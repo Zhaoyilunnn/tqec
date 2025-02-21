@@ -198,6 +198,12 @@ def _compute_detectors_at_end_of_situation(
         subtemplates = subtemplates[1:]
         plaquettes = plaquettes[1:]
 
+    # FIXME: this cannot be parallelized because sth is not pickleable
+    # subcircuits = Parallel(n_jobs=-1)(
+    #     delayed(generate_circuit_from_instantiation(subtemplate, plaqs, increments))
+    #     for subtemplate, plaqs in zip(subtemplates, plaquettes)
+    # )
+
     # Build subcircuit for each Plaquettes layer
     subcircuits: list[ScheduledCircuit] = []
     for subtemplate, plaqs in zip(subtemplates, plaquettes):

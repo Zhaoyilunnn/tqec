@@ -6,6 +6,7 @@ import warnings
 from dataclasses import dataclass
 from typing import Literal, Sequence, cast
 
+from joblib import Parallel, delayed
 import stim
 
 from tqec.utils.coordinates import StimCoordinates
@@ -79,6 +80,7 @@ class CompiledGraph:
         manhattan_radius: int = 2,
         detector_database: DetectorDatabase | None = None,
         only_use_database: bool = False,
+        parallel: bool = True,
     ) -> stim.Circuit:
         """Generate the ``stim.Circuit`` from the compiled graph.
 
@@ -142,6 +144,7 @@ class CompiledGraph:
                 manhattan_radius,
                 detector_database=detector_database,
                 only_use_database=only_use_database,
+                parallel=parallel,
             )
         # Assemble the circuits.
         circuit = global_qubit_map.to_circuit()
@@ -201,6 +204,7 @@ class CompiledGraph:
         manhattan_radius: int = 2,
         detector_database: DetectorDatabase | None = None,
         only_use_database: bool = False,
+        parallel: bool = True,
     ) -> None:
         """Compute and add in-place to ``circuits`` valid detectors.
 
@@ -227,6 +231,7 @@ class CompiledGraph:
                 that are not present in the database will be analysed to find
                 detectors.
         """
+
         # Start with the first circuit, as this is a special case.
         first_template = templates[0]
         first_plaquettes = plaquettes[0]
@@ -245,10 +250,8 @@ class CompiledGraph:
             circuits[0], mrecords_map, first_slice_detectors
         )
 
-        # Now, iterate over all the pairs of circuits.
-        for i in range(1, len(circuits)):
-            current_circuit = circuits[i]
-            slice_detectors = compute_detectors_for_fixed_radius(
+        def _compute_slice_detectors(i: int):
+            current_slice_detectors = compute_detectors_for_fixed_radius(
                 (templates[i - 1], templates[i]),
                 k,
                 (plaquettes[i - 1], plaquettes[i]),
@@ -256,15 +259,41 @@ class CompiledGraph:
                 detector_database,
                 only_use_database,
             )
-            mrecords_map = mrecords_map.with_added_measurements(
-                MeasurementRecordsMap.from_scheduled_circuit(current_circuit)
+            current_measurement_map = MeasurementRecordsMap.from_scheduled_circuit(
+                circuits[i]
             )
-            CompiledGraph._inplace_add_detectors_to_circuit(
-                current_circuit,
-                mrecords_map,
-                slice_detectors,
-                shift_coords_by=StimCoordinates(0, 0, 1),
+            return i, current_slice_detectors, current_measurement_map
+
+        # Now, iterate over all the pairs of circuits.
+        if parallel:
+            results = Parallel(n_jobs=-1)(
+                delayed(_compute_slice_detectors)(i) for i in range(1, len(circuits))
             )
+
+            results.sort(key=lambda r: r[0])
+
+            for i, slice_detectors, meas_map in results:
+                mrecords_map = mrecords_map.with_added_measurements(meas_map)
+                CompiledGraph._inplace_add_detectors_to_circuit(
+                    circuits[i],
+                    mrecords_map,
+                    slice_detectors,
+                    shift_coords_by=StimCoordinates(0, 0, 1),
+                )
+        else:
+            for i in range(1, len(circuits)):
+                _, current_slice_detectors, current_slice_mrecords_map = (
+                    _compute_slice_detectors(i)
+                )
+                mrecords_map = mrecords_map.with_added_measurements(
+                    current_slice_mrecords_map
+                )
+                CompiledGraph._inplace_add_detectors_to_circuit(
+                    circuits[i],
+                    mrecords_map,
+                    current_slice_detectors,
+                    shift_coords_by=StimCoordinates(0, 0, 1),
+                )
         # We are now over, all the detectors should be added inplace to the end
         # of the last circuit containing a measurement involved in the detector.
 

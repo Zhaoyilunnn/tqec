@@ -192,5 +192,8 @@ uv.lock
 # Ruff
 .ruff_cache
 
+# vim
+*.swp
+
 # tqec specific
 benchmarks/data/
