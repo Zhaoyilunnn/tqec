@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Protocol
 
 from tqec.compile.block import CompiledBlock
+from tqec.compile.blocks.block import Block
 from tqec.compile.specs.enums import SpatialArms
 from tqec.computation.block_graph import BlockGraph
 from tqec.computation.cube import Cube, CubeKind, ZXCube
@@ -58,6 +59,21 @@ class BlockBuilder(Protocol):
     """Protocol for building a `CompiledBlock` based on a `CubeSpec`."""
 
     def __call__(self, spec: CubeSpec) -> CompiledBlock:
+        """Build a `CompiledBlock` instance from a `CubeSpec`.
+
+        Args:
+            spec: Specification of the cube in the block graph.
+
+        Returns:
+            a `CompiledBlock` based on the provided `CubeSpec`.
+        """
+        ...
+
+
+class BlockBuilderV2(Protocol):
+    """Protocol for building a `Block` based on a `CubeSpec`."""
+
+    def __call__(self, spec: CubeSpec) -> Block:
         """Build a `CompiledBlock` instance from a `CubeSpec`.
 
         Args:
