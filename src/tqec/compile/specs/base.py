@@ -70,7 +70,7 @@ class BlockBuilder(Protocol):
         ...
 
 
-class BlockBuilderV2(Protocol):
+class CubeBuilder(Protocol):
     """Protocol for building a `Block` based on a `CubeSpec`."""
 
     def __call__(self, spec: CubeSpec) -> Block:
@@ -81,6 +81,21 @@ class BlockBuilderV2(Protocol):
 
         Returns:
             a `CompiledBlock` based on the provided `CubeSpec`.
+        """
+        ...
+
+
+class PipeBuilder(Protocol):
+    """Protocol for building a `Block` based on a `PipeSpec`."""
+
+    def __call__(self, spec: PipeSpec) -> Block:
+        """Build a `CompiledBlock` instance from a `PipeSpec`.
+
+        Args:
+            spec: Specification of the cube in the block graph.
+
+        Returns:
+            a `CompiledBlock` based on the provided `PipeSpec`.
         """
         ...
 
