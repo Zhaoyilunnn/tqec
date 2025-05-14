@@ -364,10 +364,15 @@ class DetectorDatabase:
         compact_mapping = []
         # Get unique plaquettes from all keys
         unique_plaquettes_set: set[Plaquette] = set()
+        num_plaquettes = 0
         for key in self.mapping.keys():
             for plaquettes in key.plaquettes_by_timestep:
                 unique_plaquettes_set.update(plaquettes.collection.values())
+                num_plaquettes += len(plaquettes.collection)
         unique_plaquettes = list(unique_plaquettes_set)
+        # Print the number of unique plaquettes
+        print(f"Number of unique plaquettes: {len(unique_plaquettes)}")
+        print(f"Number of plaquettes: {num_plaquettes}")
 
         for key, detectors in self.mapping.items():
             compact_mapping.append(
@@ -394,8 +399,48 @@ class DetectorDatabase:
         if not filepath.parent.exists():
             filepath.parent.mkdir()
         serializable = self.to_serializable()
+        unique_plaquettes = serializable[0]
+        all_plaquettes = []
+        all_subtemplates = []
+        mapping = serializable[1]
+
+        compact_all_plaquettes = []
+        compact_all_subtemplates = []
+
+        for key in self.mapping:
+            for plaquettes in key.plaquettes_by_timestep:
+                all_plaquettes.extend(plaquettes.collection.values())
+            all_subtemplates.extend(key.subtemplates)
+
+        for item in mapping:
+            key = item[0]
+            compact_all_subtemplates.append(key[0])
+            compact_all_plaquettes.append(key[1])
+
+        # Save compact_all_plaquettes and compact_all_subtemplates to temporary files
+        with open(filepath.with_suffix(".compact_plaquettes_all"), "wb") as f:
+            pickle.dump(compact_all_plaquettes, f)
+        with open(filepath.with_suffix(".compact_subtemplates"), "wb") as f:
+            pickle.dump(compact_all_subtemplates, f)
+
         with open(filepath, "wb") as f:
             pickle.dump(serializable, f)
+
+        # Save unique plaquettes and mapping to temporary files
+        with open(filepath.with_suffix(".plaquettes"), "wb") as f:
+            pickle.dump(unique_plaquettes, f)
+        with open(filepath.with_suffix(".mapping"), "wb") as f:
+            pickle.dump(mapping, f)
+
+        # Save all plaquettes and subtemplates to two separate files
+        with open(filepath.with_suffix(".plaquettes_all"), "wb") as f:
+            pickle.dump(all_plaquettes, f)
+        with open(filepath.with_suffix(".subtemplates"), "wb") as f:
+            pickle.dump(all_subtemplates, f)
+
+        # Save original mapping to a separate file
+        with open(filepath.with_suffix(".original_mapping"), "wb") as f:
+            pickle.dump(self.mapping, f)
 
     @staticmethod
     def from_file(filepath: Path) -> DetectorDatabase:
