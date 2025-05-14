@@ -396,6 +396,16 @@ class DetectorDatabase:
         return DetectorDatabase(mapping)
 
     def to_file(self, filepath: Path) -> None:
+        from pympler import asizeof
+
+        # Print the size of the key's plaquettes_by_timestep
+        total_size = 0
+        for key in self.mapping:
+            size = asizeof.asizeof(key.plaquettes_by_timestep)
+            total_size += size
+
+        print(f"Size of the key's plaquettes_by_timestep: {total_size} bytes")
+
         if not filepath.parent.exists():
             filepath.parent.mkdir()
         serializable = self.to_serializable()
@@ -411,6 +421,12 @@ class DetectorDatabase:
             for plaquettes in key.plaquettes_by_timestep:
                 all_plaquettes.extend(plaquettes.collection.values())
             all_subtemplates.extend(key.subtemplates)
+
+        # check if same instances exist in all_plaquettes
+        for i, plq in enumerate(all_plaquettes):
+            for j in range(i + 1, len(all_plaquettes)):
+                if plq is all_plaquettes[j]:
+                    print(f"Same instance found at indices {i} and {j}")
 
         for item in mapping:
             key = item[0]
