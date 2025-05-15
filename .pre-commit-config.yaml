@@ -32,3 +32,11 @@ repos:
   #   rev: v1.7.5
   #   hooks:
   #     - id: docformatter
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: "v1.15.0"
+    hooks:
+      - id: mypy
+        # files: src/tqec/
+        args: [--strict, --ignore-missing-imports]
+        additional_dependencies: [numpy]
+        # pass_filenames: false
