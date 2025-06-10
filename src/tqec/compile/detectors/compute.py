@@ -1,6 +1,7 @@
 import json
-from typing import Sequence
+from typing import Any, Sequence
 from multiprocessing import Pool, cpu_count
+from multiprocessing.managers import DictProxy, SyncManager
 from collections.abc import Sequence
 
 import numpy
@@ -30,6 +31,7 @@ from tqec.templates.subtemplates import (
 from tqec.utils.coordinates import StimCoordinates
 from tqec.utils.exceptions import TQECException
 from tqec.utils.position import PlaquettePosition2D, Shift2D
+from tqec.compile.detectors.database import _DetectorDatabaseKey
 
 
 def _get_measurement_offset_mapping(circuit: stim.Circuit) -> dict[int, Measurement]:
@@ -267,7 +269,7 @@ def compute_detectors_at_end_of_situation(
     subtemplates: Sequence[SubTemplateType],
     plaquettes_by_timestep: Sequence[Plaquettes],
     increments: Shift2D,
-    database: DetectorDatabase | None = None,
+    database_dict: dict[_DetectorDatabaseKey, frozenset[Detector]] | DictProxy | None = None,
     only_use_database: bool = False,
 ) -> tuple[frozenset[Detector], frozenset[Detector] | None]:
     """Returns detectors that should be added at the end of the provided
@@ -303,8 +305,8 @@ def compute_detectors_at_end_of_situation(
 
     """
     # Try to recover the result from the database.
-    if database is not None:
-        detectors = database.get_detectors(subtemplates, plaquettes_by_timestep)
+    if database_dict is not None:
+        detectors = database_dict.get(_DetectorDatabaseKey(subtemplates, plaquettes_by_timestep))
         # If not found and only detectors from the database should be used, this
         # is an error.
         if detectors is None and only_use_database:
@@ -315,7 +317,10 @@ def compute_detectors_at_end_of_situation(
             detectors = _compute_detectors_at_end_of_situation(
                 subtemplates, plaquettes_by_timestep, increments
             )
-            database.add_situation(subtemplates, plaquettes_by_timestep, detectors)
+            key = _DetectorDatabaseKey(subtemplates, plaquettes_by_timestep)
+            database_dict[key] = (
+                frozenset([detectors]) if isinstance(detectors, Detector) else detectors
+            )
     # If database is None
     else:
         if only_use_database:
@@ -511,7 +516,7 @@ def _compute_detector_for_subtemplate(
         npt.NDArray[numpy.int_],  # s3d
         Sequence[Plaquettes],  # plaquettes
         Shift2D,  # increments
-        DetectorDatabase | None,  # database
+        dict[_DetectorDatabaseKey, frozenset[Detector]] | DictProxy | None,  # database
         bool,  # only_use_database
     ],
 ) -> tuple[tuple[int, ...], tuple[frozenset[Detector], frozenset[Detector] | None]]:
@@ -616,24 +621,23 @@ def compute_detectors_for_fixed_radius(
     # If parallel_process_count > 1 we will enable parallel processing to
     # compute detectors in parallel.
     if parallel_process_count > 1:
-        args_list = [
-            (indices, s3d, plaquettes, increments, None, False)
-            for indices, s3d in unique_3d_subtemplates.subtemplates.items()
-        ]
+        with SyncManager() as manager:
+            if database is not None:
+                managed_dict = manager.dict(database.mapping)
+            else:
+                managed_dict = None
+            args_list = [
+                (indices, s3d, plaquettes, increments, managed_dict, False)
+                for indices, s3d in unique_3d_subtemplates.subtemplates.items()
+            ]
 
-        with Pool(processes=parallel_process_count) as pool:
-            results = pool.map(_compute_detector_for_subtemplate, args_list)
+            with Pool(processes=parallel_process_count) as pool:
+                results = pool.map(_compute_detector_for_subtemplate, args_list)
 
-        if database is not None:
-            for indices, (_, detectors_for_db) in results:
-                subtemplates = _extract_subtemplates_from_s3d(
-                    unique_3d_subtemplates.subtemplates[indices]
-                )
-                if detectors_for_db is not None:
-                    database.add_situation(subtemplates, plaquettes, detectors_for_db)
-
-        # Convert results to dictionary
-        detectors_by_subtemplate = {result[0]: result[1][0] for result in results}
+            if database is not None:
+                database.mapping = dict(managed_dict)
+            # Convert results to dictionary
+            detectors_by_subtemplate = {result[0]: result[1][0] for result in results}
 
     # If parallel_process_count == 1, computing detectors sequentially
     elif parallel_process_count == 1:
@@ -642,7 +646,7 @@ def compute_detectors_for_fixed_radius(
                 _extract_subtemplates_from_s3d(s3d),
                 plaquettes,
                 increments,
-                database,
+                database.mapping if database is not None else None,
                 only_use_database,
             )[0]
             for indices, s3d in unique_3d_subtemplates.subtemplates.items()

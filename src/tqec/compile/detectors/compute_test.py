@@ -283,17 +283,17 @@ def test_public_compute_detectors_at_end_of_situation(
             [alternating_subtemplate],
             [init_plaquettes],
             increments,
-            database,
+            database.mapping,
             True,
         )
     assert len(database) == 0
     detectors, _ = compute_detectors_at_end_of_situation(
-        [alternating_subtemplate], [init_plaquettes], increments, database, False
+        [alternating_subtemplate], [init_plaquettes], increments, database.mapping, False
     )
     assert len(database) == 1
     assert len(detectors) == 1
     detectors, _ = compute_detectors_at_end_of_situation(
-        [alternating_subtemplate], [init_plaquettes], increments, database, True
+        [alternating_subtemplate], [init_plaquettes], increments, database.mapping, True
     )
     assert len(detectors) == 1
 
