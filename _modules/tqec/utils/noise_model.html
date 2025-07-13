@@ -31,6 +31,8 @@
 
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
   
   <!-- So that users can add custom icons -->
   <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -43,6 +45,9 @@
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
@@ -148,15 +153,15 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../contributor_guide.html">
-    Contributor Guide
+  <a class="nav-link nav-internal" href="../../../gallery/index.html">
+    Gallery
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../gallery/index.html">
-    Gallery
+  <a class="nav-link nav-internal" href="../../../contributor_guide.html">
+    Contributor Guide
   </a>
 </li>
 
@@ -281,15 +286,15 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../contributor_guide.html">
-    Contributor Guide
+  <a class="nav-link nav-internal" href="../../../gallery/index.html">
+    Gallery
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../gallery/index.html">
-    Gallery
+  <a class="nav-link nav-internal" href="../../../contributor_guide.html">
+    Contributor Guide
   </a>
 </li>
 
@@ -429,6 +434,9 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">   immediately followed by resets. As a result, the depolarizing error has no</span>
 <span class="sd">   effect.</span>
 <span class="sd">4. Remove the ``depolarizing_two_body_measurement_noise`` noise model.</span>
+<span class="sd">5. Changes to NoiseModel.noisy_circuit to respect TQEC convention with TICKs and</span>
+<span class="sd">   REPEAT blocks (not before the block, the first instruction in the repeated</span>
+<span class="sd">   inner block, and after the block).</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span><span class="p">,</span> <span class="n">defaultdict</span>
@@ -558,7 +566,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">after</span> <span class="o">=</span> <span class="n">after</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">flip_result</span> <span class="o">=</span> <span class="n">flip_result</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">append_noisy_version_of</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_append_noisy_version_of</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">split_op</span><span class="p">:</span> <span class="n">stim</span><span class="o">.</span><span class="n">CircuitInstruction</span><span class="p">,</span>
@@ -602,6 +610,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">any_clifford_1q_rule</span><span class="p">:</span> <span class="n">NoiseRule</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">any_clifford_2q_rule</span><span class="p">:</span> <span class="n">NoiseRule</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents a noise model that can be applied to a ``stim.Circuit``.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">idle_depolarization</span> <span class="o">=</span> <span class="n">idle_depolarization</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">additional_depolarization_waiting_for_m_or_r</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">additional_depolarization_waiting_for_m_or_r</span>
@@ -760,7 +769,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="k">if</span> <span class="n">rule</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">split_op</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">rule</span><span class="o">.</span><span class="n">append_noisy_version_of</span><span class="p">(</span>
+                <span class="n">rule</span><span class="o">.</span><span class="n">_append_noisy_version_of</span><span class="p">(</span>
                     <span class="n">split_op</span><span class="o">=</span><span class="n">split_op</span><span class="p">,</span>
                     <span class="n">out_during_moment</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
                     <span class="n">after_moments</span><span class="o">=</span><span class="n">after</span><span class="p">,</span>
@@ -803,22 +812,21 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">immune_qubits</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="n">stim</span><span class="o">.</span><span class="n">Circuit</span><span class="p">()</span>
-
-        <span class="n">first</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">for</span> <span class="n">moment_split_ops</span> <span class="ow">in</span> <span class="n">_iter_split_op_moments</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">immune_qubits</span><span class="o">=</span><span class="n">immune_qubits</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
-                <span class="n">first</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">elif</span> <span class="n">result</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">stim</span><span class="o">.</span><span class="n">CircuitRepeatBlock</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">moment_split_ops</span><span class="p">,</span> <span class="n">stim</span><span class="o">.</span><span class="n">CircuitRepeatBlock</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">stim</span><span class="o">.</span><span class="n">CircuitRepeatBlock</span><span class="p">):</span>
                 <span class="k">pass</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;TICK&quot;</span><span class="p">)</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;TICK&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[])</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">moment_split_ops</span><span class="p">,</span> <span class="n">stim</span><span class="o">.</span><span class="n">CircuitRepeatBlock</span><span class="p">):</span>
                 <span class="n">noisy_body</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">noisy_circuit</span><span class="p">(</span>
                     <span class="n">moment_split_ops</span><span class="o">.</span><span class="n">body_copy</span><span class="p">(),</span>
                     <span class="n">system_qubits</span><span class="o">=</span><span class="n">system_qubits</span><span class="p">,</span>
                     <span class="n">immune_qubits</span><span class="o">=</span><span class="n">immune_qubits</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="n">noisy_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;TICK&quot;</span><span class="p">)</span>
                 <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">stim</span><span class="o">.</span><span class="n">CircuitRepeatBlock</span><span class="p">(</span>
                         <span class="n">repeat_count</span><span class="o">=</span><span class="n">moment_split_ops</span><span class="o">.</span><span class="n">repeat_count</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">noisy_body</span>

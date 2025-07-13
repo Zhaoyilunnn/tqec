@@ -31,6 +31,8 @@
 
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
   
   <!-- So that users can add custom icons -->
   <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -43,6 +45,9 @@
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
@@ -148,15 +153,15 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../contributor_guide.html">
-    Contributor Guide
+  <a class="nav-link nav-internal" href="../../../gallery/index.html">
+    Gallery
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../gallery/index.html">
-    Gallery
+  <a class="nav-link nav-internal" href="../../../contributor_guide.html">
+    Contributor Guide
   </a>
 </li>
 
@@ -281,15 +286,15 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../contributor_guide.html">
-    Contributor Guide
+  <a class="nav-link nav-internal" href="../../../gallery/index.html">
+    Gallery
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../gallery/index.html">
-    Gallery
+  <a class="nav-link nav-internal" href="../../../contributor_guide.html">
+    Contributor Guide
   </a>
 </li>
 
@@ -414,8 +419,8 @@ window.addEventListener("load", () => mermaid.run());
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">stim</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">override</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqec.circuit.qubit</span><span class="w"> </span><span class="kn">import</span> <span class="n">GridQubit</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tqec.circuit.schedule</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScheduledCircuit</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tqec.plaquette.debug</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlaquetteDebugInformation</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tqec.plaquette.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlaquetteOrientation</span>
@@ -423,7 +428,6 @@ window.addEventListener("load", () => mermaid.run());
 <span class="kn">from</span><span class="w"> </span><span class="nn">tqec.utils.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TQECException</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tqec.utils.frozendefaultdict</span><span class="w"> </span><span class="kn">import</span> <span class="n">FrozenDefaultDict</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tqec.utils.position</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhysicalQubitPosition2D</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">tqec.utils.scale</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearFunction</span><span class="p">,</span> <span class="n">round_or_fail</span>
 
 
 <div class="viewcode-block" id="Plaquette">
@@ -477,6 +481,10 @@ window.addEventListener("load", () => mermaid.run());
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">origin</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PhysicalQubitPosition2D</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the plaquette origin.</span>
+
+<span class="sd">        By definition, for the moment, the plaquette origin is always ``(0, 0)``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">PhysicalQubitPosition2D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -487,6 +495,69 @@ window.addEventListener("load", () => mermaid.run());
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+<div class="viewcode-block" id="Plaquette.project_on_data_qubit_indices">
+<a class="viewcode-back" href="../../../_autosummary/tqec.plaquette.Plaquette.html#tqec.plaquette.Plaquette.project_on_data_qubit_indices">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">project_on_data_qubit_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_qubits_indices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Plaquette</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Project the plaquette on the provided qubits and return a new</span>
+<span class="sd">        plaquette with the remaining qubits and circuit.</span>
+
+<span class="sd">        This method is useful for deriving a boundary plaquette from a integral</span>
+<span class="sd">        plaquette.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data_qubits: data-qubit indices that will be kept in the returned</span>
+<span class="sd">                plaquette.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A new plaquette with projected qubits and circuit. The qubits are</span>
+<span class="sd">            updated to only keep the provided ``data_qubits_indices``. The</span>
+<span class="sd">            circuit is also updated to only use the kept qubits and empty</span>
+<span class="sd">            moments with the corresponding schedules are removed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">kept_qubits</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">q</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qubits</span><span class="o">.</span><span class="n">data_qubits_with_indices</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data_qubits_indices</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_on_data_qubits</span><span class="p">(</span><span class="n">kept_qubits</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Plaquette.project_on_data_qubits">
+<a class="viewcode-back" href="../../../_autosummary/tqec.plaquette.Plaquette.html#tqec.plaquette.Plaquette.project_on_data_qubits">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">project_on_data_qubits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_qubits</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GridQubit</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Plaquette</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Project the plaquette on the provided qubits and return a new</span>
+<span class="sd">        plaquette with the remaining qubits and circuit.</span>
+
+<span class="sd">        This method is useful for deriving a boundary plaquette from a integral</span>
+<span class="sd">        plaquette.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data_qubits: qubits that will be kept in the returned plaquette.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A new plaquette with projected qubits and circuit. The qubits are</span>
+<span class="sd">            updated to only keep the provided ``data_qubits``. The circuit is</span>
+<span class="sd">            also updated to only use the kept qubits and empty moments with the</span>
+<span class="sd">            corresponding schedules are removed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">removed_data_qubit_indices</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qubits</span><span class="o">.</span><span class="n">data_qubits_with_indices</span> <span class="k">if</span> <span class="n">q</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data_qubits</span>
+        <span class="p">]</span>
+        <span class="n">new_plaquette_qubits</span> <span class="o">=</span> <span class="n">PlaquetteQubits</span><span class="p">(</span><span class="n">data_qubits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">qubits</span><span class="o">.</span><span class="n">syndrome_qubits</span><span class="p">)</span>
+        <span class="n">new_scheduled_circuit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">filter_by_qubits</span><span class="p">(</span><span class="n">new_plaquette_qubits</span><span class="o">.</span><span class="n">all_qubits</span><span class="p">)</span>
+        <span class="n">debug_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug_information</span>
+        <span class="k">if</span> <span class="n">debug_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">debug_info</span> <span class="o">=</span> <span class="n">debug_info</span><span class="o">.</span><span class="n">with_data_qubits_removed</span><span class="p">(</span><span class="n">removed_data_qubit_indices</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Plaquette</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_&quot;</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">removed_data_qubit_indices</span><span class="p">)),</span>
+            <span class="n">new_plaquette_qubits</span><span class="p">,</span>
+            <span class="n">new_scheduled_circuit</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mergeable_instructions</span><span class="p">,</span>
+            <span class="n">debug_info</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="Plaquette.project_on_boundary">
 <a class="viewcode-back" href="../../../_autosummary/tqec.plaquette.Plaquette.html#tqec.plaquette.Plaquette.project_on_boundary">[docs]</a>
@@ -525,12 +596,27 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="Plaquette.reliable_hash">
 <a class="viewcode-back" href="../../../_autosummary/tqec.plaquette.Plaquette.html#tqec.plaquette.Plaquette.reliable_hash">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reliable_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a hash of ``self`` that is replicable across OSes and Python runs.</span>
+
+<span class="sd">        The default ``hash`` function from Python is not guaranteed to always give the same value</span>
+<span class="sd">        from the same input. In particular, with CPython, ``str`` instances are hashed with an</span>
+<span class="sd">        additional salt that is randomly picked at each call to the Python executable.</span>
+
+<span class="sd">        This is an issue when trying to store a dictionary involving a plaquette as key and re-use</span>
+<span class="sd">        it in subsequent runs or on other machines / OSes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(),</span> <span class="mi">16</span><span class="p">)</span></div>
 
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">num_measurements</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of measurements performed in the circuit representing ``self``.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">num_measurements</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">num_moments</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of moments in the circuit representing ``self``.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">schedule</span><span class="o">.</span><span class="n">max_schedule</span> <span class="o">+</span> <span class="mi">1</span>
 
 <div class="viewcode-block" id="Plaquette.is_empty">
 <a class="viewcode-back" href="../../../_autosummary/tqec.plaquette.Plaquette.html#tqec.plaquette.Plaquette.is_empty">[docs]</a>
@@ -540,6 +626,21 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        An empty plaquette is a plaquette that contain empty scheduled circuit.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_circuit</span><span class="p">(</span><span class="n">include_qubit_coords</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">==</span> <span class="n">stim</span><span class="o">.</span><span class="n">Circuit</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="Plaquette.with_debug_information">
+<a class="viewcode-back" href="../../../_autosummary/tqec.plaquette.Plaquette.html#tqec.plaquette.Plaquette.with_debug_information">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">with_debug_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">debug_information</span><span class="p">:</span> <span class="n">PlaquetteDebugInformation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Plaquette</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a copy of ``self`` with its debug information replaced by the provided</span>
+<span class="sd">        ``debug_information``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Plaquette</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">qubits</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mergeable_instructions</span><span class="p">,</span>
+            <span class="n">debug_information</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Plaquette.to_dict">
@@ -579,13 +680,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">circuit</span> <span class="o">=</span> <span class="n">ScheduledCircuit</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;circuit&quot;</span><span class="p">])</span>
         <span class="n">mergeable_instructions</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;mergeable_instructions&quot;</span><span class="p">])</span>
         <span class="n">debug_information</span> <span class="o">=</span> <span class="n">PlaquetteDebugInformation</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;debug_information&quot;</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">Plaquette</span><span class="p">(</span>
-            <span class="n">name</span><span class="p">,</span>
-            <span class="n">qubits</span><span class="p">,</span>
-            <span class="n">circuit</span><span class="p">,</span>
-            <span class="n">mergeable_instructions</span><span class="p">,</span>
-            <span class="n">debug_information</span><span class="p">,</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Plaquette</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">qubits</span><span class="p">,</span> <span class="n">circuit</span><span class="p">,</span> <span class="n">mergeable_instructions</span><span class="p">,</span> <span class="n">debug_information</span><span class="p">)</span></div>
 </div>
 
 
@@ -619,21 +714,28 @@ window.addEventListener("load", () => mermaid.run());
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Plaquette</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
 
-<div class="viewcode-block" id="Plaquettes.repeat">
-<a class="viewcode-back" href="../../../_autosummary/tqec.plaquette.Plaquettes.html#tqec.plaquette.Plaquettes.repeat">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">repeat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repetitions</span><span class="p">:</span> <span class="n">LinearFunction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RepeatedPlaquettes</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">RepeatedPlaquettes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="p">,</span> <span class="n">repetitions</span><span class="p">)</span></div>
-
-
 <div class="viewcode-block" id="Plaquettes.with_updated_plaquettes">
 <a class="viewcode-back" href="../../../_autosummary/tqec.plaquette.Plaquettes.html#tqec.plaquette.Plaquettes.with_updated_plaquettes">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">with_updated_plaquettes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plaquettes_to_update</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Plaquette</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Plaquettes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new :class:`.Plaquettes` instance with the updated plaquettes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            plaquettes_to_update: a mapping from plaquette indices to :class:`.Plaquette` instances.</span>
+<span class="sd">                Each entry will replace an existing (or create a new) entry in a copy of ``self``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a new :class:`.Plaquettes` instance with plaquettes from ``self`` and</span>
+<span class="sd">            ``plaquettes_to_update``. If an index is present in both ``self`` and</span>
+<span class="sd">            ``plaquettes_to_update``, ``plaquettes_to_update`` take precedence.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Plaquettes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">collection</span> <span class="o">|</span> <span class="n">plaquettes_to_update</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Plaquettes.map_indices">
 <a class="viewcode-back" href="../../../_autosummary/tqec.plaquette.Plaquettes.html#tqec.plaquette.Plaquettes.map_indices">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">map_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">callable</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Plaquettes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new :class:`.Plaquettes` instance with updated plaquette indices.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Plaquettes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">map_keys</span><span class="p">(</span><span class="nb">callable</span><span class="p">))</span></div>
 
 
@@ -658,6 +760,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="Plaquettes.to_name_dict">
 <a class="viewcode-back" href="../../../_autosummary/tqec.plaquette.Plaquettes.html#tqec.plaquette.Plaquettes.to_name_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_name_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a dictionary with each plaquette name as value.&quot;&quot;&quot;</span>
         <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">default_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">d</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">default_value</span><span class="o">.</span><span class="n">name</span>
@@ -667,6 +770,9 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="Plaquettes.without_plaquettes">
 <a class="viewcode-back" href="../../../_autosummary/tqec.plaquette.Plaquettes.html#tqec.plaquette.Plaquettes.without_plaquettes">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">without_plaquettes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Plaquettes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the plaquettes associated with the provided ``indices`` from a copy of ``self`` and return the new</span>
+<span class="sd">        instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Plaquettes</span><span class="p">(</span>
             <span class="n">FrozenDefaultDict</span><span class="p">(</span>
                 <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">},</span>
@@ -678,6 +784,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="Plaquettes.items">
 <a class="viewcode-back" href="../../../_autosummary/tqec.plaquette.Plaquettes.html#tqec.plaquette.Plaquettes.items">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Plaquette</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an iterable over each :class:`.Plaquette` and its associated index in ``self``.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">items</span><span class="p">()</span></div>
 
 
@@ -748,44 +855,6 @@ window.addEventListener("load", () => mermaid.run());
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">Plaquettes</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span></div>
 </div>
-
-
-
-<div class="viewcode-block" id="RepeatedPlaquettes">
-<a class="viewcode-back" href="../../../_autosummary/tqec.plaquette.RepeatedPlaquettes.html#tqec.plaquette.RepeatedPlaquettes">[docs]</a>
-<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">RepeatedPlaquettes</span><span class="p">(</span><span class="n">Plaquettes</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represent plaquettes that should be repeated for several rounds.&quot;&quot;&quot;</span>
-
-    <span class="n">repetitions</span><span class="p">:</span> <span class="n">LinearFunction</span>
-
-<div class="viewcode-block" id="RepeatedPlaquettes.num_rounds">
-<a class="viewcode-back" href="../../../_autosummary/tqec.plaquette.RepeatedPlaquettes.html#tqec.plaquette.RepeatedPlaquettes.num_rounds">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">num_rounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">round_or_fail</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repetitions</span><span class="p">(</span><span class="n">k</span><span class="p">))</span></div>
-
-
-<div class="viewcode-block" id="RepeatedPlaquettes.with_updated_plaquettes">
-<a class="viewcode-back" href="../../../_autosummary/tqec.plaquette.RepeatedPlaquettes.html#tqec.plaquette.RepeatedPlaquettes.with_updated_plaquettes">[docs]</a>
-    <span class="nd">@override</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">with_updated_plaquettes</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">plaquettes_to_update</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Plaquette</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RepeatedPlaquettes</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">RepeatedPlaquettes</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">collection</span> <span class="o">|</span> <span class="n">plaquettes_to_update</span><span class="p">,</span>
-            <span class="n">repetitions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">repetitions</span><span class="p">,</span>
-        <span class="p">)</span></div>
-
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="nb">isinstance</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">RepeatedPlaquettes</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">repetitions</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">repetitions</span>
-            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">collection</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">repetitions</span><span class="p">,</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()))</span></div>
 
 </pre></div>
 

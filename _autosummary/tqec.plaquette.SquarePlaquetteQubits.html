@@ -32,6 +32,8 @@
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -44,12 +46,15 @@
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_autosummary/tqec.plaquette.SquarePlaquetteQubits';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="tqec.circuit" href="tqec.circuit.html" />
-    <link rel="prev" title="RepeatedPlaquettes" href="tqec.plaquette.RepeatedPlaquettes.html" />
+    <link rel="prev" title="RPNGDescription" href="tqec.plaquette.RPNGDescription.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -143,15 +148,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../contributor_guide.html">
-    Contributor Guide
+  <a class="nav-link nav-internal" href="../gallery/index.html">
+    Gallery
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../gallery/index.html">
-    Gallery
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributor Guide
   </a>
 </li>
 
@@ -278,15 +283,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../contributor_guide.html">
-    Contributor Guide
+  <a class="nav-link nav-internal" href="../gallery/index.html">
+    Gallery
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../gallery/index.html">
-    Gallery
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributor Guide
   </a>
 </li>
 
@@ -365,7 +370,6 @@
 <li class="toctree-l2"><a class="reference internal" href="tqec.plaquette.RG.html">RG</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tqec.plaquette.RPNG.html">RPNG</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tqec.plaquette.RPNGDescription.html">RPNGDescription</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tqec.plaquette.RepeatedPlaquettes.html">RepeatedPlaquettes</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">SquarePlaquetteQubits</a></li>
 </ul>
 </details></li>
@@ -481,11 +485,12 @@
 <dt class="sig sig-object py" id="tqec.plaquette.SquarePlaquetteQubits">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tqec.plaquette.</span></span><span class="sig-name descname"><span class="pre">SquarePlaquetteQubits</span></span><a class="reference internal" href="../_modules/tqec/plaquette/qubit.html#SquarePlaquetteQubits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tqec.plaquette.SquarePlaquetteQubits" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="tqec.plaquette.PlaquetteQubits.html#tqec.plaquette.PlaquetteQubits" title="tqec.plaquette.qubit.PlaquetteQubits"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlaquetteQubits</span></code></a></p>
+<p>Represents the qubits used by a regular square plaquette.</p>
 <p class="rubric">Methods</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tqec.plaquette.SquarePlaquetteQubits.__init__" title="tqec.plaquette.SquarePlaquetteQubits.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>()</p></td>
-<td><p></p></td>
+<td><p>Represents the qubits used by a regular square plaquette.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tqec.plaquette.SquarePlaquetteQubits.from_dict" title="tqec.plaquette.SquarePlaquetteQubits.from_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_dict</span></code></a>(data)</p></td>
 <td><p>Return a plaquette qubits from its dictionary representation.</p></td>
@@ -506,22 +511,22 @@
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">all_qubits</span></code></p></td>
-<td><p></p></td>
+<td><p>Return all the qubits represented by <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_qubits_indices</span></code></p></td>
-<td><p></p></td>
+<td><p>Return an iterator over the index of each data-qubit.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_qubits_with_indices</span></code></p></td>
-<td><p></p></td>
+<td><p>Return an iterator over each data-qubit and their indices.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">qubit_map</span></code></p></td>
-<td><p></p></td>
+<td><p>Return the qubit map representing <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">syndrome_qubits_indices</span></code></p></td>
-<td><p></p></td>
+<td><p>Return an iterator over the index of each syndrome-qubit.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">syndrome_qubits_with_indices</span></code></p></td>
-<td><p></p></td>
+<td><p>Return an iterator over each syndrome-qubit and their indices.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_qubits</span></code></p></td>
 <td><p></p></td>
@@ -538,7 +543,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="tqec.plaquette.SquarePlaquetteQubits.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tqec/plaquette/qubit.html#SquarePlaquetteQubits.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tqec.plaquette.SquarePlaquetteQubits.__init__" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Represents the qubits used by a regular square plaquette.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None</p>
 </dd>
@@ -634,12 +640,12 @@ their corresponding values.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="tqec.plaquette.RepeatedPlaquettes.html"
+       href="tqec.plaquette.RPNGDescription.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">RepeatedPlaquettes</p>
+        <p class="prev-next-title">RPNGDescription</p>
       </div>
     </a>
     <a class="right-next"

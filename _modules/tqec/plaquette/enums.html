@@ -31,6 +31,8 @@
 
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
   
   <!-- So that users can add custom icons -->
   <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -43,6 +45,9 @@
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
@@ -148,15 +153,15 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../contributor_guide.html">
-    Contributor Guide
+  <a class="nav-link nav-internal" href="../../../gallery/index.html">
+    Gallery
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../gallery/index.html">
-    Gallery
+  <a class="nav-link nav-internal" href="../../../contributor_guide.html">
+    Contributor Guide
   </a>
 </li>
 
@@ -281,15 +286,15 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../contributor_guide.html">
-    Contributor Guide
+  <a class="nav-link nav-internal" href="../../../gallery/index.html">
+    Gallery
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../gallery/index.html">
-    Gallery
+  <a class="nav-link nav-internal" href="../../../contributor_guide.html">
+    Contributor Guide
   </a>
 </li>
 
@@ -422,6 +427,12 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="PlaquetteOrientation.to_plaquette_side">
 <a class="viewcode-back" href="../../../_autosummary/tqec.plaquette.PlaquetteOrientation.html#tqec.plaquette.PlaquetteOrientation.to_plaquette_side">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_plaquette_side</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PlaquetteSide</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the plaquette side corresponding to ``self``.</span>
+
+<span class="sd">        If ``self == PlaquetteOrientation.RIGHT`` then</span>
+<span class="sd">        ``self.to_plaquette_side() == PlaquetteSide.LEFT`` because a plaquette oriented to the right</span>
+<span class="sd">        has 2 data-qubit on its left side.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">PlaquetteOrientation</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">PlaquetteSide</span><span class="o">.</span><span class="n">LEFT</span>
         <span class="k">elif</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">PlaquetteOrientation</span><span class="o">.</span><span class="n">LEFT</span><span class="p">:</span>
@@ -445,6 +456,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="PlaquetteSide.opposite">
 <a class="viewcode-back" href="../../../_autosummary/tqec.plaquette.PlaquetteSide.html#tqec.plaquette.PlaquetteSide.opposite">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">opposite</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PlaquetteSide</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the opposite side.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">PlaquetteSide</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">PlaquetteSide</span><span class="o">.</span><span class="n">LEFT</span>
         <span class="k">elif</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">PlaquetteSide</span><span class="o">.</span><span class="n">LEFT</span><span class="p">:</span>

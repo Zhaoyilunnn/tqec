@@ -32,6 +32,8 @@
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -44,6 +46,9 @@
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_autosummary/tqec.plaquette.Plaquette';</script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -143,15 +148,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../contributor_guide.html">
-    Contributor Guide
+  <a class="nav-link nav-internal" href="../gallery/index.html">
+    Gallery
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../gallery/index.html">
-    Gallery
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributor Guide
   </a>
 </li>
 
@@ -278,15 +283,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../contributor_guide.html">
-    Contributor Guide
+  <a class="nav-link nav-internal" href="../gallery/index.html">
+    Gallery
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../gallery/index.html">
-    Gallery
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributor Guide
   </a>
 </li>
 
@@ -365,7 +370,6 @@
 <li class="toctree-l2"><a class="reference internal" href="tqec.plaquette.RG.html">RG</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tqec.plaquette.RPNG.html">RPNG</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tqec.plaquette.RPNGDescription.html">RPNGDescription</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tqec.plaquette.RepeatedPlaquettes.html">RepeatedPlaquettes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tqec.plaquette.SquarePlaquetteQubits.html">SquarePlaquetteQubits</a></li>
 </ul>
 </details></li>
@@ -569,11 +573,20 @@ circuits together to remove duplicate instructions.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#tqec.plaquette.Plaquette.project_on_boundary" title="tqec.plaquette.Plaquette.project_on_boundary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">project_on_boundary</span></code></a>(projected_orientation)</p></td>
 <td><p>Project the plaquette on boundary and return a new plaquette with the remaining qubits and circuit.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tqec.plaquette.Plaquette.project_on_data_qubit_indices" title="tqec.plaquette.Plaquette.project_on_data_qubit_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">project_on_data_qubit_indices</span></code></a>(...)</p></td>
+<td><p>Project the plaquette on the provided qubits and return a new plaquette with the remaining qubits and circuit.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tqec.plaquette.Plaquette.project_on_data_qubits" title="tqec.plaquette.Plaquette.project_on_data_qubits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">project_on_data_qubits</span></code></a>(data_qubits)</p></td>
+<td><p>Project the plaquette on the provided qubits and return a new plaquette with the remaining qubits and circuit.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tqec.plaquette.Plaquette.reliable_hash" title="tqec.plaquette.Plaquette.reliable_hash"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reliable_hash</span></code></a>()</p></td>
-<td><p></p></td>
+<td><p>Return a hash of <code class="docutils literal notranslate"><span class="pre">self</span></code> that is replicable across OSes and Python runs.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tqec.plaquette.Plaquette.to_dict" title="tqec.plaquette.Plaquette.to_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dict</span></code></a>()</p></td>
 <td><p>Return a dictionary representation of the plaquette.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tqec.plaquette.Plaquette.with_debug_information" title="tqec.plaquette.Plaquette.with_debug_information"><code class="xref py py-obj docutils literal notranslate"><span class="pre">with_debug_information</span></code></a>(debug_information)</p></td>
+<td><p>Create a copy of <code class="docutils literal notranslate"><span class="pre">self</span></code> with its debug information replaced by the provided <code class="docutils literal notranslate"><span class="pre">debug_information</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -582,24 +595,27 @@ circuits together to remove duplicate instructions.</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">num_measurements</span></code></p></td>
+<td><p>Return the number of measurements performed in the circuit representing <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">num_moments</span></code></p></td>
+<td><p>Return the number of moments in the circuit representing <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">origin</span></code></p></td>
+<td><p>Return the plaquette origin.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tqec.plaquette.Plaquette.name" title="tqec.plaquette.Plaquette.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">origin</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tqec.plaquette.Plaquette.qubits" title="tqec.plaquette.Plaquette.qubits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qubits</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tqec.plaquette.Plaquette.name" title="tqec.plaquette.Plaquette.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tqec.plaquette.Plaquette.circuit" title="tqec.plaquette.Plaquette.circuit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">circuit</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tqec.plaquette.Plaquette.qubits" title="tqec.plaquette.Plaquette.qubits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qubits</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tqec.plaquette.Plaquette.mergeable_instructions" title="tqec.plaquette.Plaquette.mergeable_instructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mergeable_instructions</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tqec.plaquette.Plaquette.circuit" title="tqec.plaquette.Plaquette.circuit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">circuit</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tqec.plaquette.Plaquette.mergeable_instructions" title="tqec.plaquette.Plaquette.mergeable_instructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mergeable_instructions</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">debug_information</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">debug_information</span></code></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -683,9 +699,65 @@ removed.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="tqec.plaquette.Plaquette.project_on_data_qubit_indices">
+<span class="sig-name descname"><span class="pre">project_on_data_qubit_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_qubits_indices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tqec/plaquette/plaquette.html#Plaquette.project_on_data_qubit_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tqec.plaquette.Plaquette.project_on_data_qubit_indices" title="Link to this definition">#</a></dt>
+<dd><p>Project the plaquette on the provided qubits and return a new
+plaquette with the remaining qubits and circuit.</p>
+<p>This method is useful for deriving a boundary plaquette from a integral
+plaquette.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_qubits</strong> – data-qubit indices that will be kept in the returned
+plaquette.</p></li>
+<li><p><strong>data_qubits_indices</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new plaquette with projected qubits and circuit. The qubits are
+updated to only keep the provided <code class="docutils literal notranslate"><span class="pre">data_qubits_indices</span></code>. The
+circuit is also updated to only use the kept qubits and empty
+moments with the corresponding schedules are removed.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#tqec.plaquette.Plaquette" title="tqec.plaquette.plaquette.Plaquette"><em>Plaquette</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tqec.plaquette.Plaquette.project_on_data_qubits">
+<span class="sig-name descname"><span class="pre">project_on_data_qubits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_qubits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tqec/plaquette/plaquette.html#Plaquette.project_on_data_qubits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tqec.plaquette.Plaquette.project_on_data_qubits" title="Link to this definition">#</a></dt>
+<dd><p>Project the plaquette on the provided qubits and return a new
+plaquette with the remaining qubits and circuit.</p>
+<p>This method is useful for deriving a boundary plaquette from a integral
+plaquette.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_qubits</strong> (<em>list</em><em>[</em><em>GridQubit</em><em>]</em>) – qubits that will be kept in the returned plaquette.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new plaquette with projected qubits and circuit. The qubits are
+updated to only keep the provided <code class="docutils literal notranslate"><span class="pre">data_qubits</span></code>. The circuit is
+also updated to only use the kept qubits and empty moments with the
+corresponding schedules are removed.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#tqec.plaquette.Plaquette" title="tqec.plaquette.plaquette.Plaquette"><em>Plaquette</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="tqec.plaquette.Plaquette.reliable_hash">
 <span class="sig-name descname"><span class="pre">reliable_hash</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tqec/plaquette/plaquette.html#Plaquette.reliable_hash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tqec.plaquette.Plaquette.reliable_hash" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Return a hash of <code class="docutils literal notranslate"><span class="pre">self</span></code> that is replicable across OSes and Python runs.</p>
+<p>The default <code class="docutils literal notranslate"><span class="pre">hash</span></code> function from Python is not guaranteed to always give the same value
+from the same input. In particular, with CPython, <code class="docutils literal notranslate"><span class="pre">str</span></code> instances are hashed with an
+additional salt that is randomly picked at each call to the Python executable.</p>
+<p>This is an issue when trying to store a dictionary involving a plaquette as key and re-use
+it in subsequent runs or on other machines / OSes.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>int</p>
 </dd>
@@ -700,6 +772,21 @@ removed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict[str, <em>Any</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tqec.plaquette.Plaquette.with_debug_information">
+<span class="sig-name descname"><span class="pre">with_debug_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">debug_information</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tqec/plaquette/plaquette.html#Plaquette.with_debug_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tqec.plaquette.Plaquette.with_debug_information" title="Link to this definition">#</a></dt>
+<dd><p>Create a copy of <code class="docutils literal notranslate"><span class="pre">self</span></code> with its debug information replaced by the provided
+<code class="docutils literal notranslate"><span class="pre">debug_information</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>debug_information</strong> (<em>PlaquetteDebugInformation</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#tqec.plaquette.Plaquette" title="tqec.plaquette.plaquette.Plaquette"><em>Plaquette</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -764,8 +851,11 @@ removed.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tqec.plaquette.Plaquette.from_dict"><code class="docutils literal notranslate"><span class="pre">Plaquette.from_dict()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tqec.plaquette.Plaquette.is_empty"><code class="docutils literal notranslate"><span class="pre">Plaquette.is_empty()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tqec.plaquette.Plaquette.project_on_boundary"><code class="docutils literal notranslate"><span class="pre">Plaquette.project_on_boundary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tqec.plaquette.Plaquette.project_on_data_qubit_indices"><code class="docutils literal notranslate"><span class="pre">Plaquette.project_on_data_qubit_indices()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tqec.plaquette.Plaquette.project_on_data_qubits"><code class="docutils literal notranslate"><span class="pre">Plaquette.project_on_data_qubits()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tqec.plaquette.Plaquette.reliable_hash"><code class="docutils literal notranslate"><span class="pre">Plaquette.reliable_hash()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tqec.plaquette.Plaquette.to_dict"><code class="docutils literal notranslate"><span class="pre">Plaquette.to_dict()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tqec.plaquette.Plaquette.with_debug_information"><code class="docutils literal notranslate"><span class="pre">Plaquette.with_debug_information()</span></code></a></li>
 </ul>
 </li>
 </ul>
