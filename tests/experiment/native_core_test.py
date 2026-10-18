@@ -37,3 +37,18 @@ def test_merge_filter_conflicts():
         merged.append('H', [0])
     with pytest.raises(MultipleOperationsOnSameQubitError):
         first + first
+
+
+def test_native_memory_spatial_path_without_stim(monkeypatch):
+    import stim
+    from tests.experiment.cases import make_graph
+    from tqec.compile.compile import compile_block_graph
+    from tqec.compile.tree.annotators.observables import get_ordered_leaves
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError('Stim construction reached from native physical generation')
+    monkeypatch.setattr(stim, 'Circuit', forbidden)
+    tree = compile_block_graph(make_graph('memory_z')).to_layer_tree()
+    tree._annotate_circuits(1)
+    for leaf in get_ordered_leaves(tree._root):
+        leaf.get_annotations(1).circuit.get_native_module().verify()

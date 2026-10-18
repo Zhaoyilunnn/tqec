@@ -2,9 +2,9 @@ import functools
 from copy import deepcopy
 from typing import Final, Literal
 
-import stim
 from typing_extensions import override
 
+from tqec.circuit.moment import Moment
 from tqec.circuit.schedule.circuit import ScheduledCircuit
 from tqec.plaquette.constants import MEASUREMENT_SCHEDULE
 from tqec.plaquette.debug import PlaquetteDebugInformation
@@ -57,7 +57,7 @@ class DefaultRPNGTranslator(RPNGTranslator):
 
     @staticmethod
     def _add_extended_basis_operation(
-        circuit: stim.Circuit,
+        circuit: Moment,
         op: Literal["R", "M"],
         timestep_operations: dict[ExtendedBasis, list[int]],
     ) -> None:
@@ -117,18 +117,21 @@ class DefaultRPNGTranslator(RPNGTranslator):
                 entangling_operations[rpng.n] = (rpng.p, dqi)
                 used_data_qubit_indices.add(dqi)
 
-        circuit = stim.Circuit()
+        moments = [Moment()]
+        circuit = moments[-1]
         schedule: list[int] = [0]
         # Add reset operations
         self._add_extended_basis_operation(circuit, "R", reset_timestep_operations)
-        circuit.append("TICK", [], [])
+        moments.append(Moment())
+        circuit = moments[-1]
 
         # Add entangling gates
         for sched in sorted(entangling_operations):
             p, data_qubit = entangling_operations[sched]
             circuit.append(f"C{p.value.upper()}", [syndrome_qubit_index, data_qubit], [])
             schedule.append(sched)
-            circuit.append("TICK", [], [])
+            moments.append(Moment())
+            circuit = moments[-1]
 
         # Add measurement operations
         self._add_extended_basis_operation(circuit, "M", meas_timestep_operations)
@@ -137,7 +140,7 @@ class DefaultRPNGTranslator(RPNGTranslator):
         # Filter out unused qubits
         kept_data_qubits = [qubits.data_qubits[i] for i in used_data_qubit_indices]
         new_plaquette_qubits = PlaquetteQubits(kept_data_qubits, qubits.syndrome_qubits)
-        unfiltered_circuit = ScheduledCircuit.from_circuit(circuit, schedule, qubits.qubit_map)
+        unfiltered_circuit = ScheduledCircuit(moments, schedule, qubits.qubit_map)
         filtered_circuit = unfiltered_circuit.filter_by_qubits(new_plaquette_qubits.all_qubits)
 
         # Return the plaquette

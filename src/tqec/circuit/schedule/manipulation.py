@@ -236,67 +236,38 @@ def merge_instructions(
     ]
 
 
-def merge_scheduled_circuits(
-    circuits: list[ScheduledCircuit],
-    global_qubit_map: QubitMap,
-    mergeable_instructions: Iterable[str] = (),
-) -> ScheduledCircuit:
-    """Merge several :class:`.ScheduledCircuit` instances into one instance.
+def merge_scheduled_circuits(circuits, global_qubit_map, mergeable_instructions=()):
+    """Merge scoped native operations at equal schedules, deduplicating only allowed gates."""
+    from tqec.circuit.native import gate_name
+    from xdsl.ir import Block
+    from deltakit_compile.dialects import qcore
+    by_time = {}
+    for circuit in circuits:
+        for time, moment in circuit.scheduled_moments:
+            by_time.setdefault(time, []).append(moment)
+    result = []
+    for time, moments in sorted(by_time.items()):
+        labels = sorted({i for moment in moments for i in moment.qubits_indices})
+        block = Block(arg_types=[qcore.QubitType() for _ in labels])
+        global_ssa = dict(zip(labels, block.args))
+        seen = set()
+        for moment in moments:
+            lookup = {arg: i for i, arg in moment.qubit_ssa.items()}
+            for op in moment.instructions:
+                name = gate_name(op)
+                for group in op.qubit_operand_groups:
+                    targets = tuple(lookup[q] for q in group)
+                    key = (name, targets)
+                    if name in mergeable_instructions and key in seen:
+                        continue
+                    seen.add(key)
+                    # Native broadcasts are split before deduplication; all
+                    # retained operations use this moment's own SSA arguments.
+                    from tqec.circuit.native import make_operation
+                    block.add_op(make_operation(name, [global_ssa[i] for i in targets]))
+        result.append(Moment(block, set(labels)))
+    return ScheduledCircuit(result, sorted(by_time), global_qubit_map)
 
-    This function takes several **compatible** scheduled circuits as input and
-    merge them, respecting their schedules, into a unique
-    :class:`~tqec.circuit.schedule.circuit.ScheduledCircuit` instance that will
-    then be returned to the caller.
-
-    The provided circuits should be compatible between each other. Compatible
-    circuits are circuits that can all be described with a unique global qubit
-    map. In other words, if two circuits from the list of compatible circuits
-    use the same qubit index, that should mean that they use the same qubit.
-    You can obtain compatible circuits by using
-    :func:`relabel_circuits_qubit_indices`.
-
-    Args:
-        circuits: **compatible** circuits to merge.
-        global_qubit_map: global qubit map for all the provided ``circuits``.
-        mergeable_instructions: a list of instruction names that are considered
-            mergeable. Duplicate instructions with a name in this list will be
-            merged into a single instruction.
-
-    Returns:
-        a circuit representing the merged scheduled circuits given as input.
-
-    """
-    scheduled_circuits = _ScheduledCircuits(circuits, global_qubit_map)
-
-    all_moments: list[Moment] = []
-    all_schedules = Schedule()
-    global_i2q = QubitMap({i: q for q, i in scheduled_circuits.q2i.items()})
-
-    while scheduled_circuits.has_pending_moment():
-        schedule, moments = scheduled_circuits.collect_moments_at_minimum_schedule()
-        # Flatten the moments into a list of operations to perform some modifications
-        instructions: list[stim.CircuitInstruction] = functools.reduce(
-            operator.iadd, (list(moment.instructions) for moment in moments), []
-        )
-        # Avoid duplicated operations. Any operation that have the Plaquette.get_mergeable_tag() tag
-        # is considered mergeable, and can be removed if another operation in the list
-        # is considered equal (and has the mergeable tag).
-        deduplicated_instructions = remove_duplicate_instructions(
-            instructions,
-            mergeable_instruction_names=frozenset(mergeable_instructions),
-        )
-        merged_instructions = merge_instructions(deduplicated_instructions)
-        circuit = stim.Circuit()
-        for inst in merged_instructions:
-            circuit.append(
-                inst.name,
-                functools.reduce(operator.iadd, _sort_target_groups(inst.target_groups()), []),
-                inst.gate_args_copy(),
-            )
-        all_moments.append(Moment(circuit))
-        all_schedules.append(schedule)
-
-    return ScheduledCircuit(all_moments, all_schedules, global_i2q, _avoid_checks=True)
 
 
 def relabel_circuits_qubit_indices(
