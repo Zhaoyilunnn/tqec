@@ -6,7 +6,10 @@ from tqec.compile.blocks.layers.atomic.layout import LayoutLayer
 from tqec.compile.blocks.layers.composed.repeated import RepeatedLayer
 from tqec.compile.blocks.layers.composed.sequenced import SequencedLayers
 from tqec.compile.lowering.base import UnsupportedLoweringError
+from tqec.compile.lowering.bloq.detectors import qec_relations
 from tqec.compile.lowering.bloq.layout import layout_moments
+from tqec.compile.lowering.bloq.measurements import MeasurementRegistry
+from tqec.compile.lowering.bloq.observables import observable_nodes
 from tqec.compile.lowering.bloq.schedule import circuit_text
 from tqec.compile.lowering.bloq.text import PINNED_BLOQ_VERSION, template, token
 from tqec.compile.tree.tree import LayerTree
@@ -48,37 +51,49 @@ def emit_bloq_text(
     """
     if type(k) is not int or k < 1 or type(max_instances) is not int or max_instances < 1:
         raise ValueError("k and max_instances must be positive integers.")
-    if not gates_only:
-        raise UnsupportedLoweringError(
-            "bloq", "QEC side tables", "complete lowering is not implemented"
-        )
-    pool: dict = {}
-    nodes = []
+    layers = []
+    all_moments = []
+    circuits = []
+    registry = MeasurementRegistry()
     for index, (path, layer) in enumerate(_layers(tree.construction_root, k)):
         if index >= max_instances:
             raise UnsupportedLoweringError(
                 "bloq", "repeat expansion", f"exceeds {max_instances} instances", path
             )
+        layers.append((path, layer))
         moments = layout_moments(layer, k, reschedule_measurements, path)
-        lines, _ = circuit_text(moments)
-        signature = tuple(lines)
+        all_moments.append(moments)
+        lines, records = circuit_text(moments)
+        circuits.append(lines)
+        registry.add_instance(index, records)
+    if gates_only:
+        tables, checks = ([[] for _ in layers], [[] for _ in layers])
+    else:
+        tables, checks = qec_relations(all_moments, registry)
+    pool: dict = {}
+    nodes = []
+    for index, (lines, side_tables) in enumerate(zip(circuits, tables)):
+        signature = (tuple(lines), tuple(side_tables))
         template_id = pool.setdefault(signature, len(pool))
-        nodes.extend(
-            [f"  n{index} quantum {{", f"    instance i{index} t{template_id} @ (0,0)", "  }"]
-        )
+        nodes.extend([f"  n{index} quantum {{", f"    instance i{index} t{template_id} @ (0,0)"])
+        nodes.extend(f"    {check}" for check in checks[index])
+        nodes.append("  }")
         if index:
             nodes.append(f"  n{index - 1} -> n{index} order")
+    if not gates_only:
+        nodes.extend(observable_nodes(tree, k, layers, registry))
+    capability = "gates-only" if gates_only else "static-clifford"
     metadata = [
         "BLOQIR 1",
         f"metadata tqec.scale u64 {k}",
-        "metadata tqec.capability string gates-only",
+        f"metadata tqec.capability string {capability}",
         f"metadata tqec.bloq_version string {token(PINNED_BLOQ_VERSION)}",
     ]
     return (
         "\n\n".join(
             [
                 *metadata,
-                *(template(i, lines) for lines, i in pool.items()),
+                *(template(i, lines, sides) for (lines, sides), i in pool.items()),
                 "graph {\n" + "\n".join(nodes) + "\n}",
             ]
         )
