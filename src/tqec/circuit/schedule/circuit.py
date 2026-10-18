@@ -96,68 +96,9 @@ class ScheduledCircuit:
         return ScheduledCircuit([], Schedule(), QubitMap(), _avoid_checks=True)
 
     @staticmethod
-    def from_circuit(
-        circuit: stim.Circuit,
-        schedule: Schedule | list[int] | int = 0,
-        qubit_map: QubitMap | None = None,
-    ) -> ScheduledCircuit:
-        """Build a :class:`ScheduledCircuit` instance from a circuit and a schedule.
-
-        Args:
-            circuit: the instance of ``stim.Circuit`` that is scheduled. Should
-                not contain any instance of ``stim.CircuitRepeatBlock``.
-            schedule: a sorted list of positive integers or a positive integer.
-                If a list is given, it should contain as many values as there
-                are moments in the provided ``stim.Circuit`` instance. If an
-                integer is provided, each moment of the provided ``stim.Circuit``
-                is scheduled sequentially, starting by the provided schedule.
-            qubit_map: a map from indices to qubits. If None, this function will
-                try to extract the qubit coordinates from the ``QUBIT_COORDS``
-                instructions found in the provided ``circuit``. Else, the
-                provided map will be used.
-
-        Raises:
-            ScheduleError: if the provided ``schedule`` is invalid.
-            TQECError: if the provided ``circuit`` contains at least one
-                ``stim.CircuitRepeatBlock`` instance.
-            TQECError: if the provided ``circuit`` contains at least one
-                ``QUBIT_COORDS`` instruction after the first ``TICK`` instruction.
-
-        """
-        # Handle each input type explicitly due to type checker
-        if isinstance(schedule, int):
-            schedule_temp = list(range(schedule, schedule + circuit.num_ticks + 1))
-            schedule = Schedule(schedule=schedule_temp)
-        elif isinstance(schedule, list) and not isinstance(schedule, Schedule):
-            schedule = Schedule(schedule=schedule)
-
-        # Ensure that the provided circuit does not contain any
-        # `stim.CircuitRepeatBlock` instance.
-        if any(isinstance(inst, stim.CircuitRepeatBlock) for inst in circuit):
-            raise ScheduleError(
-                "stim.CircuitRepeatBlock instances are not supported in a "
-                "ScheduledCircuit instance."
-            )
-        moments: list[Moment] = list(
-            iter_stim_circuit_without_repeat_by_moments(circuit, collected_before_use=True)
-        )
-        if not moments:
-            return ScheduledCircuit.empty()
-
-        if any(m.contains_instruction("QUBIT_COORDS") for m in moments[1:]):
-            raise ScheduleError(
-                "ScheduledCircuit instance expects the input `stim.Circuit` to "
-                "only contain QUBIT_COORDS instructions before the first TICK."
-            )
-        if qubit_map is None:
-            # Here, we know for sure that no qubit is (re)defined in another place
-            # than the first moment, so we can directly get qubit coordinates from
-            # that moment.
-            qubit_map = get_qubit_map(moments[0].circuit)
-        # And because we want the cleanest possible moments, we can remove the
-        # `QUBIT_COORDS` instructions from the first moment.
-        moments[0].remove_all_instructions_inplace(frozenset(["QUBIT_COORDS"]))
-        return ScheduledCircuit(moments, schedule, qubit_map, _avoid_checks=True)
+    def from_circuit(*args, **kwargs):
+        """Reject legacy Stim construction on the native experimental path."""
+        raise TQECError("Use native Moments; ScheduledCircuit.from_circuit no longer imports Stim.")
 
     @property
     def schedule(self) -> Schedule:
@@ -175,48 +116,27 @@ class ScheduledCircuit:
         """
         return self._qubit_map.to_circuit(shift_to_positive)
 
-    def get_circuit(
-        self, include_qubit_coords: bool = True, shift_to_positive: bool = False
-    ) -> stim.Circuit:
-        """Build and return the ``stim.Circuit`` instance represented by ``self``.
+    def get_native_module(self):
+        """Assemble this schedule as a verified native Deltakit physical module."""
+        from tqec.circuit.native import assemble, compile_module
+        by_time = dict(self.scheduled_moments)
+        moments = [by_time.get(t) for t in range(self.schedule.max_schedule + 1)] if by_time else []
+        return compile_module(assemble(moments, self.qubit_map)).module
 
-        Args:
-            include_qubit_coords: if ``True``, ``QUBIT_COORDS`` annotations are
-                added at the beginning of the returned circuit to declare the
-                coordinates of used qubits. Else, no ``QUBIT_COORDS`` annotation
-                is added.
-            shift_to_positive: if ``True``, the qubit coordinates are shift such
-                that they are all positive. Their relative positioning stays
-                unchanged.
-
-        Warning:
-            The circuit is re-built at each call! Use that function wisely.
-
-        Returns:
-            ``stim.Circuit`` instance represented by ``self``.
-
-        """
-        ret = stim.Circuit()
-        if not self._moments:
-            return ret
-
-        # Appending the QUBIT_COORDS instructions first.
-        if include_qubit_coords:
-            ret += self.get_qubit_coords_definition_preamble(shift_to_positive)
-
-        # Building the actual circuit.
-        current_schedule: int = 0
-        last_schedule: int = self._schedule[-1]
-        for sched, moment in zip(self._schedule, self._moments):
-            for _ in range(current_schedule, sched):
-                ret.append("TICK", [], [])
-                current_schedule += 1
-            ret += moment.circuit
-            if current_schedule != last_schedule:
-                ret.append("TICK", [], [])
-                current_schedule += 1
-
-        return ret
+    def get_circuit(self, include_qubit_coords=True, shift_to_positive=False):
+        """Export native physical IR to Stim at an explicit compatibility boundary."""
+        from tqec.circuit.native import compile_module
+        if self.is_empty():
+            return stim.Circuit()
+        result = stim.Circuit(compile_module(self.get_native_module(), export="stim").program)
+        if len(result) and result[-1].name == "TICK":
+            result = result[:-1]
+        if not include_qubit_coords:
+            result = stim.Circuit("\n".join(str(op) for op in result if op.name != "QUBIT_COORDS"))
+        if shift_to_positive:
+            from tqec.post_processing.shift import shift_to_only_positive
+            result = shift_to_only_positive(result)
+        return result
 
     def map_qubit_indices(
         self, qubit_index_map: dict[int, int], inplace: bool = False
