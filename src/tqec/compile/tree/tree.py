@@ -285,6 +285,11 @@ class LayerTree:
         )
         self._annotate_observables(k)
 
+    def get_native_module(self, k, *, max_rounds=1000, reschedule_measurements=True):
+        """Build native physical IR from concrete plaquettes without a Stim intermediate."""
+        from tqec.compile.tree.native import build_native
+        return build_native(self, k, max_rounds, reschedule_measurements)
+
     def generate_circuit(
         self,
         k: int,
