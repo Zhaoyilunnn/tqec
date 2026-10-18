@@ -6,13 +6,14 @@ from typing_extensions import override
 
 from tqec.compile.blocks.block import Block
 from tqec.compile.blocks.layers.atomic.base import BaseLayer
-from tqec.compile.blocks.layers.atomic.plaquettes import PlaquetteLayer
+from tqec.compile.blocks.layers.atomic.template import make_template_layer
 from tqec.compile.blocks.layers.composed.base import BaseComposedLayer
 from tqec.compile.blocks.layers.composed.repeated import RepeatedLayer
 from tqec.compile.blocks.layers.composed.sequenced import SequencedLayers
 from tqec.compile.specs.base import CubeBuilder, CubeSpec, PipeBuilder, PipeSpec
 from tqec.compile.specs.enums import SpatialArms
 from tqec.compile.specs.library.generators.fixed_boundary import FixedBoundaryConventionGenerator
+from tqec.compile.specs.library.specification import SpecificationBuilder
 from tqec.computation.cube import ConditionalCubeKind, LeafCubeKind, ZXCube
 from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler, PlaquetteCompiler
 from tqec.plaquette.plaquette import Plaquettes
@@ -66,9 +67,9 @@ def _get_block(
     if not has_spatial_junction_in_timeslice:
         return Block(
             [
-                PlaquetteLayer(template, finit),
-                RepeatedLayer(PlaquetteLayer(template, fmemory), repetitions),
-                PlaquetteLayer(template, fmeas),
+                make_template_layer(template, finit),
+                RepeatedLayer(make_template_layer(template, fmemory), repetitions),
+                make_template_layer(template, fmeas),
             ]
         )
     # else
@@ -92,23 +93,25 @@ def _get_block(
     remainder = repetitions.offset % 2
     loop_replacement: list[BaseLayer | BaseComposedLayer] = [
         RepeatedLayer(
-            SequencedLayers([PlaquetteLayer(template, bmemory), PlaquetteLayer(template, fmemory)]),
+            SequencedLayers(
+                [make_template_layer(template, bmemory), make_template_layer(template, fmemory)]
+            ),
             halved_repetitions,
         )
     ]
     if remainder == 1:  # Note that remainder can only be 0 or 1.
-        loop_replacement.append(PlaquetteLayer(template, bmemory))
+        loop_replacement.append(make_template_layer(template, bmemory))
 
     return Block(
         [
-            PlaquetteLayer(template, finit),
+            make_template_layer(template, finit),
             SequencedLayers(loop_replacement),
-            PlaquetteLayer(template, fmeas if remainder == 1 else bmeas),
+            make_template_layer(template, fmeas if remainder == 1 else bmeas),
         ]
     )
 
 
-class FixedBoundaryCubeBuilder(CubeBuilder):
+class FixedBoundaryCubeBuilder(SpecificationBuilder, CubeBuilder):
     def __init__(
         self, compiler: PlaquetteCompiler, translator: RPNGTranslator = DefaultRPNGTranslator()
     ) -> None:
@@ -182,7 +185,7 @@ class FixedBoundaryCubeBuilder(CubeBuilder):
         )
 
 
-class FixedBoundaryPipeBuilder(PipeBuilder):
+class FixedBoundaryPipeBuilder(SpecificationBuilder, PipeBuilder):
     def __init__(
         self, compiler: PlaquetteCompiler, translator: RPNGTranslator = DefaultRPNGTranslator()
     ) -> None:
@@ -242,14 +245,14 @@ class FixedBoundaryPipeBuilder(PipeBuilder):
             None,
             None,
         )
-        memory_layer = PlaquetteLayer(memory_template, memory_plaquettes)
+        memory_layer = make_template_layer(memory_template, memory_plaquettes)
 
         if hadamard_transition:
             hadamard_template = self._generator.get_temporal_hadamard_raw_template()
             hadamard_plaquettes = self._generator.get_temporal_hadamard_plaquettes(
                 False, z_orientation
             )
-            hadamard_layer = PlaquetteLayer(hadamard_template, hadamard_plaquettes)
+            hadamard_layer = make_template_layer(hadamard_template, hadamard_plaquettes)
             return Block([hadamard_layer, memory_layer])
         # Else, it is a regular temporal junction
         return Block([memory_layer for _ in range(2)])

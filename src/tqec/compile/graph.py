@@ -56,7 +56,7 @@ from tqec.compile.blocks.enums import (
     border_from_signed_direction,
 )
 from tqec.compile.blocks.layers.atomic.base import BaseLayer
-from tqec.compile.blocks.layers.atomic.plaquettes import PlaquetteLayer
+from tqec.compile.blocks.layers.atomic.template import TemplateLayer
 from tqec.compile.blocks.layers.composed.sequenced import SequencedLayers
 from tqec.compile.blocks.positioning import (
     LayoutPipePosition2D,
@@ -76,8 +76,8 @@ from tqec.utils.scale import PhysicalQubitScalable2D
 
 
 def substitute_plaquettes(
-    target: PlaquetteLayer, source: PlaquetteLayer, source_border: TemplateBorder
-) -> PlaquetteLayer:
+    target: TemplateLayer, source: TemplateLayer, source_border: TemplateBorder
+) -> TemplateLayer:
     """Perform plaquette substitution on the provided layers.
 
     Note:
@@ -105,7 +105,7 @@ def substitute_plaquettes(
         if si in target.plaquettes.collection
     }
     new_plaquettes = target.plaquettes.with_updated_plaquettes(plaquettes_mapping)
-    return PlaquetteLayer(target.template, new_plaquettes, target.trimmed_spatial_borders)
+    return type(target)(target.template, new_plaquettes, target.trimmed_spatial_borders)
 
 
 class TopologicalComputationGraph:
@@ -271,7 +271,7 @@ class TopologicalComputationGraph:
     def _substitute_part_of_spatial_pipe(
         self,
         pipe_pos: LayoutPosition3D[LayoutPipePosition2D],
-        neighbouring_block_layer: PlaquetteLayer,
+        neighbouring_block_layer: TemplateLayer,
         spatial_block_border: SpatialBlockBorder,
         temporal_pipe_border: TemporalBlockBorder,
     ) -> None:
@@ -291,18 +291,18 @@ class TopologicalComputationGraph:
         Raises:
             KeyError: if ``pipe_pos not in self._blocks``.
             NotImplementedError: if the pipe layer that should be partially
-                substituted is not an instance of ``PlaquetteLayer``.
+                substituted is not an instance of ``TemplateLayer``.
 
         """
         pipe_block = self._blocks[pipe_pos]
         pipe_layer_to_replace = pipe_block.get_temporal_layer_on_border(temporal_pipe_border)
-        if not isinstance(pipe_layer_to_replace, PlaquetteLayer):
+        if not isinstance(pipe_layer_to_replace, TemplateLayer):
             raise NotImplementedError(
                 "Due to the insertion of a temporal pipe, we need to replace "
                 f"part of a pipe {temporal_pipe_border} border with part of the "
                 f"temporal pipe. That is not possible because the "
                 f"{temporal_pipe_border} spatial pipe border is not an instance "
-                f"of {PlaquetteLayer.__name__}. Found an instance of "
+                f"of {TemplateLayer.__name__}. Found an instance of "
                 f"{type(pipe_layer_to_replace).__name__}."
             )
         # We now replace part of pipe_layer_to_replace
@@ -342,10 +342,10 @@ class TopologicalComputationGraph:
         # Else, we also need to replace part of the spatial pipe. Note that for
         # the moment this requires both the block and the spatial pipes to be
         # implemented using template / plaquettes.
-        if not isinstance(layer, PlaquetteLayer):
+        if not isinstance(layer, TemplateLayer):
             raise NotImplementedError(
                 "Cannot substitute spatial pipe piece from a layer that is "
-                f"not a {PlaquetteLayer.__name__} instance."
+                f"not a {TemplateLayer.__name__} instance."
             )
         for trimmed_spatial_border in block.trimmed_spatial_borders:
             pipe_pos = LayoutPosition3D.from_block_and_signed_direction(

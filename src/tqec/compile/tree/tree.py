@@ -108,13 +108,23 @@ class LayerTree:
 
         """
         self._root = LayerNode(root)
+        self._stim_materialized = False
         self._abstract_observables = abstract_observables or []
         self._annotations = dict(annotations) if annotations is not None else {}
         self._observable_builder = observable_builder
         self._slices_with_temporal_hadamard_layer = slices_with_temporal_hadamard_layer or set()
 
+    def _materialize_stim(self) -> None:
+        if self._stim_materialized:
+            return
+        from tqec.compile.lowering.stim import StimMaterializer  # noqa: PLC0415
+
+        self._root = LayerNode(StimMaterializer().materialize_layer(self._root._layer))
+        self._stim_materialized = True
+
     def to_dict(self) -> dict[str, Any]:
         """Return a dictionary representation of ``self``."""
+        self._materialize_stim()
         return {  # pragma: no cover
             "root": self._root.to_dict(),
             "abstract_observables": self._abstract_observables,
@@ -269,6 +279,7 @@ class LayerTree:
     ) -> None:
         """Annotate the tree with circuits, qubit maps, detectors and observables."""
         # If already annotated, no need to re-annotate.
+        self._materialize_stim()
         if k in self._annotations:
             return  # pragma: no cover
         # Else, perform all the needed computations.
@@ -392,6 +403,7 @@ class LayerTree:
 
         """
         # If already annotated, no need to re-annotate.
+        self._materialize_stim()
         if k in self._annotations:
             annotations = self._get_annotation(k)
             assert annotations.qubit_map is not None
@@ -533,6 +545,7 @@ class LayerTree:
         """
         # Warning explicitly disabled because this intended and the only way to
         # avoid the costly svg import.
+        self._materialize_stim()
         from tqec.visualisation.computation.tree import LayerVisualiser  # noqa: PLC0415
 
         if show_observable is not None and show_observable >= len(self._abstract_observables):

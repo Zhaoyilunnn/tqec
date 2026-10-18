@@ -3,7 +3,7 @@
 from typing import Final, Literal
 
 from tqec.compile.blocks.layers.atomic.base import BaseLayer
-from tqec.compile.blocks.layers.atomic.plaquettes import PlaquetteLayer
+from tqec.compile.blocks.layers.atomic.template import TemplateLayer
 from tqec.compile.blocks.layers.composed.base import BaseComposedLayer
 from tqec.compile.blocks.layers.composed.repeated import RepeatedLayer
 from tqec.compile.blocks.layers.composed.sequenced import SequencedLayers
@@ -49,7 +49,7 @@ def _get_template_from_layer(
 
     """
     if isinstance(root, BaseLayer):
-        if not isinstance(root, PlaquetteLayer):
+        if not isinstance(root, TemplateLayer):
             raise TQECError(
                 f"Trying to get the Template from a {type(root).__name__} "
                 "instance that does not have any Template."
@@ -168,7 +168,12 @@ def compile_block_graph(
     for cube in block_graph.cubes:
         spec = cube_specs[cube]
         position = BlockPosition3D(cube.position.x, cube.position.y, cube.position.z)
-        graph.add_cube(position, convention.triplet.cube_builder(spec, block_temporal_height))
+        graph.add_cube(
+            position,
+            getattr(
+                convention.triplet.cube_builder, "build_specs", convention.triplet.cube_builder
+            )(spec, block_temporal_height),
+        )
 
     # 3. Add pipes to the graph
     # Note that the order of the pipes to add is important.
@@ -197,6 +202,12 @@ def compile_block_graph(
                 pipe.kind.is_temporal and pos1.z in temporal_hadamard_z_positions
             ),
         )
-        graph.add_pipe(pos1, pos2, convention.triplet.pipe_builder(key, block_temporal_height))
+        graph.add_pipe(
+            pos1,
+            pos2,
+            getattr(
+                convention.triplet.pipe_builder, "build_specs", convention.triplet.pipe_builder
+            )(key, block_temporal_height),
+        )
 
     return graph

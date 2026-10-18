@@ -190,3 +190,14 @@ class TemplateLayer(BaseLayer, Generic[CollectionT]):
                 default=0,
             ),
         )
+
+
+def make_template_layer(template, plaquettes, trimmed_spatial_borders=frozenset()):
+    """Choose the layer representation from its construction collection."""
+    if isinstance(plaquettes, PlaquetteSpecs):
+        from tqec.compile.blocks.layers.atomic.spec_plaquettes import SpecPlaquetteLayer  # noqa: PLC0415
+
+        return SpecPlaquetteLayer(template, plaquettes, trimmed_spatial_borders)
+    from tqec.compile.blocks.layers.atomic.plaquettes import PlaquetteLayer  # noqa: PLC0415
+
+    return PlaquetteLayer(template, plaquettes, trimmed_spatial_borders)

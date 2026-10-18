@@ -5,7 +5,7 @@ from typing_extensions import override
 
 from tqec.compile.blocks.block import Block
 from tqec.compile.blocks.layers.atomic.base import BaseLayer
-from tqec.compile.blocks.layers.atomic.plaquettes import PlaquetteLayer
+from tqec.compile.blocks.layers.atomic.template import make_template_layer
 from tqec.compile.blocks.layers.composed.base import BaseComposedLayer
 from tqec.compile.blocks.layers.composed.repeated import RepeatedLayer
 from tqec.compile.specs.base import (
@@ -22,6 +22,7 @@ from tqec.compile.specs.library.generators.schedules import (
     DEFAULT_SCHEDULE_FAMILY,
     PlaquetteScheduleFamily,
 )
+from tqec.compile.specs.library.specification import SpecificationBuilder
 from tqec.computation.cube import ConditionalCubeKind, LeafCubeKind, ZXCube
 from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler, PlaquetteCompiler
 from tqec.plaquette.plaquette import Plaquettes
@@ -34,7 +35,7 @@ from tqec.utils.position import Direction3D
 from tqec.utils.scale import LinearFunction
 
 
-class FixedBulkCubeBuilder(CubeBuilder):
+class FixedBulkCubeBuilder(SpecificationBuilder, CubeBuilder):
     def __init__(
         self,
         compiler: PlaquetteCompiler = IdentityPlaquetteCompiler,
@@ -107,14 +108,14 @@ class FixedBulkCubeBuilder(CubeBuilder):
         # else
         template, (init, repeat, measure) = self._get_template_and_plaquettes(spec)
         layers: list[BaseLayer | BaseComposedLayer] = [
-            PlaquetteLayer(template, init),
-            RepeatedLayer(PlaquetteLayer(template, repeat), repetitions=block_temporal_height),
-            PlaquetteLayer(template, measure),
+            make_template_layer(template, init),
+            RepeatedLayer(make_template_layer(template, repeat), repetitions=block_temporal_height),
+            make_template_layer(template, measure),
         ]
         return Block(layers)
 
 
-class FixedBulkPipeBuilder(PipeBuilder):
+class FixedBulkPipeBuilder(SpecificationBuilder, PipeBuilder):
     def __init__(
         self,
         compiler: PlaquetteCompiler = IdentityPlaquetteCompiler,
@@ -204,7 +205,7 @@ class FixedBulkPipeBuilder(PipeBuilder):
         template = self._generator.get_memory_qubit_raw_template()
         return Block(
             [
-                PlaquetteLayer(template, memory_plaquettes)
+                make_template_layer(template, memory_plaquettes)
                 for _ in range(3 if spec.at_temporal_hadamard_layer else 2)
             ]
         )
@@ -247,9 +248,9 @@ class FixedBulkPipeBuilder(PipeBuilder):
         template = self._generator.get_temporal_hadamard_raw_template()
         return Block(
             [
-                PlaquetteLayer(template, memory_plaquettes_before),
-                PlaquetteLayer(template, realignment_plaquettes),
-                PlaquetteLayer(template, memory_plaquettes_after),
+                make_template_layer(template, memory_plaquettes_before),
+                make_template_layer(template, realignment_plaquettes),
+                make_template_layer(template, memory_plaquettes_after),
             ]
         )
 
@@ -307,12 +308,12 @@ class FixedBulkPipeBuilder(PipeBuilder):
         )
         return Block(
             [
-                PlaquetteLayer(pipe_template, initialisation_plaquettes),
+                make_template_layer(pipe_template, initialisation_plaquettes),
                 RepeatedLayer(
-                    PlaquetteLayer(pipe_template, temporal_bulk_plaquettes),
+                    make_template_layer(pipe_template, temporal_bulk_plaquettes),
                     repetitions=block_temporal_height,
                 ),
-                PlaquetteLayer(pipe_template, measurement_plaquettes),
+                make_template_layer(pipe_template, measurement_plaquettes),
             ]
         )
 
@@ -376,18 +377,18 @@ class FixedBulkPipeBuilder(PipeBuilder):
         template = self._get_spatial_regular_pipe_template(spec)
 
         layers: list[BaseLayer | BaseComposedLayer] = [
-            PlaquetteLayer(
+            make_template_layer(
                 template,
                 plaquettes_factory(spec.pipe_kind.z, None),
             ),
             RepeatedLayer(
-                PlaquetteLayer(
+                make_template_layer(
                     template,
                     plaquettes_factory(None, None),
                 ),
                 repetitions=block_temporal_height,
             ),
-            PlaquetteLayer(
+            make_template_layer(
                 template,
                 plaquettes_factory(None, spec.pipe_kind.z),
             ),
