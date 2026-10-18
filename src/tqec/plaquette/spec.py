@@ -20,6 +20,15 @@ class RPNGPlaquetteSpec:
     description: RPNGDescription
     measurement_schedule: int = MEASUREMENT_SCHEDULE
 
+    @property
+    def num_moments(self) -> int:
+        """Return the timing extent of the standard RPNG construction."""
+        desc = self.description
+        if desc.ancilla.g is not None or any(c.g is not None for c in desc.corners):
+            return self.measurement_schedule + 1
+        gates = [c.n for c in desc.corners if c.p is not None and c.n is not None]
+        return max(gates, default=0) + 1
+
 
 PlaquetteSpec = RPNGPlaquetteSpec
 
@@ -53,3 +62,11 @@ class PlaquetteSpecs:
     def map_indices(self, mapping: Callable[[int], int]) -> "PlaquetteSpecs":
         """Return a collection with remapped indices and the same default."""
         return PlaquetteSpecs(self.collection.map_keys(mapping))
+
+    def without_plaquettes(self, indices: Collection[int]) -> "PlaquetteSpecs":
+        """Implement the shared template collection trimming operation."""
+        return self.without_specs(indices)
+
+    def with_updated_plaquettes(self, updates: Mapping[int, PlaquetteSpec]) -> "PlaquetteSpecs":
+        """Implement the shared template collection replacement operation."""
+        return self.with_updated_specs(updates)
