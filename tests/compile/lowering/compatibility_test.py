@@ -6,13 +6,13 @@ import stim
 from tqec.compile.compile import compile_block_graph
 from tqec.compile.convention import FIXED_BULK_CONVENTION, Convention, ConventionTriplet
 from tqec.compile.detectors.database import DetectorDatabase
-from tqec.compile.lowering.stim import StimMaterializer
+from tqec.compile.lowering.stim.compiler import IdentityPlaquetteCompiler, PlaquetteCompiler
+from tqec.compile.lowering.stim.materializer import StimMaterializer
+from tqec.compile.lowering.stim.passes.scheduling import ChangeSchedulePass
+from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
 from tqec.compile.specs.library.fixed_bulk import FixedBulkCubeBuilder, FixedBulkPipeBuilder
 from tqec.computation.block_graph import BlockGraph
-from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler, PlaquetteCompiler
-from tqec.plaquette.compilation.passes.scheduling import ChangeSchedulePass
 from tqec.plaquette.rpng.rpng import RPNGDescription
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.utils.instructions import MEASUREMENT_INSTRUCTION_NAMES, RESET_INSTRUCTION_NAMES
 from tqec.utils.noise_model import NoiseModel
 from tqec.utils.position import Position3D

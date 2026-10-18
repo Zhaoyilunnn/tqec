@@ -1,7 +1,7 @@
 import stim
 
+from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
 from tqec.plaquette.rpng import RPNGDescription
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 
 
 def test_default_translator_creation() -> None:

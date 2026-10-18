@@ -46,6 +46,7 @@ def test_compiler_and_layer_tree_do_not_import_stim() -> None:
                 tree = compiled.to_layer_tree()
                 assert tree._root._layer.scalable_timesteps is not None
         assert not any(m.split('.')[0] in {'stim', 'tqecd'} for m in sys.modules)
+        assert not any(m.startswith('tqec.compile.lowering.stim') for m in sys.modules)
         for output in (lambda: compiled.generate_stim_circuit(1),
                        lambda: tree.generate_circuit(1),
                        lambda: tree.generate_crumble_url(1)):

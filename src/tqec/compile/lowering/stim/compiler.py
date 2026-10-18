@@ -12,7 +12,7 @@ from tqec.utils.instructions import (
 )
 
 if TYPE_CHECKING:
-    from tqec.plaquette.compilation.passes.base import CompilationPass
+    from tqec.compile.lowering.stim.passes.base import CompilationPass
 
 
 class PlaquetteCompiler:

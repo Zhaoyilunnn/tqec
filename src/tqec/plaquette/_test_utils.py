@@ -1,7 +1,6 @@
+from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator, RPNGTranslator
 from tqec.plaquette.plaquette import Plaquette
 from tqec.plaquette.rpng.rpng import RPNGDescription
-from tqec.plaquette.rpng.translators.base import RPNGTranslator
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.utils.enums import Basis
 
 

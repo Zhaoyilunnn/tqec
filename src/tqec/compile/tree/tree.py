@@ -117,7 +117,7 @@ class LayerTree:
         require_stim()
         if self._stim_materialized:
             return
-        from tqec.compile.lowering.stim import StimMaterializer  # noqa: PLC0415
+        from tqec.compile.lowering.stim.materializer import StimMaterializer  # noqa: PLC0415
 
         materialized = StimMaterializer().materialize_layer(self._root._layer)
         if materialized is not self._root._layer:

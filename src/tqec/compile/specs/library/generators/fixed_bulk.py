@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import inspect
 from copy import copy
+from functools import cached_property
 from typing import TYPE_CHECKING, Any, Literal, cast
 
 from tqec.compile.specs.base import CubeSpec
@@ -10,23 +11,17 @@ from tqec.compile.specs.enums import (
     PipeCubeArmConfig,
     SpatialArms,
 )
-from tqec.compile.specs.library.generators.extended_stabilizers import ExtendedPlaquetteCollection
 from tqec.compile.specs.library.generators.schedules import (
     DEFAULT_SCHEDULE_FAMILY,
     PlaquetteScheduleFamily,
 )
 from tqec.compile.specs.library.generators.utils import (
-    PlaquetteMapper,
     get_reset_measurement_indices_for_spatial_arms,
 )
-from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler, PlaquetteCompiler
-from tqec.plaquette.debug import DrawPolygon, PlaquetteDebugInformation
 from tqec.plaquette.enums import PlaquetteOrientation
 from tqec.plaquette.extended_specs import ExtendedSpecCollection
-from tqec.plaquette.plaquette import Plaquette, Plaquettes
-from tqec.plaquette.qubit import SquarePlaquetteQubits
+from tqec.plaquette.plaquette import Plaquettes
 from tqec.plaquette.rpng.rpng import PauliBasis, RPNGDescription
-from tqec.plaquette.rpng.translators.base import RPNGTranslator
 from tqec.plaquette.spec import PlaquetteSpecs, RealignmentPlaquetteSpec
 from tqec.plaquette.spec_mapper import PlaquetteSpecMapper
 from tqec.templates.base import RectangularTemplate
@@ -41,64 +36,17 @@ from tqec.utils.exceptions import TQECError
 from tqec.utils.frozendefaultdict import FrozenDefaultDict
 
 if TYPE_CHECKING:
-    pass
-
-
-def make_fixed_bulk_realignment_plaquette(
-    stabilizer_basis: Basis,
-    z_orientation: Orientation,
-    mq_reset: Basis,
-    mq_measurement: Basis,
-    debug_basis: PauliBasis | None = None,
-) -> Plaquette:
-    """Make the plaquette used for fixed-bulk temporal Hadamard transition."""
-    import stim  # noqa: PLC0415
-
-    from tqec.circuit.schedule.circuit import ScheduledCircuit  # noqa: PLC0415
-
-    qubits = SquarePlaquetteQubits()
-    cx_targets: list[tuple[int, int]]
-    # used to match the 5-timestep schedule in the other part of computation
-    cx_schedule: list[int]
-    match stabilizer_basis, z_orientation:
-        case Basis.Z, Orientation.VERTICAL:
-            cx_targets = [(0, 4), (1, 4), (4, 2), (4, 0)]
-            cx_schedule = [1, 2, 3, 5]
-        case Basis.Z, Orientation.HORIZONTAL:
-            cx_targets = [(0, 4), (2, 4), (4, 1), (4, 0)]
-            cx_schedule = [1, 3, 4, 5]
-        case Basis.X, Orientation.VERTICAL:
-            cx_targets = [(4, 0), (4, 2), (1, 4), (0, 4)]
-            cx_schedule = [1, 3, 4, 5]
-        case Basis.X, Orientation.HORIZONTAL:
-            cx_targets = [(4, 0), (4, 1), (2, 4), (0, 4)]
-            cx_schedule = [1, 2, 3, 5]
-    circuit = stim.Circuit()
-    circuit.append(f"R{mq_reset.value}", qubits.syndrome_qubits_indices, [])
-    circuit.append("TICK", [], [])
-    for targets in cx_targets:
-        circuit.append("CX", targets, [])
-        circuit.append("TICK", [], [])
-    circuit.append(f"M{mq_measurement.value}", qubits.syndrome_qubits_indices, [])
-    circuit.append("H", qubits.data_qubits_indices, [])
-    schedule = [0, *cx_schedule, 6]
-    scheduled_circuit = ScheduledCircuit.from_circuit(circuit, schedule, qubits.qubit_map)
-    return Plaquette(
-        f"fixed_bulk_realignment_{stabilizer_basis}_{z_orientation.value}_R{mq_reset}_M{mq_measurement}",
-        qubits,
-        scheduled_circuit,
-        mergeable_instructions=frozenset({"H"}),
-        debug_information=PlaquetteDebugInformation(
-            draw_polygons=(DrawPolygon(debug_basis) if debug_basis is not None else None)
-        ),
-    )
+    from tqec.compile.lowering.stim.compiler import PlaquetteCompiler
+    from tqec.compile.lowering.stim.extended_stabilizers import ExtendedPlaquetteCollection
+    from tqec.compile.lowering.stim.mapper import PlaquetteMapper
+    from tqec.compile.lowering.stim.translator import RPNGTranslator
 
 
 class FixedBulkConventionGenerator:
     def __init__(
         self,
         translator: RPNGTranslator | None,
-        compiler: PlaquetteCompiler,
+        compiler: PlaquetteCompiler | None,
         schedule_family: PlaquetteScheduleFamily = DEFAULT_SCHEDULE_FAMILY,
     ):
         """Contain the plaquette generation procedures to implement the fixed bulk convention.
@@ -112,11 +60,33 @@ class FixedBulkConventionGenerator:
                 should be generated for this convention.
 
         """
-        self._mapper = PlaquetteMapper(translator, compiler, schedule_family.measurement_schedule)
+        self._translator = translator
+        self._compiler = compiler
+        self._measurement_schedule = schedule_family.measurement_schedule
         self._collection = Plaquettes
-        self._extended_collection = ExtendedPlaquetteCollection
-        self._realignment = make_fixed_bulk_realignment_plaquette
         self._schedule_family = schedule_family
+
+    @cached_property
+    def _mapper(self) -> PlaquetteMapper:
+        from tqec.compile.lowering.stim.mapper import PlaquetteMapper  # noqa: PLC0415
+
+        return PlaquetteMapper(self._translator, self._compiler, self._measurement_schedule)
+
+    @cached_property
+    def _extended_collection(self) -> type[ExtendedPlaquetteCollection]:
+        from tqec.compile.lowering.stim.extended_stabilizers import (  # noqa: PLC0415
+            ExtendedPlaquetteCollection,
+        )
+
+        return ExtendedPlaquetteCollection
+
+    @cached_property
+    def _realignment(self):
+        from tqec.compile.lowering.stim.realignment import (  # noqa: PLC0415
+            make_fixed_bulk_realignment_plaquette,
+        )
+
+        return make_fixed_bulk_realignment_plaquette
 
     def as_specs(self):
         """Return a generator of descriptions for the built-in physical policy.
@@ -124,17 +94,20 @@ class FixedBulkConventionGenerator:
         Custom translators and passes retain their explicit legacy Stim path;
         their transformed footprint cannot be inferred from RPNG parameters.
         """
-        if self._mapper._compiler is not IdentityPlaquetteCompiler:
-            return self
-        if self._mapper._translator is not None:
-            from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator  # noqa: PLC0415
+        if self._compiler is not None:
+            from tqec.compile.lowering.stim.compiler import IdentityPlaquetteCompiler  # noqa: PLC0415
 
-            if type(self._mapper._translator) is not DefaultRPNGTranslator:
+            if self._compiler is not IdentityPlaquetteCompiler:
+                return self
+        if self._translator is not None:
+            from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator  # noqa: PLC0415
+
+            if type(self._translator) is not DefaultRPNGTranslator:
                 return self
         schedule = (
-            self._mapper._translator._measurement_schedule
-            if self._mapper._translator is not None
-            else self._mapper._measurement_schedule
+            self._translator._measurement_schedule
+            if self._translator is not None
+            else self._measurement_schedule
         )
         # Only this copied adapter changes the output factories; the original
         # generator retains its concrete-plaquette public API.

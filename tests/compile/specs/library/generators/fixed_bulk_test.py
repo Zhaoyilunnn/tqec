@@ -1,6 +1,6 @@
 import stim
 
-from tqec.compile.specs.library.generators.fixed_bulk import (
+from tqec.compile.lowering.stim.realignment import (
     make_fixed_bulk_realignment_plaquette,
 )
 from tqec.plaquette.qubit import SquarePlaquetteQubits

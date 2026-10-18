@@ -1,7 +1,7 @@
 import stim
 
 from tqec.circuit.schedule.circuit import ScheduledCircuit
-from tqec.plaquette.compilation.passes.measurement_basis import (
+from tqec.compile.lowering.stim.passes.measurement_basis import (
     ChangeMeasurementBasisPass,
 )
 from tqec.utils.enums import Basis

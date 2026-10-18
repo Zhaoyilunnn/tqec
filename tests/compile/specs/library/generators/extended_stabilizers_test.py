@@ -7,8 +7,7 @@ import svg
 
 from tqec.circuit.qubit import GridQubit
 from tqec.compile.generation import generate_circuit_from_instantiation
-from tqec.compile.specs.library.generators.constants import EXTENDED_PLAQUETTE_SCHEDULES
-from tqec.compile.specs.library.generators.extended_stabilizers import (
+from tqec.compile.lowering.stim.extended_stabilizers import (
     DataQubitOperations,
     ExtendedPlaquette,
     ExtendedPlaquetteCollection,
@@ -17,6 +16,7 @@ from tqec.compile.specs.library.generators.extended_stabilizers import (
     get_extended_plaquette,
     get_horizontal_extended_plaquette,
 )
+from tqec.compile.specs.library.generators.constants import EXTENDED_PLAQUETTE_SCHEDULES
 from tqec.plaquette.debug import DrawPolygon, PlaquetteDebugInformation
 from tqec.plaquette.plaquette import Plaquettes
 from tqec.plaquette.rpng.rpng import PauliBasis, RPNGDescription

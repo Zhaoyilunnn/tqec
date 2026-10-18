@@ -1,22 +1,43 @@
 import functools
+from abc import ABC, abstractmethod
 from copy import deepcopy
 from typing import Final, Literal
 
-import stim
 from typing_extensions import override
 
+import stim
 from tqec.circuit.schedule.circuit import ScheduledCircuit
 from tqec.plaquette.constants import MEASUREMENT_SCHEDULE
 from tqec.plaquette.debug import PlaquetteDebugInformation
 from tqec.plaquette.plaquette import Plaquette
 from tqec.plaquette.qubit import PlaquetteQubits, SquarePlaquetteQubits
 from tqec.plaquette.rpng import ExtendedBasis, PauliBasis, RPNGDescription
-from tqec.plaquette.rpng.translators.base import RPNGTranslator
 from tqec.utils.exceptions import TQECError
 from tqec.utils.instructions import (
     MEASUREMENT_INSTRUCTION_NAMES,
     RESET_INSTRUCTION_NAMES,
 )
+
+
+class RPNGTranslator(ABC):
+    """Base interface for classes capable of generating a plaquette from a RPNG description."""
+
+    @abstractmethod
+    def translate(
+        self,
+        rpng_description: RPNGDescription,
+    ) -> Plaquette:
+        """Generate the plaquette corresponding to the provided ``RPNG`` description.
+
+        Args:
+            rpng_description: description of the plaquette to generate.
+
+        Returns:
+            a valid implementation of the provided
+            :class:`~tqec.plaquette.rpng.RPNGDescription` instance.
+
+        """
+        pass
 
 
 class DefaultRPNGTranslator(RPNGTranslator):

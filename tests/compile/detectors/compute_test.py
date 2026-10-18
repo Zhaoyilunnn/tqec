@@ -21,10 +21,10 @@ from tqec.compile.detectors.compute import (
 )
 from tqec.compile.detectors.database import DetectorDatabase
 from tqec.compile.detectors.detector import Detector
+from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
 from tqec.plaquette._test_utils import make_surface_code_plaquette
 from tqec.plaquette.plaquette import Plaquettes
 from tqec.plaquette.rpng.rpng import RPNGDescription
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.templates._testing import FixedTemplate
 from tqec.templates.layout import LayoutTemplate
 from tqec.templates.qubit import QubitTemplate

@@ -2,13 +2,13 @@ from unittest.mock import patch
 
 import pytest
 
+from tqec.compile.lowering.stim.compiler import IdentityPlaquetteCompiler
+from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
 from tqec.compile.specs.library.generators.fixed_bulk import FixedBulkConventionGenerator
 from tqec.compile.specs.library.generators.schedules import (
     DEFAULT_SCHEDULE_FAMILY,
     DIAGONAL_SCHEDULE_FAMILY,
 )
-from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.plaquette.spec import RPNGPlaquetteSpec
 from tqec.plaquette.spec_mapper import PlaquetteSpecMapper
 from tqec.utils.enums import Orientation

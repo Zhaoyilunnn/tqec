@@ -11,8 +11,8 @@ from tqec.compile.blocks.layers.composed.repeated import RepeatedLayer
 from tqec.compile.blocks.layers.composed.sequenced import SequencedLayers
 from tqec.compile.compile import compile_block_graph
 from tqec.compile.convention import FIXED_BOUNDARY_CONVENTION, FIXED_BULK_CONVENTION
+from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
 from tqec.computation.block_graph import BlockGraph
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.utils.position import Position3D
 
 

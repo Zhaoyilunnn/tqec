@@ -1,7 +1,7 @@
 import stim
 
 from tqec.circuit.schedule.circuit import ScheduledCircuit
-from tqec.plaquette.compilation.passes.scheduling import ChangeSchedulePass, ScheduleMap
+from tqec.compile.lowering.stim.passes.scheduling import ChangeSchedulePass, ScheduleMap
 
 
 def _s(circuit: str) -> ScheduledCircuit:

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Literal, cast
 
 from tqec.circuit.qubit import GridQubit
 from tqec.circuit.schedule.schedule import Schedule
-from tqec.compile.specs.library.generators.constants import EXTENDED_PLAQUETTE_SCHEDULES
+from tqec.plaquette.constants import EXTENDED_PLAQUETTE_SCHEDULES
 from tqec.plaquette.plaquette import Plaquette
 from tqec.plaquette.qubit import PlaquetteQubits
 from tqec.plaquette.rpng.rpng import RPNG, PauliBasis, RPNGDescription
@@ -85,7 +85,6 @@ def _make_spatial_cube_arm_memory_plaquette(
     # DOWN and RIGHT emit the RX-first GHZ sequence when ``is_reversed`` is
     # True, i.e. exactly when ``is_reversed == reversed_phase``.
     import stim  # noqa: PLC0415
-
     from tqec.circuit.moment import Moment  # noqa: PLC0415
     from tqec.circuit.schedule.circuit import ScheduledCircuit  # noqa: PLC0415
 
@@ -392,7 +391,9 @@ def _make_extended_plaquette(
 
 @dataclass(frozen=True)
 class ExtendedPlaquetteCollection:
-    """The names reflect the shape of the extended plaquette. E.g.
+    """The names reflect the shape of the extended plaquette.
+
+    For example,
     left_half_rectangle is the left half of the full rectangle.
     bottom_right_triangle: the right angle of the triangle is
     in the bottom right corner.

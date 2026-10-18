@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import functools
 from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 from typing_extensions import override
 
@@ -24,20 +27,22 @@ from tqec.compile.specs.library.generators.schedules import (
 )
 from tqec.compile.specs.library.specification import SpecificationBuilder
 from tqec.computation.cube import ConditionalCubeKind, LeafCubeKind, ZXCube
-from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler, PlaquetteCompiler
 from tqec.plaquette.plaquette import Plaquettes
-from tqec.plaquette.rpng.translators.base import RPNGTranslator
 from tqec.templates.base import RectangularTemplate
 from tqec.utils.enums import Basis, Orientation
 from tqec.utils.exceptions import TQECError
 from tqec.utils.position import Direction3D
 from tqec.utils.scale import LinearFunction
 
+if TYPE_CHECKING:
+    from tqec.compile.lowering.stim.compiler import PlaquetteCompiler
+    from tqec.compile.lowering.stim.translator import RPNGTranslator
+
 
 class FixedBulkCubeBuilder(SpecificationBuilder, CubeBuilder):
     def __init__(
         self,
-        compiler: PlaquetteCompiler = IdentityPlaquetteCompiler,
+        compiler: PlaquetteCompiler | None = None,
         translator: RPNGTranslator | None = None,
         schedule_family: PlaquetteScheduleFamily = DEFAULT_SCHEDULE_FAMILY,
     ) -> None:
@@ -115,7 +120,7 @@ class FixedBulkCubeBuilder(SpecificationBuilder, CubeBuilder):
 class FixedBulkPipeBuilder(SpecificationBuilder, PipeBuilder):
     def __init__(
         self,
-        compiler: PlaquetteCompiler = IdentityPlaquetteCompiler,
+        compiler: PlaquetteCompiler | None = None,
         translator: RPNGTranslator | None = None,
         schedule_family: PlaquetteScheduleFamily = DEFAULT_SCHEDULE_FAMILY,
     ) -> None:
@@ -415,5 +420,5 @@ class FixedBulkPipeBuilder(SpecificationBuilder, PipeBuilder):
         return self._get_spatial_regular_pipe_block(spec, block_temporal_height)
 
 
-FIXED_BULK_CUBE_BUILDER: CubeBuilder = FixedBulkCubeBuilder(IdentityPlaquetteCompiler)
-FIXED_BULK_PIPE_BUILDER: PipeBuilder = FixedBulkPipeBuilder(IdentityPlaquetteCompiler)
+FIXED_BULK_CUBE_BUILDER: CubeBuilder = FixedBulkCubeBuilder()
+FIXED_BULK_PIPE_BUILDER: PipeBuilder = FixedBulkPipeBuilder()

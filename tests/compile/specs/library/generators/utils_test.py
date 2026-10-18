@@ -1,5 +1,7 @@
 import pytest
 
+from tqec.compile.lowering.stim.compiler import IdentityPlaquetteCompiler
+from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
 from tqec.compile.specs.base import CubeSpec
 from tqec.compile.specs.library.generators.fixed_boundary import FixedBoundaryConventionGenerator
 from tqec.compile.specs.library.generators.fixed_bulk import FixedBulkConventionGenerator
@@ -7,8 +9,6 @@ from tqec.compile.specs.library.generators.utils import (
     get_reset_measurement_indices_for_spatial_arms,
 )
 from tqec.computation.cube import ZXCube
-from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.utils.enums import Basis
 
 

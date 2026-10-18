@@ -36,7 +36,7 @@ rescheduling actual operations requires materialization first.
 Physical output boundary
 ------------------------
 
-``tqec.compile.lowering.stim.StimMaterializer`` translates specifications into
+``tqec.compile.lowering.stim.materializer.StimMaterializer`` translates specifications into
 existing ``Plaquette`` and ``PlaquetteLayer`` objects. It calls the original RPNG,
 extended stabilizer and realignment implementations. It preserves template
 indices, trimmed borders, layer order and repetitions. Its local cache shares

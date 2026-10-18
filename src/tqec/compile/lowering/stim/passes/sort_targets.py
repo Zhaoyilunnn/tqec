@@ -7,7 +7,7 @@ from typing_extensions import override
 
 from tqec.circuit.moment import Moment
 from tqec.circuit.schedule.circuit import ScheduledCircuit
-from tqec.plaquette.compilation.passes.base import CompilationPass
+from tqec.compile.lowering.stim.passes.base import CompilationPass
 
 
 def _with_targets_sorted(moments: Iterator[Moment]) -> list[Moment]:

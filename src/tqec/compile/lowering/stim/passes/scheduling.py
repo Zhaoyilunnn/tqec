@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing_extensions import override
 
 from tqec.circuit.schedule.circuit import ScheduledCircuit
-from tqec.plaquette.compilation.passes.base import CompilationPass
+from tqec.compile.lowering.stim.passes.base import CompilationPass
 from tqec.utils.exceptions import TQECError
 
 

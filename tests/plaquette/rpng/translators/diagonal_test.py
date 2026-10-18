@@ -2,9 +2,9 @@ import pytest
 import stim
 
 from tqec.circuit.schedule import ScheduleError
+from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
 from tqec.compile.specs.library.generators.schedules import DIAGONAL_SCHEDULE_FAMILY
 from tqec.plaquette.rpng import RPNGDescription
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 
 
 def test_translator_supports_diagonal_schedule() -> None:

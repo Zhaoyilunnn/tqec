@@ -1,16 +1,16 @@
 from typing import Final
 
-from tqec.plaquette.compilation.base import PlaquetteCompiler
-from tqec.plaquette.compilation.passes.controlled_gate_basis import (
+from tqec.compile.lowering.stim.compiler import PlaquetteCompiler
+from tqec.compile.lowering.stim.passes.controlled_gate_basis import (
     ChangeControlledGateBasisPass,
 )
-from tqec.plaquette.compilation.passes.measurement_basis import (
+from tqec.compile.lowering.stim.passes.measurement_basis import (
     ChangeMeasurementBasisPass,
 )
-from tqec.plaquette.compilation.passes.reset_basis import ChangeResetBasisPass
-from tqec.plaquette.compilation.passes.scheduling import ChangeSchedulePass
-from tqec.plaquette.compilation.passes.sort_targets import SortTargetsPass
-from tqec.plaquette.compilation.passes.transformer import ScheduleConstant
+from tqec.compile.lowering.stim.passes.reset_basis import ChangeResetBasisPass
+from tqec.compile.lowering.stim.passes.scheduling import ChangeSchedulePass
+from tqec.compile.lowering.stim.passes.sort_targets import SortTargetsPass
+from tqec.compile.lowering.stim.passes.transformer import ScheduleConstant
 from tqec.utils.enums import Basis
 
 

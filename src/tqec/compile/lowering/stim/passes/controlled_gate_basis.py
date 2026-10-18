@@ -1,11 +1,11 @@
-from tqec.plaquette.compilation.passes.transformer import (
+from tqec.compile.lowering.stim.passes.transformer import (
     InstructionCreator,
     ScheduledCircuitTransformation,
     ScheduledCircuitTransformationPass,
     ScheduleFunction,
     ScheduleOffset,
 )
-from tqec.plaquette.compilation.passes.transformer.simplifiers import (
+from tqec.compile.lowering.stim.passes.transformer.simplifiers import (
     SelfInverseGateSimplification,
 )
 from tqec.utils.enums import Basis

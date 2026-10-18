@@ -8,7 +8,8 @@ obtained for the fixed boundary convention.
 from __future__ import annotations
 
 from copy import copy
-from typing import Any, Final, Literal, cast
+from functools import cached_property
+from typing import TYPE_CHECKING, Any, Final, Literal, cast
 
 from tqec.compile.specs.base import CubeSpec
 from tqec.compile.specs.enums import SpatialArms
@@ -16,24 +17,21 @@ from tqec.compile.specs.library.generators.constants import (
     HORIZONTAL_HOOK_SCHEDULES,
     VERTICAL_HOOK_SCHEDULES,
 )
-from tqec.compile.specs.library.generators.extended_stabilizers import (
-    DataQubitOperations,
-    ExtendedPlaquetteCollection,
-    ExtendedPlaquetteDataQubitsOperations,
-)
 from tqec.compile.specs.library.generators.utils import (
-    PlaquetteMapper,
     get_reset_measurement_indices_for_spatial_arms,
     should_measure_spatial_arm_data,
     should_reset_spatial_arm_data,
 )
-from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler, PlaquetteCompiler
+from tqec.plaquette.constants import MEASUREMENT_SCHEDULE
 from tqec.plaquette.enums import PlaquetteOrientation
 from tqec.plaquette.extended_specs import ExtendedSpecCollection
 from tqec.plaquette.plaquette import Plaquette, Plaquettes
 from tqec.plaquette.rpng.rpng import ExtendedBasis, RPNGDescription
-from tqec.plaquette.rpng.translators.base import RPNGTranslator
-from tqec.plaquette.spec import PlaquetteSpecs
+from tqec.plaquette.spec import (
+    DataQubitOperations,
+    ExtendedPlaquetteDataQubitsOperations,
+    PlaquetteSpecs,
+)
 from tqec.plaquette.spec_mapper import PlaquetteSpecMapper
 from tqec.templates.base import RectangularTemplate
 from tqec.templates.qubit import (
@@ -47,9 +45,15 @@ from tqec.utils.exceptions import TQECError
 from tqec.utils.frozendefaultdict import FrozenDefaultDict
 from tqec.utils.position import Direction3D
 
+if TYPE_CHECKING:
+    from tqec.compile.lowering.stim.compiler import PlaquetteCompiler
+    from tqec.compile.lowering.stim.extended_stabilizers import ExtendedPlaquetteCollection
+    from tqec.compile.lowering.stim.mapper import PlaquetteMapper
+    from tqec.compile.lowering.stim.translator import RPNGTranslator
+
 
 class FixedBoundaryConventionGenerator:
-    def __init__(self, translator: RPNGTranslator | None, compiler: PlaquetteCompiler):
+    def __init__(self, translator: RPNGTranslator | None, compiler: PlaquetteCompiler | None):
         """Low-level helper class centralising all the plaquette creation for the fixed boundary
         convention.
 
@@ -57,9 +61,24 @@ class FixedBoundaryConventionGenerator:
         plaquettes needed to implement low-level QEC layers using the fixed boundary convention.
 
         """
-        self._mapper = PlaquetteMapper(translator, compiler)
+        self._translator = translator
+        self._compiler = compiler
+        self._measurement_schedule = MEASUREMENT_SCHEDULE
         self._collection = Plaquettes
-        self._extended_collection = ExtendedPlaquetteCollection
+
+    @cached_property
+    def _mapper(self) -> PlaquetteMapper:
+        from tqec.compile.lowering.stim.mapper import PlaquetteMapper  # noqa: PLC0415
+
+        return PlaquetteMapper(self._translator, self._compiler, self._measurement_schedule)
+
+    @cached_property
+    def _extended_collection(self) -> type[ExtendedPlaquetteCollection]:
+        from tqec.compile.lowering.stim.extended_stabilizers import (  # noqa: PLC0415
+            ExtendedPlaquetteCollection,
+        )
+
+        return ExtendedPlaquetteCollection
 
     def as_specs(self):
         """Return a generator of descriptions for the built-in physical policy.
@@ -67,17 +86,20 @@ class FixedBoundaryConventionGenerator:
         Custom translators and passes retain their explicit legacy Stim path;
         their transformed footprint cannot be inferred from RPNG parameters.
         """
-        if self._mapper._compiler is not IdentityPlaquetteCompiler:
-            return self
-        if self._mapper._translator is not None:
-            from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator  # noqa: PLC0415
+        if self._compiler is not None:
+            from tqec.compile.lowering.stim.compiler import IdentityPlaquetteCompiler  # noqa: PLC0415
 
-            if type(self._mapper._translator) is not DefaultRPNGTranslator:
+            if self._compiler is not IdentityPlaquetteCompiler:
+                return self
+        if self._translator is not None:
+            from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator  # noqa: PLC0415
+
+            if type(self._translator) is not DefaultRPNGTranslator:
                 return self
         schedule = (
-            self._mapper._translator._measurement_schedule
-            if self._mapper._translator is not None
-            else self._mapper._measurement_schedule
+            self._translator._measurement_schedule
+            if self._translator is not None
+            else self._measurement_schedule
         )
         # Only this copied adapter changes the output factories; the original
         # generator retains its concrete-plaquette public API.

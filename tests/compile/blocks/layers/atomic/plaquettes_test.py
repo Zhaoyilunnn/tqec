@@ -4,10 +4,10 @@ import pytest
 
 from tqec.compile.blocks.enums import SpatialBlockBorder, TemporalBlockBorder
 from tqec.compile.blocks.layers.atomic.plaquettes import PlaquetteLayer
+from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
 from tqec.plaquette.constants import MEASUREMENT_SCHEDULE
 from tqec.plaquette.plaquette import Plaquettes
 from tqec.plaquette.rpng.rpng import RPNGDescription
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.templates._testing import FixedTemplate
 from tqec.templates.qubit import QubitTemplate
 from tqec.utils.exceptions import TQECError

@@ -6,13 +6,13 @@ from tqec.compile.blocks.layers.atomic.layout import LayoutLayer
 from tqec.compile.blocks.layers.atomic.spec_plaquettes import SpecPlaquetteLayer
 from tqec.compile.blocks.positioning import LayoutPosition2D
 from tqec.compile.lowering.base import UnsupportedLoweringError
-from tqec.compile.lowering.stim import StimMaterializer
-from tqec.compile.specs.library.generators.extended_stabilizers import ExtendedPlaquetteCollection
+from tqec.compile.lowering.stim.compiler import IdentityPlaquetteCompiler
+from tqec.compile.lowering.stim.extended_stabilizers import ExtendedPlaquetteCollection
+from tqec.compile.lowering.stim.materializer import StimMaterializer
+from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
 from tqec.compile.specs.library.generators.fixed_bulk import FixedBulkConventionGenerator
-from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler
 from tqec.plaquette.extended_specs import ExtendedSpecCollection
 from tqec.plaquette.rpng.rpng import RPNGDescription
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.plaquette.spec import PlaquetteSpecs, RPNGPlaquetteSpec
 from tqec.templates.qubit import QubitTemplate
 from tqec.utils.enums import Basis, Orientation

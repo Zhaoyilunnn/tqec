@@ -1,10 +1,10 @@
 import pytest
 
+from tqec.compile.lowering.stim.compiler import IdentityPlaquetteCompiler
+from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
 from tqec.compile.specs.enums import SpatialArms
 from tqec.compile.specs.library.generators.fixed_boundary import FixedBoundaryConventionGenerator
-from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler
 from tqec.plaquette.rpng.rpng import RPNGDescription
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.utils.enums import Basis, Orientation
 
 

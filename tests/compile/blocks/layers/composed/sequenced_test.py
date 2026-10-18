@@ -7,9 +7,9 @@ from tqec.compile.blocks.layers.atomic.plaquettes import PlaquetteLayer
 from tqec.compile.blocks.layers.atomic.raw import RawCircuitLayer
 from tqec.compile.blocks.layers.composed.repeated import RepeatedLayer
 from tqec.compile.blocks.layers.composed.sequenced import SequencedLayers
+from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
 from tqec.plaquette.plaquette import Plaquettes
 from tqec.plaquette.rpng.rpng import RPNGDescription
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.templates._testing import FixedTemplate
 from tqec.templates.qubit import QubitSpatialCubeTemplate, QubitTemplate
 from tqec.utils.exceptions import TQECError

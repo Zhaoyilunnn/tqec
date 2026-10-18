@@ -2,9 +2,9 @@ from pprint import pprint
 
 import stim
 
-from tqec.plaquette.compilation.css import CSSPlaquetteCompiler
+from tqec.compile.lowering.stim.css import CSSPlaquetteCompiler
+from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
 from tqec.plaquette.rpng import RPNGDescription
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 
 
 def test_zzzz() -> None:

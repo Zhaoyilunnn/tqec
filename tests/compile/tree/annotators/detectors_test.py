@@ -1,10 +1,10 @@
 import pytest
 
 from tqec.circuit.measurement_map import MeasurementRecordsMap
+from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
 from tqec.compile.tree.annotators.detectors import LookbackStack
 from tqec.plaquette.plaquette import Plaquettes
 from tqec.plaquette.rpng.rpng import RPNGDescription
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.templates.base import Template
 from tqec.templates.qubit import QubitTemplate
 from tqec.utils.exceptions import TQECError

@@ -5,9 +5,9 @@ from tqec.compile.blocks.layers.atomic.layout import LayoutLayer
 from tqec.compile.blocks.layers.atomic.plaquettes import PlaquetteLayer
 from tqec.compile.blocks.layers.atomic.spec_plaquettes import SpecPlaquetteLayer
 from tqec.compile.blocks.positioning import LayoutPosition2D
+from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
 from tqec.plaquette.plaquette import Plaquettes
 from tqec.plaquette.rpng.rpng import RPNGDescription
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.plaquette.spec import PlaquetteSpecs, RPNGPlaquetteSpec
 from tqec.templates.qubit import QubitTemplate
 from tqec.utils.frozendefaultdict import FrozenDefaultDict

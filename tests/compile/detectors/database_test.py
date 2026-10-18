@@ -14,12 +14,12 @@ from tqec.compile.detectors.database import (
     _DetectorDatabaseKey,  # pyright: ignore[reportPrivateUsage]
 )
 from tqec.compile.detectors.detector import Detector
+from tqec.compile.lowering.stim.compiler import IdentityPlaquetteCompiler
+from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
 from tqec.compile.specs.library.generators.fixed_bulk import (
     FixedBulkConventionGenerator,
 )
-from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler
 from tqec.plaquette.plaquette import Plaquettes
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.templates.qubit import QubitTemplate
 from tqec.templates.subtemplates import (
     SubTemplateType,

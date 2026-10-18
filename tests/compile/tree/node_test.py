@@ -7,10 +7,10 @@ from tqec.compile.blocks.layers.atomic.plaquettes import PlaquetteLayer
 from tqec.compile.blocks.layers.composed.repeated import RepeatedLayer
 from tqec.compile.blocks.layers.composed.sequenced import SequencedLayers
 from tqec.compile.blocks.positioning import LayoutPosition2D
+from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
 from tqec.compile.tree.node import LayerNode, NodeWalker
 from tqec.plaquette.plaquette import Plaquettes
 from tqec.plaquette.rpng.rpng import RPNGDescription
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.templates.qubit import QubitTemplate
 from tqec.utils.exceptions import TQECError
 from tqec.utils.frozendefaultdict import FrozenDefaultDict

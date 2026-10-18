@@ -6,9 +6,9 @@ from typing_extensions import override
 
 from tqec.circuit.moment import Moment
 from tqec.circuit.schedule.circuit import ScheduledCircuit
-from tqec.plaquette.compilation.passes.base import CompilationPass
-from tqec.plaquette.compilation.passes.transformer.schedule import ScheduleFunction
-from tqec.plaquette.compilation.passes.transformer.simplifiers import (
+from tqec.compile.lowering.stim.passes.base import CompilationPass
+from tqec.compile.lowering.stim.passes.transformer.schedule import ScheduleFunction
+from tqec.compile.lowering.stim.passes.transformer.simplifiers import (
     InstructionSimplifier,
     NoInstructionSimplification,
 )

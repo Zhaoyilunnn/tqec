@@ -3,11 +3,11 @@ from typing import Final
 from tqec.compile.blocks.layers.atomic.layout import LayoutLayer
 from tqec.compile.blocks.layers.atomic.plaquettes import PlaquetteLayer
 from tqec.compile.blocks.positioning import LayoutPosition2D
+from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
 from tqec.compile.tree.annotators.polygons import generate_polygons_for_layout_layer
 from tqec.plaquette.debug import DrawPolygon, PlaquetteDebugInformation
 from tqec.plaquette.plaquette import Plaquette, Plaquettes
 from tqec.plaquette.rpng.rpng import PauliBasis, RPNGDescription
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.templates._testing import FixedTemplate
 from tqec.utils.frozendefaultdict import FrozenDefaultDict
 from tqec.utils.position import BlockPosition2D, Shift2D

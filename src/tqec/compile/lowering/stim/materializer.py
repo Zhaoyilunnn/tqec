@@ -7,11 +7,11 @@ from tqec.compile.blocks.layers.atomic.spec_plaquettes import SpecPlaquetteLayer
 from tqec.compile.blocks.layers.composed.repeated import RepeatedLayer
 from tqec.compile.blocks.layers.composed.sequenced import SequencedLayers
 from tqec.compile.lowering.base import UnsupportedLoweringError
-from tqec.compile.specs.library.generators.extended_stabilizers import ExtendedPlaquetteCollection
-from tqec.compile.specs.library.generators.fixed_bulk import make_fixed_bulk_realignment_plaquette
-from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler
+from tqec.compile.lowering.stim.compiler import IdentityPlaquetteCompiler
+from tqec.compile.lowering.stim.extended_stabilizers import ExtendedPlaquetteCollection
+from tqec.compile.lowering.stim.realignment import make_fixed_bulk_realignment_plaquette
+from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
 from tqec.plaquette.plaquette import Plaquette, Plaquettes
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.plaquette.spec import (
     ExtendedPlaquetteSpec,
     PlaquetteSpec,

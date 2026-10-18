@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import functools
 from collections.abc import Callable
-from typing import Protocol
+from typing import TYPE_CHECKING, Protocol
 
 from typing_extensions import override
 
@@ -15,14 +17,16 @@ from tqec.compile.specs.enums import SpatialArms
 from tqec.compile.specs.library.generators.fixed_boundary import FixedBoundaryConventionGenerator
 from tqec.compile.specs.library.specification import SpecificationBuilder
 from tqec.computation.cube import ConditionalCubeKind, LeafCubeKind, ZXCube
-from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler, PlaquetteCompiler
 from tqec.plaquette.plaquette import Plaquettes
-from tqec.plaquette.rpng.translators.base import RPNGTranslator
 from tqec.templates.base import RectangularTemplate
 from tqec.utils.enums import Basis, Orientation
 from tqec.utils.exceptions import TQECError
 from tqec.utils.position import Direction3D
 from tqec.utils.scale import LinearFunction
+
+if TYPE_CHECKING:
+    from tqec.compile.lowering.stim.compiler import PlaquetteCompiler
+    from tqec.compile.lowering.stim.translator import RPNGTranslator
 
 
 class _PlaquettesGenerator(Protocol):
@@ -112,7 +116,7 @@ def _get_block(
 
 class FixedBoundaryCubeBuilder(SpecificationBuilder, CubeBuilder):
     def __init__(
-        self, compiler: PlaquetteCompiler, translator: RPNGTranslator | None = None
+        self, compiler: PlaquetteCompiler | None = None, translator: RPNGTranslator | None = None
     ) -> None:
         """Implement the :class:`.CubeBuilder` interface for the fixed boundary convention.
 
@@ -186,7 +190,7 @@ class FixedBoundaryCubeBuilder(SpecificationBuilder, CubeBuilder):
 
 class FixedBoundaryPipeBuilder(SpecificationBuilder, PipeBuilder):
     def __init__(
-        self, compiler: PlaquetteCompiler, translator: RPNGTranslator | None = None
+        self, compiler: PlaquetteCompiler | None = None, translator: RPNGTranslator | None = None
     ) -> None:
         """Implement the :class:`.PipeBuilder` interface for the fixed boundary convention.
 
@@ -406,5 +410,5 @@ class FixedBoundaryPipeBuilder(SpecificationBuilder, PipeBuilder):
         return self._get_spatial_regular_pipe_block(spec, block_temporal_height)
 
 
-FIXED_BOUNDARY_CUBE_BUILDER = FixedBoundaryCubeBuilder(IdentityPlaquetteCompiler)
-FIXED_BOUNDARY_PIPE_BUILDER = FixedBoundaryPipeBuilder(IdentityPlaquetteCompiler)
+FIXED_BOUNDARY_CUBE_BUILDER = FixedBoundaryCubeBuilder()
+FIXED_BOUNDARY_PIPE_BUILDER = FixedBoundaryPipeBuilder()
