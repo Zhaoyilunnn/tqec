@@ -12,6 +12,8 @@ from tqec.compile.blocks.layers.composed.sequenced import SequencedLayers
 from tqec.compile.compile import compile_block_graph
 from tqec.compile.convention import FIXED_BOUNDARY_CONVENTION, FIXED_BULK_CONVENTION
 from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
+from tqec.compile.observables.abstract_observable import AbstractObservable
+from tqec.compile.observables.builder import ObservableBuilder
 from tqec.computation.block_graph import BlockGraph
 from tqec.utils.position import Position3D
 
@@ -32,8 +34,9 @@ def assert_specs(layer):
 
 
 @pytest.mark.parametrize("convention", (FIXED_BULK_CONVENTION, FIXED_BOUNDARY_CONVENTION))
+@pytest.mark.parametrize("explicit", (False, True))
 @pytest.mark.parametrize("kind", ("memory", "hadamard", "junction"))
-def test_compile_does_not_construct_physical_circuits(convention, kind):
+def test_compile_does_not_construct_physical_circuits(convention, kind, explicit):
     for builder in (convention.triplet.cube_builder, convention.triplet.pipe_builder):
         getattr(builder, "build_specs").cache_clear()
         getattr(builder, "_call_impl").cache_clear()
@@ -44,12 +47,15 @@ def test_compile_does_not_construct_physical_circuits(convention, kind):
     if kind == "junction":
         for p in ((0, 1, 0), (-1, 0, 0), (1, 0, 0)):
             graph.add_pipe(first, graph.add_cube(Position3D(*p), "ZZX"))
+    observables = graph.find_correlation_surfaces() if explicit else "auto"
     with (
+        patch.object(ObservableBuilder, "build", side_effect=AssertionError("observable building")),
         patch.object(stim, "Circuit", side_effect=AssertionError("Stim construction")),
         patch.object(Moment, "__init__", side_effect=AssertionError("Moment construction")),
         patch.object(ScheduledCircuit, "__init__", side_effect=AssertionError("ScheduledCircuit")),
         patch.object(DefaultRPNGTranslator, "translate", side_effect=AssertionError("translation")),
     ):
-        compiled = compile_block_graph(graph, convention)
+        compiled = compile_block_graph(graph, convention, observables=observables)
         tree = compiled.to_layer_tree()
-        assert_specs(tree._root._layer)
+        assert_specs(tree.construction_root)
+        assert all(isinstance(obs, AbstractObservable) for obs in tree._abstract_observables)

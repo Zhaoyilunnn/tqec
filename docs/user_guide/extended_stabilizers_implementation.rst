@@ -41,7 +41,7 @@ pattern is replaced by a sequence that alternates backward and forward memory
 plaquettes, with the total number of repetitions unchanged.
 
 For the implementation, see the ``is_reversed`` parameter in
-``src/tqec/compile/specs/library/generators/extended_stabilizers.py``
+``src/tqec/compile/lowering/stim/extended_stabilizers.py``
 and the forward/backward schedule alternation in
 ``src/tqec/compile/specs/library/fixed_boundary.py``.
 

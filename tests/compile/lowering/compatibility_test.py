@@ -59,7 +59,8 @@ def test_streaming_and_repeated_distances(reschedule: bool, noisy: bool) -> None
     assert first.num_observables == 1
 
 
-def test_custom_translator_and_passes_are_preserved() -> None:
+@pytest.mark.parametrize("custom", ("translator", "compiler", "both"))
+def test_custom_translator_and_passes_are_preserved(custom: str) -> None:
     class CountingTranslator(DefaultRPNGTranslator):
         def __init__(self):
             super().__init__(8)
@@ -70,27 +71,31 @@ def test_custom_translator_and_passes_are_preserved() -> None:
             return super().translate(rpng_description)
 
     translator = CountingTranslator()
+    schedule = 6 if custom == "compiler" else 8
     compiler = PlaquetteCompiler(
         "CUSTOM",
-        (ChangeSchedulePass({i: i for i in range(8)} | {8: 10}),),
+        (ChangeSchedulePass({i: i for i in range(schedule)} | {schedule: 10}),),
         lambda instructions: instructions,
     )
+    selected_compiler = None if custom == "translator" else compiler
+    selected_translator = None if custom == "compiler" else translator
     convention = Convention(
         "fixed_bulk",
         ConventionTriplet(
-            FixedBulkCubeBuilder(compiler, translator),
-            FixedBulkPipeBuilder(compiler, translator),
+            FixedBulkCubeBuilder(selected_compiler, selected_translator),
+            FixedBulkPipeBuilder(selected_compiler, selected_translator),
             FIXED_BULK_CONVENTION.triplet.observable_builder,
         ),
     )
     compiled = compile_block_graph(memory(), convention)
-    assert translator.calls > 0
+    assert (translator.calls > 0) == (custom != "compiler")
     tree = compiled.to_layer_tree()
     materialized = StimMaterializer().materialize_layer(tree._root._layer)
     layer = materialized.layer_sequence[0].layer_sequence[0]
-    assert layer.measurement_schedule == 10
+    assert layer.measurement_schedule == (8 if custom == "translator" else 10)
+    prefix = "ID(" if custom == "translator" else "CUSTOM("
     for child in layer.layers.values():
-        assert all(p.name.startswith("CUSTOM(") for p in child.plaquettes.collection.values())
+        assert all(p.name.startswith(prefix) for p in child.plaquettes.collection.values())
     circuit = compiled.generate_stim_circuit(1, database_path=None)
     circuit.detector_error_model()
 
@@ -155,3 +160,20 @@ def test_stim_output_preserves_construction_tree() -> None:
     assert tuple(tree._abstract_observables) == observables
     assert compiled.generate_stim_circuit(1, database_path=None) == first
     assert specs(compiled.to_layer_tree().construction_root) == original_specs
+
+
+def test_detector_options_reach_stim_output(tmp_path) -> None:
+    compiled = compile_block_graph(memory())
+    without_detectors = compiled.generate_stim_circuit(1, manhattan_radius=0, database_path=None)
+    assert without_detectors.num_detectors == 0
+    assert without_detectors.num_observables == 1
+    database = DetectorDatabase()
+    path = tmp_path / "detectors.pkl"
+    with_detectors = compiled.generate_stim_circuit(
+        1, manhattan_radius=2, detector_database=database, database_path=path
+    )
+    assert with_detectors.num_detectors > 0
+    assert len(database) > 0
+    assert len(DetectorDatabase.from_file(path)) == len(database)
+    loaded = compiled.generate_stim_circuit(1, database_path=path)
+    assert loaded == with_detectors

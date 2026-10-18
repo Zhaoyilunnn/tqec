@@ -12,9 +12,9 @@ Construction specifications
 
 ``tqec.plaquette.spec`` defines three local construction descriptions:
 
-* ``RPNGPlaquetteSpec`` stores the RPNG description, measurement schedule and
-  whether the existing identity compilation policy applies. That policy preserves
-  the original plaquette naming and mergeable-instruction behavior.
+* ``RPNGPlaquetteSpec`` stores the RPNG description and measurement schedule.
+  Stim materialization always applies ``IdentityPlaquetteCompiler`` after RPNG
+  translation, preserving ``ID(...)`` names and mergeable instructions.
 * ``ExtendedPlaquetteSpec`` selects a shaped half of an extended stabilizer,
   including its orientation, reversed schedule, internal resets and measurements,
   and independent data-qubit operations for both halves.
@@ -43,8 +43,11 @@ indices, trimmed borders, layer order and repetitions. Its local cache shares
 materialized plaquettes; the existing measurement rescheduling operation creates
 new objects instead of mutating cached circuits.
 
-``LayerTree`` materializes before circuit generation, streaming, visualization or
-serialization. Circuit, detector, observable and polygon annotations therefore
+``LayerTree.construction_root`` exposes the original construction for other
+backends. Circuit generation, streaming, visualization and serialization use a
+separate, cached Stim tree. They leave the construction root and its specifications
+unchanged. Rebuilding sequences and repetitions preserves their trimmed borders.
+Circuit, detector, observable and polygon annotations therefore
 continue to consume concrete layers. The existing generation APIs retain their
 noise model, detector database, measurement scheduling and observable arguments.
 Detector finding remains owned by the Stim and tqecd implementation. Existing
@@ -55,15 +58,37 @@ Custom translators, custom plaquette compilation passes and ``RawCircuitLayer``
 remain supported through the legacy Stim path. They can create circuits during
 compilation. Their transformed timing and footprint cannot be inferred from the
 built-in specifications, and they do not satisfy the compiler-only guarantee.
-Direct calls to the existing builders and plaquette generators retain their
-concrete output; ``build_specs`` selects the built-in description path.
+Direct calls to the builders and plaquette generators retain their concrete output;
+``build_specs`` selects the built-in description path. When both compiler and
+translator are omitted, their ``None`` defaults select the built-in policy without
+importing backend implementations.
+Explicit custom objects select the Stim-only path and execute their translation
+and compilation passes during construction.
+
+Stim implementation modules
+---------------------------
+
+The concrete implementation lives under ``tqec.compile.lowering.stim``:
+
+* ``translator`` defines ``RPNGTranslator`` and ``DefaultRPNGTranslator``.
+* ``compiler`` defines ``PlaquetteCompiler`` and ``IdentityPlaquetteCompiler``.
+* ``css`` defines ``CSSPlaquetteCompiler``; ``passes`` contains its transformations.
+* ``mapper`` provides ``PlaquetteMapper`` for direct concrete generation.
+* ``extended_stabilizers`` and ``realignment`` implement the specialized plaquettes.
+* ``materializer`` recursively lowers specifications and preserves layer metadata.
+
+Import these objects from their implementation modules. The former translator and
+compilation packages have been removed. Concrete mapper, extended stabilizer and
+realignment helpers must also be imported from their new backend modules. Bare
+translator calls still return names without ``ID(...)``; materializing an RPNG specification
+always applies the identity policy, including for manually constructed specs.
 
 Import boundary and installation
 --------------------------------
 
 In a fresh interpreter, importing ``tqec``, building supported ``BlockGraph``
 objects, calling ``compile_block_graph`` with a built-in convention, and calling
-``to_layer_tree`` do not import Stim or tqecd. Public exports are preserved.
+``to_layer_tree`` do not import Stim, tqecd or the Stim backend package.
 Physical output imports the backend and reports missing Stim dependencies at
 that boundary. Explicit analysis functions that use Stim, such as stabilizer
 reduction and CZ flow validation, still require Stim.

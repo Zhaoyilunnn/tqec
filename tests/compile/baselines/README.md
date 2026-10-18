@@ -21,3 +21,14 @@ observable determinism. Initial run: 42 passed. Existing compiler, layout,
 translator, detector computation and tree tests: 244 passed, 2 expected failures.
 The existing tests were run with `TQEC_DETECTOR_DATABASE_PATH` pointing to a
 file in a temporary directory to avoid changing the user's database.
+
+The Stim backend reorganization starts from fork commit
+`18a7efe4b41bbff7805a7ea982c874b7d63de971`. All 42 fingerprints also pass on that
+commit and remain unchanged after relocation. Local translation contracts live in
+`tests/compile/lowering/compatibility_test.py`: bare RPNG names, identity names and
+mergeable instructions, and custom passes that change measurement schedules.
+Translator and pass unit tests live under `tests/compile/lowering/stim/`.
+
+Existing expected failures for diagonal spatial Hadamard pipes remain in
+`tests/compile/compile_test.py`. The reorganization does not add support for
+conditional constructions or previously unsupported Hadamard combinations.
