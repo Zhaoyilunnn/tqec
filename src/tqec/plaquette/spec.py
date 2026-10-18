@@ -1,10 +1,12 @@
 """Immutable physical construction parameters, independent of circuit implementations."""
 
 from collections.abc import Callable, Collection, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from tqec.plaquette.constants import MEASUREMENT_SCHEDULE
-from tqec.plaquette.rpng.rpng import RPNGDescription
+from tqec.plaquette.enums import PlaquetteOrientation
+from tqec.plaquette.rpng.rpng import PauliBasis, RPNGDescription
+from tqec.utils.enums import Basis, Orientation
 from tqec.utils.exceptions import TQECError
 from tqec.utils.frozendefaultdict import FrozenDefaultDict
 
@@ -19,6 +21,7 @@ class RPNGPlaquetteSpec:
 
     description: RPNGDescription
     measurement_schedule: int = MEASUREMENT_SCHEDULE
+    compiled: bool = False
 
     @property
     def num_moments(self) -> int:
@@ -30,7 +33,72 @@ class RPNGPlaquetteSpec:
         return max(gates, default=0) + 1
 
 
-PlaquetteSpec = RPNGPlaquetteSpec
+@dataclass(frozen=True)
+class DataQubitOperations:
+    """Reset and measurement applied to data qubits of one plaquette."""
+
+    reset: Basis | None = None
+    measurement: Basis | None = None
+
+
+@dataclass(frozen=True)
+class ExtendedPlaquetteDataQubitsOperations:
+    """Independent data operations for the first and second extended halves."""
+
+    first: DataQubitOperations = DataQubitOperations()
+    second: DataQubitOperations = DataQubitOperations()
+
+
+@dataclass(frozen=True)
+class ExtendedPlaquetteSpec:
+    """Select one shaped half of the existing extended stabilizer construction."""
+
+    description: RPNGDescription
+    reset: Basis | None
+    measurement: Basis | None
+    is_reversed: bool
+    orientation: Orientation
+    data_operations: ExtendedPlaquetteDataQubitsOperations
+    shape: str
+    second: bool
+
+    @property
+    def num_moments(self) -> int:
+        """Return the extent including retained empty trailing moments."""
+        operations = self.data_operations.second if self.second else self.data_operations.first
+        if (
+            self.is_reversed != self.second
+            or self.measurement is not None
+            or operations.measurement is not None
+        ):
+            return 8
+        return 6
+
+
+@dataclass(frozen=True)
+class RealignmentPlaquetteSpec:
+    """Parameters of the fixed-bulk temporal Hadamard realignment construction."""
+
+    stabilizer_basis: Basis
+    z_orientation: Orientation
+    mq_reset: Basis
+    mq_measurement: Basis
+    debug_basis: PauliBasis | None = None
+    boundary: PlaquetteOrientation | None = None
+
+    def project_on_boundary(self, orientation: PlaquetteOrientation) -> "RealignmentPlaquetteSpec":
+        """Record a boundary projection to apply after materialization."""
+        if self.boundary is not None:
+            raise TQECError("Repeated realignment boundary projection is not supported.")
+        return replace(self, boundary=orientation)
+
+    @property
+    def num_moments(self) -> int:
+        """Return the extent of the realignment schedule."""
+        return 7
+
+
+PlaquetteSpec = RPNGPlaquetteSpec | ExtendedPlaquetteSpec | RealignmentPlaquetteSpec
 
 
 @dataclass(frozen=True)

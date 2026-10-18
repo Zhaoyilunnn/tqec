@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+from copy import copy
 from typing import Literal
 
 import stim
@@ -21,13 +22,17 @@ from tqec.compile.specs.library.generators.utils import (
     PlaquetteMapper,
     get_reset_measurement_indices_for_spatial_arms,
 )
-from tqec.plaquette.compilation.base import PlaquetteCompiler
+from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler, PlaquetteCompiler
 from tqec.plaquette.debug import DrawPolygon, PlaquetteDebugInformation
 from tqec.plaquette.enums import PlaquetteOrientation
+from tqec.plaquette.extended_specs import ExtendedSpecCollection
 from tqec.plaquette.plaquette import Plaquette, Plaquettes
 from tqec.plaquette.qubit import SquarePlaquetteQubits
 from tqec.plaquette.rpng.rpng import PauliBasis, RPNGDescription
 from tqec.plaquette.rpng.translators.base import RPNGTranslator
+from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
+from tqec.plaquette.spec import PlaquetteSpecs, RealignmentPlaquetteSpec
+from tqec.plaquette.spec_mapper import PlaquetteSpecMapper
 from tqec.templates.base import RectangularTemplate
 from tqec.templates.qubit import (
     QubitHorizontalBorders,
@@ -105,7 +110,28 @@ class FixedBulkConventionGenerator:
 
         """
         self._mapper = PlaquetteMapper(translator, compiler)
+        self._collection = Plaquettes
+        self._extended_collection = ExtendedPlaquetteCollection
+        self._realignment = make_fixed_bulk_realignment_plaquette
         self._schedule_family = schedule_family
+
+    def as_specs(self):
+        """Return a generator of descriptions for the built-in physical policy.
+
+        Custom translators and passes retain their explicit legacy Stim path;
+        their transformed footprint cannot be inferred from RPNG parameters.
+        """
+        if (
+            type(self._mapper._translator) is not DefaultRPNGTranslator
+            or self._mapper._compiler is not IdentityPlaquetteCompiler
+        ):
+            return self
+        generator = copy(self)
+        generator._mapper = PlaquetteSpecMapper(self._mapper._translator._measurement_schedule)
+        generator._collection = PlaquetteSpecs
+        generator._extended_collection = ExtendedSpecCollection
+        generator._realignment = RealignmentPlaquetteSpec
+        return generator
 
     def _not_implemented_exception(self) -> NotImplementedError:
         calling_method_name = inspect.stack(context=0)[1].function
@@ -292,7 +318,7 @@ class FixedBulkConventionGenerator:
 
         """
         return {
-            b: (ExtendedPlaquetteCollection.from_basis(b, reset, measurement, False)) for b in Basis
+            b: (self._extended_collection.from_basis(b, reset, measurement, False)) for b in Basis
         }
 
     ############################################################
@@ -1364,14 +1390,14 @@ class FixedBulkConventionGenerator:
 
         """
         # plaquettes at the bulk
-        x_bulk = make_fixed_bulk_realignment_plaquette(
+        x_bulk = self._realignment(
             stabilizer_basis=Basis.X,
             z_orientation=z_orientation,
             mq_reset=Basis.X,
             mq_measurement=Basis.Z,
             debug_basis=PauliBasis.X,
         )
-        z_bulk = make_fixed_bulk_realignment_plaquette(
+        z_bulk = self._realignment(
             stabilizer_basis=Basis.Z,
             z_orientation=z_orientation,
             mq_reset=Basis.Z,
@@ -1380,14 +1406,14 @@ class FixedBulkConventionGenerator:
         )
         # plaquettes at the right boundary of the template
         right_boundary_basis = Basis.Z if z_orientation == Orientation.HORIZONTAL else Basis.X
-        x_right = make_fixed_bulk_realignment_plaquette(
+        x_right = self._realignment(
             stabilizer_basis=Basis.X,
             z_orientation=z_orientation,
             mq_reset=right_boundary_basis,
             mq_measurement=right_boundary_basis,
             debug_basis=PauliBasis.X if z_orientation == Orientation.VERTICAL else None,
         ).project_on_boundary(PlaquetteOrientation.RIGHT)
-        z_right = make_fixed_bulk_realignment_plaquette(
+        z_right = self._realignment(
             stabilizer_basis=Basis.Z,
             z_orientation=z_orientation,
             mq_reset=right_boundary_basis,
@@ -1395,14 +1421,14 @@ class FixedBulkConventionGenerator:
             debug_basis=PauliBasis.Z if z_orientation == Orientation.HORIZONTAL else None,
         ).project_on_boundary(PlaquetteOrientation.RIGHT)
         down_boundary_basis = right_boundary_basis.flipped()
-        x_down = make_fixed_bulk_realignment_plaquette(
+        x_down = self._realignment(
             stabilizer_basis=Basis.X,
             z_orientation=z_orientation,
             mq_reset=down_boundary_basis,
             mq_measurement=down_boundary_basis,
             debug_basis=PauliBasis.X if z_orientation == Orientation.HORIZONTAL else None,
         ).project_on_boundary(PlaquetteOrientation.DOWN)
-        z_down = make_fixed_bulk_realignment_plaquette(
+        z_down = self._realignment(
             stabilizer_basis=Basis.Z,
             z_orientation=z_orientation,
             mq_reset=down_boundary_basis,
@@ -1413,7 +1439,7 @@ class FixedBulkConventionGenerator:
             {9: z_bulk, 10: x_bulk, 11: z_right, 12: x_right, 13: z_down, 14: x_down},
             default_value=self._mapper.get_plaquette(RPNGDescription.empty()),
         )
-        return Plaquettes(realign_mapping)
+        return self._collection(realign_mapping)
 
     ########################################
     #                X pipe                #
@@ -1692,7 +1718,7 @@ class FixedBulkConventionGenerator:
             otb: getattr(extended_plaquette_collection[otb], bdy_plaquette),
         }
         if sbb == Basis.X:
-            plqts = Plaquettes(
+            plqts = self._collection(
                 FrozenDefaultDict(
                     {
                         1: boundary[tlb].top,
@@ -1705,7 +1731,7 @@ class FixedBulkConventionGenerator:
                 )
             )
         elif sbb == Basis.Z:
-            plqts = Plaquettes(
+            plqts = self._collection(
                 FrozenDefaultDict(
                     {
                         2: boundary[tlb].top,

@@ -5,9 +5,17 @@ from tqec.compile.blocks.layers.atomic.plaquettes import PlaquetteLayer
 from tqec.compile.blocks.layers.atomic.spec_plaquettes import SpecPlaquetteLayer
 from tqec.compile.blocks.layers.composed.repeated import RepeatedLayer
 from tqec.compile.blocks.layers.composed.sequenced import SequencedLayers
+from tqec.compile.specs.library.generators.extended_stabilizers import ExtendedPlaquetteCollection
+from tqec.compile.specs.library.generators.fixed_bulk import make_fixed_bulk_realignment_plaquette
+from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler
 from tqec.plaquette.plaquette import Plaquette, Plaquettes
 from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
-from tqec.plaquette.spec import PlaquetteSpec, RPNGPlaquetteSpec
+from tqec.plaquette.spec import (
+    ExtendedPlaquetteSpec,
+    PlaquetteSpec,
+    RealignmentPlaquetteSpec,
+    RPNGPlaquetteSpec,
+)
 from tqec.utils.exceptions import TQECError
 
 
@@ -26,6 +34,29 @@ class StimMaterializer:
                 spec.measurement_schedule, DefaultRPNGTranslator(spec.measurement_schedule)
             )
             result = translator.translate(spec.description)
+            if spec.compiled:
+                result = IdentityPlaquetteCompiler.compile(result)
+        elif isinstance(spec, ExtendedPlaquetteSpec):
+            collection = ExtendedPlaquetteCollection.from_description(
+                spec.description,
+                spec.reset,
+                spec.measurement,
+                spec.is_reversed,
+                spec.orientation,
+                spec.data_operations,
+            )
+            pair = getattr(collection, spec.shape)
+            result = pair.bottom if spec.second else pair.top
+        elif isinstance(spec, RealignmentPlaquetteSpec):
+            result = make_fixed_bulk_realignment_plaquette(
+                spec.stabilizer_basis,
+                spec.z_orientation,
+                spec.mq_reset,
+                spec.mq_measurement,
+                spec.debug_basis,
+            )
+            if spec.boundary is not None:
+                result = result.project_on_boundary(spec.boundary)
         else:
             raise TQECError(f"Stim lowering does not support {type(spec).__name__}.")
         self._plaquettes[spec] = result

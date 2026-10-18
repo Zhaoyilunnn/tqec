@@ -19,11 +19,17 @@ class PlaquetteSpecMapper:
 
     def get_spec(self, description: RPNGDescription) -> RPNGPlaquetteSpec:
         """Preserve the description and timing without constructing a circuit."""
-        return RPNGPlaquetteSpec(description, self.measurement_schedule)
+        return RPNGPlaquetteSpec(description, self.measurement_schedule, compiled=True)
+
+    def get_plaquette(self, description: RPNGDescription) -> RPNGPlaquetteSpec:
+        """Provide the construction generator's mapper interface."""
+        return self.get_spec(description)
 
     def __call__(
         self, generator: Callable[P, FrozenDefaultDict[int, RPNGDescription]]
     ) -> Callable[P, PlaquetteSpecs]:
+        """Wrap the existing description generator without circuit translation."""
+
         @wraps(generator)
         def wrapped(*args: P.args, **kwargs: P.kwargs) -> PlaquetteSpecs:
             return PlaquetteSpecs(generator(*args, **kwargs).map_values(self.get_spec))

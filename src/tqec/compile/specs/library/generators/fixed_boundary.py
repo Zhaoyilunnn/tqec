@@ -7,6 +7,7 @@ obtained for the fixed boundary convention.
 
 from __future__ import annotations
 
+from copy import copy
 from typing import Final, Literal
 
 from tqec.compile.specs.base import CubeSpec
@@ -26,11 +27,15 @@ from tqec.compile.specs.library.generators.utils import (
     should_measure_spatial_arm_data,
     should_reset_spatial_arm_data,
 )
-from tqec.plaquette.compilation.base import PlaquetteCompiler
+from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler, PlaquetteCompiler
 from tqec.plaquette.enums import PlaquetteOrientation
+from tqec.plaquette.extended_specs import ExtendedSpecCollection
 from tqec.plaquette.plaquette import Plaquette, Plaquettes
 from tqec.plaquette.rpng.rpng import ExtendedBasis, RPNGDescription
 from tqec.plaquette.rpng.translators.base import RPNGTranslator
+from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
+from tqec.plaquette.spec import PlaquetteSpecs
+from tqec.plaquette.spec_mapper import PlaquetteSpecMapper
 from tqec.templates.base import RectangularTemplate
 from tqec.templates.qubit import (
     QubitHorizontalBorders,
@@ -54,6 +59,25 @@ class FixedBoundaryConventionGenerator:
 
         """
         self._mapper = PlaquetteMapper(translator, compiler)
+        self._collection = Plaquettes
+        self._extended_collection = ExtendedPlaquetteCollection
+
+    def as_specs(self):
+        """Return a generator of descriptions for the built-in physical policy.
+
+        Custom translators and passes retain their explicit legacy Stim path;
+        their transformed footprint cannot be inferred from RPNG parameters.
+        """
+        if (
+            type(self._mapper._translator) is not DefaultRPNGTranslator
+            or self._mapper._compiler is not IdentityPlaquetteCompiler
+        ):
+            return self
+        generator = copy(self)
+        generator._mapper = PlaquetteSpecMapper(self._mapper._translator._measurement_schedule)
+        generator._collection = PlaquetteSpecs
+        generator._extended_collection = ExtendedSpecCollection
+        return generator
 
     def get_bulk_rpng_descriptions(
         self,
@@ -241,7 +265,7 @@ class FixedBoundaryConventionGenerator:
 
         """
         return {
-            b: ExtendedPlaquetteCollection.from_basis(
+            b: self._extended_collection.from_basis(
                 b,
                 reset,
                 measurement,
@@ -1339,7 +1363,7 @@ class FixedBoundaryConventionGenerator:
                 else boundary_collection.left_half_rectangle
             )
             plaquettes |= {2: boundary.top, 4: boundary.bottom}
-        return Plaquettes(
+        return self._collection(
             FrozenDefaultDict(
                 plaquettes,
                 default_value=self._mapper.get_plaquette(RPNGDescription.empty()),

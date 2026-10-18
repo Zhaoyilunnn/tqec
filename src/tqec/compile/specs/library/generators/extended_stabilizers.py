@@ -14,6 +14,7 @@ from tqec.compile.specs.library.generators.constants import EXTENDED_PLAQUETTE_S
 from tqec.plaquette.plaquette import Plaquette
 from tqec.plaquette.qubit import PlaquetteQubits
 from tqec.plaquette.rpng.rpng import RPNG, PauliBasis, RPNGDescription
+from tqec.plaquette.spec import DataQubitOperations, ExtendedPlaquetteDataQubitsOperations
 from tqec.utils.enums import Basis, Orientation
 from tqec.utils.exceptions import TQECError
 from tqec.utils.instructions import MEASUREMENT_INSTRUCTION_NAMES, RESET_INSTRUCTION_NAMES
@@ -22,24 +23,6 @@ from tqec.visualisation.computation.plaquette.extended import (
     ExtendedPlaquettePosition,
     ExtendedPlaquetteType,
 )
-
-
-@dataclass(frozen=True)
-class DataQubitOperations:
-    """Reset and measurement applied to data qubits of one plaquette."""
-
-    reset: Basis | None = None
-    measurement: Basis | None = None
-
-
-@dataclass(frozen=True)
-class ExtendedPlaquetteDataQubitsOperations:
-    """Operations on UP/DOWN (vertical) or LEFT/RIGHT (horizontal), respectively."""
-
-    # UP/LEFT
-    first: DataQubitOperations = DataQubitOperations()
-    # DOWN/RIGHT
-    second: DataQubitOperations = DataQubitOperations()
 
 
 def _get_spatial_cube_arm_name(
