@@ -19,7 +19,7 @@ class PlaquetteSpecMapper:
 
     def get_spec(self, description: RPNGDescription) -> RPNGPlaquetteSpec:
         """Preserve the description and timing without constructing a circuit."""
-        return RPNGPlaquetteSpec(description, self.measurement_schedule, compiled=True)
+        return RPNGPlaquetteSpec(description, self.measurement_schedule)
 
     def get_plaquette(self, description: RPNGDescription) -> RPNGPlaquetteSpec:
         """Provide the construction generator's mapper interface."""

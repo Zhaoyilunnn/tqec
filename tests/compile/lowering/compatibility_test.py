@@ -9,8 +9,11 @@ from tqec.compile.detectors.database import DetectorDatabase
 from tqec.compile.lowering.stim import StimMaterializer
 from tqec.compile.specs.library.fixed_bulk import FixedBulkCubeBuilder, FixedBulkPipeBuilder
 from tqec.computation.block_graph import BlockGraph
-from tqec.plaquette.compilation.base import PlaquetteCompiler
+from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler, PlaquetteCompiler
+from tqec.plaquette.compilation.passes.scheduling import ChangeSchedulePass
+from tqec.plaquette.rpng.rpng import RPNGDescription
 from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
+from tqec.utils.instructions import MEASUREMENT_INSTRUCTION_NAMES, RESET_INSTRUCTION_NAMES
 from tqec.utils.noise_model import NoiseModel
 from tqec.utils.position import Position3D
 
@@ -63,7 +66,11 @@ def test_custom_translator_and_passes_are_preserved() -> None:
             return super().translate(rpng_description)
 
     translator = CountingTranslator()
-    compiler = PlaquetteCompiler("CUSTOM", (), lambda instructions: instructions)
+    compiler = PlaquetteCompiler(
+        "CUSTOM",
+        (ChangeSchedulePass({i: i for i in range(8)} | {8: 10}),),
+        lambda instructions: instructions,
+    )
     convention = Convention(
         "fixed_bulk",
         ConventionTriplet(
@@ -77,7 +84,7 @@ def test_custom_translator_and_passes_are_preserved() -> None:
     tree = compiled.to_layer_tree()
     materialized = StimMaterializer().materialize_layer(tree._root._layer)
     layer = materialized.layer_sequence[0].layer_sequence[0]
-    assert layer.measurement_schedule == 8
+    assert layer.measurement_schedule == 10
     for child in layer.layers.values():
         assert all(p.name.startswith("CUSTOM(") for p in child.plaquettes.collection.values())
     circuit = compiled.generate_stim_circuit(1, database_path=None)
@@ -94,3 +101,19 @@ def test_visualization_and_serialization_materialize_before_use() -> None:
     root = tree._root
     tree._materialize_stim()
     assert tree._root is root
+
+
+def test_bare_translation_and_identity_policy() -> None:
+    description = RPNGDescription.from_string("-x1- -x2- -x3- -x4-")
+    bare = DefaultRPNGTranslator().translate(description)
+    identity = IdentityPlaquetteCompiler.compile(bare)
+    assert bare.name == str(description)
+    assert identity.name == f"ID({description})"
+    assert bare.mergeable_instructions == (
+        frozenset({"H"}) | MEASUREMENT_INSTRUCTION_NAMES | RESET_INSTRUCTION_NAMES
+    )
+    assert identity.mergeable_instructions == (
+        bare.mergeable_instructions | MEASUREMENT_INSTRUCTION_NAMES | RESET_INSTRUCTION_NAMES
+    )
+    assert identity.circuit == bare.circuit
+    assert identity.debug_information == bare.debug_information

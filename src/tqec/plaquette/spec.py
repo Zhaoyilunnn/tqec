@@ -31,7 +31,6 @@ class RPNGPlaquetteSpec(_SpecGeometry):
 
     description: RPNGDescription
     measurement_schedule: int = MEASUREMENT_SCHEDULE
-    compiled: bool = False
 
     @property
     def used_qubits(self) -> frozenset[GridQubit]:

@@ -35,8 +35,7 @@ class StimMaterializer:
                 spec.measurement_schedule, DefaultRPNGTranslator(spec.measurement_schedule)
             )
             result = translator.translate(spec.description)
-            if spec.compiled:
-                result = IdentityPlaquetteCompiler.compile(result)
+            result = IdentityPlaquetteCompiler.compile(result)
         elif isinstance(spec, ExtendedPlaquetteSpec):
             collection = ExtendedPlaquetteCollection.from_description(
                 spec.description,

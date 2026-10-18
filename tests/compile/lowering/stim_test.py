@@ -27,7 +27,7 @@ def test_rpng_materialization_is_exact(description: str, schedule: int) -> None:
     spec = RPNGPlaquetteSpec(rpng, schedule)
     lowering = StimMaterializer()
     actual = lowering.materialize_plaquette(spec)
-    expected = DefaultRPNGTranslator(schedule).translate(rpng)
+    expected = IdentityPlaquetteCompiler.compile(DefaultRPNGTranslator(schedule).translate(rpng))
     assert actual.to_dict() == expected.to_dict()
     assert actual.circuit.qubits == spec.used_qubits
     assert actual.num_moments == spec.num_moments
