@@ -1,7 +1,7 @@
 """Close proven fragment boundary relations using actual instance records."""
 
 from tqec.compile.lowering.base import UnsupportedLoweringError
-from tqec.compile.lowering.bloq.flows import closed_relations, fragment_flows
+from tqec.compile.lowering.bloq.flows import _dependencies, closed_relations, fragment_flows
 from tqec.compile.lowering.bloq.measurements import MeasurementRegistry, indices
 from tqec.compile.lowering.bloq.text import coordinate
 
@@ -17,7 +17,7 @@ def _pauli_text(x, z, qubits):
     )
 
 
-def qec_relations(all_moments, registry: MeasurementRegistry):
+def qec_relations(all_moments, registry: MeasurementRegistry, regions):
     """Return template flows, local checks and checks spanning adjacent instances."""
     qubits = sorted(
         {
@@ -49,8 +49,32 @@ def qec_relations(all_moments, registry: MeasurementRegistry):
                 template_tables[instance].append(
                     f"flow {start} -> {end}{measurements}" + (" sign -1" if sign else "")
                 )
-        for family in (creation, destruction, previous + destruction):
-            for mask, sign in closed_relations(family, len(qubits)):
+        candidates = [
+            relation
+            for family in (creation, destruction, previous + destruction)
+            for relation in closed_relations(family, len(qubits))
+        ]
+        for center, (rx, ry), syndrome in regions[instance]:
+            allowed = 0
+            owned = 0
+            for record, (owner, _local, q, _t) in enumerate(registry.outputs):
+                if owner not in (instance - 1, instance):
+                    continue
+                if abs(q[0] - center[0]) <= rx and abs(q[1] - center[1]) <= ry:
+                    allowed |= 1 << record
+                if q in syndrome:
+                    owned |= 1 << record
+            # Intersect the proved relation space with this local neighborhood.
+            # Do not merely discard long basis vectors: their combinations can
+            # contain short, valid stabilizer checks.
+            for combination in _dependencies([mask & ~allowed for mask, _ in candidates]):
+                mask = sign = 0
+                for i in indices(combination):
+                    parity, negative = candidates[i]
+                    mask ^= parity
+                    sign ^= negative
+                if not mask or not mask & owned:
+                    continue
                 if mask in seen:
                     if seen[mask] != sign:
                         raise UnsupportedLoweringError(
@@ -59,12 +83,9 @@ def qec_relations(all_moments, registry: MeasurementRegistry):
                     continue
                 seen[mask] = sign
                 records = [registry.outputs[i] for i in indices(mask)]
-                # The latest owned measurement anchors the check in space; node
-                # order supplies time. Bloq detector coordinates are two-dimensional.
-                center = max(records, key=lambda item: (item[0], item[3], -item[1]))[2]
                 local = all(owner == instance for owner, _, _, _ in records)
                 parity = registry.parity(mask, local_instance=instance if local else None)
                 line = f"detector {'-' if sign else ''}{parity} @ {coordinate(center)}"
                 (template_tables if local else node_tables)[instance].append(line)
         previous = creation
-    return template_tables, node_tables
+    return template_tables, node_tables, list(seen)

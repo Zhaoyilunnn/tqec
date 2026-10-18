@@ -27,7 +27,9 @@ def physical_moments(circuit):
     return [sorted(moment) for moment in result]
 
 
-@pytest.mark.parametrize("case", ("memory_x", "memory_z", "temporal", "spatial", "cnot"))
+@pytest.mark.parametrize(
+    "case", ("memory_x", "memory_z", "temporal", "spatial", "cnot", "junction", "hadamard")
+)
 @pytest.mark.parametrize("convention", CONVENTIONS)
 @pytest.mark.parametrize("k", (1, 2))
 def test_physical_differential(case, convention, k) -> None:

@@ -7,7 +7,8 @@ from tqec.compile.blocks.layers.composed.repeated import RepeatedLayer
 from tqec.compile.blocks.layers.composed.sequenced import SequencedLayers
 from tqec.compile.lowering.base import UnsupportedLoweringError
 from tqec.compile.lowering.bloq.detectors import qec_relations
-from tqec.compile.lowering.bloq.layout import layout_moments
+from tqec.compile.lowering.bloq.flows import _dependencies
+from tqec.compile.lowering.bloq.layout import detector_regions, layout_moments
 from tqec.compile.lowering.bloq.measurements import MeasurementRegistry
 from tqec.compile.lowering.bloq.observables import observable_nodes
 from tqec.compile.lowering.bloq.schedule import circuit_text
@@ -17,22 +18,48 @@ from tqec.utils.exceptions import TQECError
 from tqec.utils.scale import round_or_fail
 
 
-def _layers(layer, k: int, path: tuple = ()):
+def _events(layer, k: int, path: tuple = ()):
     if isinstance(layer, LayoutLayer):
         yield path, layer
     elif isinstance(layer, SequencedLayers):
-        for index, child in enumerate(layer.layer_sequence):
-            yield from _layers(child, k, (*path, index))
+        children = layer.layer_sequence
+        for index, child in enumerate(children):
+            yield from _events(child, k, (*path, index))
+            if index + 1 < len(children) and not isinstance(children[index + 1], RepeatedLayer):
+                yield None
     elif isinstance(layer, RepeatedLayer):
         count = round_or_fail(layer.repetitions(k))
         if count < 0:
             raise UnsupportedLoweringError("bloq", "repeat", "negative count", path)
         for index in range(count):
-            yield from _layers(layer.internal_layer, k, (*path, "repeat", index))
+            yield None
+            yield from _events(layer.internal_layer, k, (*path, "repeat", index))
     else:
         raise UnsupportedLoweringError(
             "bloq", type(layer).__name__, "requires a spec-backed layout", path
         )
+
+
+def _layers(layer, k: int):
+    return (event for event in _events(layer, k) if event is not None)
+
+
+def _timed_layers(layer, k: int):
+    ticks = 0
+    first = True
+    for event in _events(layer, k):
+        if event is None:
+            ticks += 1
+            continue
+        if not first and ticks == 0:
+            raise UnsupportedLoweringError(
+                "bloq", "time boundary", "adjacent slices share a moment", event[0]
+            )
+        # Bloq terminates each template with one TICK. Preserve extra separators
+        # contributed by nested sequences, including zero-repeat children.
+        yield event, ticks if first else ticks - 1
+        ticks = 0
+        first = False
 
 
 def emit_bloq_text(
@@ -55,13 +82,15 @@ def emit_bloq_text(
     all_moments = []
     circuits = []
     registry = MeasurementRegistry()
-    for index, (path, layer) in enumerate(_layers(tree.construction_root, k)):
+    for index, ((path, layer), padding) in enumerate(_timed_layers(tree.construction_root, k)):
         if index >= max_instances:
             raise UnsupportedLoweringError(
                 "bloq", "repeat expansion", f"exceeds {max_instances} instances", path
             )
         layers.append((path, layer))
-        moments = layout_moments(layer, k, reschedule_measurements, path)
+        moments = [[] for _ in range(padding)] + layout_moments(
+            layer, k, reschedule_measurements, path
+        )
         all_moments.append(moments)
         lines, records = circuit_text(moments)
         circuits.append(lines)
@@ -69,7 +98,15 @@ def emit_bloq_text(
     if gates_only:
         tables, checks = ([[] for _ in layers], [[] for _ in layers])
     else:
-        tables, checks = qec_relations(all_moments, registry)
+        tables, checks, detector_parities = qec_relations(
+            all_moments, registry, [list(detector_regions(layer, k)) for _, layer in layers]
+        )
+        observable_lines, logical_parities = observable_nodes(tree, k, layers, registry)
+        for relation in _dependencies(detector_parities + logical_parities):
+            if relation >> len(detector_parities):
+                raise UnsupportedLoweringError(
+                    "bloq", "logical boundary", "observable is contained in the detector space"
+                )
     pool: dict = {}
     nodes = []
     for index, (lines, side_tables) in enumerate(zip(circuits, tables)):
@@ -81,7 +118,7 @@ def emit_bloq_text(
         if index:
             nodes.append(f"  n{index - 1} -> n{index} order")
     if not gates_only:
-        nodes.extend(observable_nodes(tree, k, layers, registry))
+        nodes.extend(observable_lines)
     capability = "gates-only" if gates_only else "static-clifford"
     metadata = [
         "BLOQIR 1",
