@@ -11,6 +11,8 @@ from tqec.circuit.schedule.circuit import ScheduledCircuit
 from tqec.compile.blocks.enums import SpatialBlockBorder
 from tqec.compile.blocks.layers.atomic.base import BaseLayer
 from tqec.compile.blocks.layers.atomic.plaquettes import PlaquetteLayer
+from tqec.compile.blocks.layers.atomic.spec_plaquettes import SpecPlaquetteLayer
+from tqec.compile.blocks.layers.atomic.template import TemplateLayer
 from tqec.compile.blocks.positioning import (
     LayoutCubePosition2D,
     LayoutPipePosition2D,
@@ -18,6 +20,7 @@ from tqec.compile.blocks.positioning import (
 )
 from tqec.compile.generation import generate_circuit
 from tqec.plaquette.plaquette import Plaquette, Plaquettes
+from tqec.plaquette.spec import PlaquetteSpecs
 from tqec.templates.enums import TemplateBorder
 from tqec.templates.layout import LayoutTemplate
 from tqec.utils.array import to2dlist
@@ -193,19 +196,28 @@ class LayoutLayer(BaseLayer):
                 f"Found a layer that is not an instance of {PlaquetteLayer.__name__}. "
                 "Detector computation is not implemented (yet) for this case."
             )
-        cubes: dict[BlockPosition2D, PlaquetteLayer] = {
+        return self._to_template_and_collection()
+
+    def to_template_and_specs(self) -> tuple[LayoutTemplate, PlaquetteSpecs]:
+        """Merge construction descriptions using the same spatial border mappings."""
+        if not all(isinstance(layer, SpecPlaquetteLayer) for layer in self.layers.values()):
+            raise TQECError("Expected only specification layers for description merging.")
+        return self._to_template_and_collection()
+
+    def _to_template_and_collection(self):
+        cubes: dict[BlockPosition2D, TemplateLayer] = {
             pos.to_block_position(): layer
             for pos, layer in self.layers.items()
-            if isinstance(pos, LayoutCubePosition2D) and isinstance(layer, PlaquetteLayer)
+            if isinstance(pos, LayoutCubePosition2D) and isinstance(layer, TemplateLayer)
         }
         template_dict: Final = {pos: layer.template for pos, layer in cubes.items()}
         plaquettes_dict = {pos: layer.plaquettes for pos, layer in cubes.items()}
 
         # Add plaquettes from each pipe to the plaquette_dict.
-        pipes: dict[tuple[BlockPosition2D, BlockPosition2D], PlaquetteLayer] = {
+        pipes: dict[tuple[BlockPosition2D, BlockPosition2D], TemplateLayer] = {
             pos.to_pipe(): layer
             for pos, layer in self.layers.items()
-            if isinstance(pos, LayoutPipePosition2D) and isinstance(layer, PlaquetteLayer)
+            if isinstance(pos, LayoutPipePosition2D) and isinstance(layer, TemplateLayer)
         }
         for (u, v), pipe_layer in pipes.items():
             pipe_direction = Direction3D.from_neighbouring_positions(u.to_3d(), v.to_3d())
@@ -241,7 +253,7 @@ class LayoutLayer(BaseLayer):
                 )
 
         template = LayoutTemplate(template_dict)
-        return template, template.get_global_plaquettes(plaquettes_dict)
+        return template, template.get_global_plaquette_collection(plaquettes_dict)
 
     def qubits(self, k: int) -> set[GridQubit]:
         """Return the qubits used by the circuit representing the layer at scale ``k``.

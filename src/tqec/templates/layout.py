@@ -193,6 +193,10 @@ class LayoutTemplate(Template):
             :meth:`~tqec.compile.generation.generate_circuit`.
 
         """
+        return self.get_global_plaquette_collection(individual_plaquettes)
+
+    def get_global_plaquette_collection(self, individual_plaquettes):
+        """Merge either concrete plaquettes or specs with the template's index mapping."""
         missing_positions = frozenset(self._layout.keys()) - frozenset(individual_plaquettes.keys())
         if missing_positions:
             raise TQECError(
@@ -215,7 +219,8 @@ class LayoutTemplate(Template):
                 f"{unique_default_values}. Cannot pick one for the merged "
                 f"{Plaquettes.__name__} instance."
             )
-        return Plaquettes(
+        collection_type = type(next(iter(individual_plaquettes.values())))
+        return collection_type(
             FrozenDefaultDict(global_plaquettes, default_value=next(iter(unique_default_values)))
         )
 
