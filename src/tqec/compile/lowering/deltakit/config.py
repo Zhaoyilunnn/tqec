@@ -8,7 +8,7 @@ from typing import Literal
 class DeltakitOptions:
     """Select annotation semantics without silently dropping logical observables."""
 
-    annotation_mode: Literal["none", "explicit", "auto"] = "none"
+    annotation_mode: Literal["none", "explicit", "auto"] = "explicit"
     include_observables: bool | None = None
     repeat_mode: Literal["unroll"] = "unroll"
     strict_schedule: bool = True

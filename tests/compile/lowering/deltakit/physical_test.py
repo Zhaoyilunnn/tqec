@@ -17,7 +17,10 @@ def test_physical_schedule(case, convention, k) -> None:
     compiled = compile_block_graph(make_graph(case), CONVENTIONS[convention])
     tree = compiled.to_layer_tree()
     result = compile_to_deltakit(
-        tree, k, options=DeltakitOptions(include_observables=False), export="stim"
+        tree,
+        k,
+        options=DeltakitOptions(annotation_mode="none", include_observables=False),
+        export="stim",
     )
     actual = stim.Circuit(result.program)
     expected = compiled.generate_stim_circuit(

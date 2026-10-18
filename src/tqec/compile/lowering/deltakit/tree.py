@@ -48,7 +48,7 @@ def _timed_layers(layer, k: int, max_instances: int):
             raise UnsupportedLoweringError(
                 "deltakit", "time boundary", "adjacent slices share a moment", event[0]
             )
-        # Bloq terminates each template with one TICK. Preserve extra separators
+        # Native export terminates each nonempty moment with one TICK. Preserve extra separators
         # contributed by nested sequences, including zero-repeat children.
         yield event, ticks if first else ticks - 1
         ticks = 0

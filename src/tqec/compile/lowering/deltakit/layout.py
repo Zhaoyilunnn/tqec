@@ -1,4 +1,4 @@
-"""Apply existing template indexing and seam substitutions before text emission."""
+"""Apply existing template indexing and seam substitutions before native emission."""
 
 from tqec.compile.blocks.layers.atomic.layout import LayoutLayer
 from tqec.compile.blocks.layers.atomic.spec_plaquettes import SpecPlaquetteLayer
