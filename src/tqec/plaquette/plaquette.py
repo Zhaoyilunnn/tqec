@@ -7,8 +7,6 @@ from collections.abc import Callable, Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Literal, cast
 
-import stim
-
 from tqec.circuit.qubit import GridQubit
 from tqec.circuit.schedule import ScheduledCircuit
 from tqec.plaquette.debug import PlaquetteDebugInformation

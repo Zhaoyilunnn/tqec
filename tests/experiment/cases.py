@@ -1,22 +1,10 @@
-"""Exact output references captured before changing construction representation.
+"""Frozen input graphs shared by the baseline, experiment and timing controls."""
 
-Regenerate deliberately with ``TQEC_UPDATE_BASELINES=1 uv run pytest -q
- tests/compile/decoupling_baseline_test.py`` on the recorded upstream commit.
-"""
-
-import hashlib
-import json
-import os
-from pathlib import Path
-
-
-from tqec.compile.compile import compile_block_graph
 from tqec.compile.convention import (
     FIXED_BOUNDARY_CONVENTION,
     FIXED_BULK_CONVENTION,
     fixed_bulk_convention,
 )
-from tqec.compile.detectors.database import DetectorDatabase
 from tqec.compile.specs.library.generators.schedules import DIAGONAL_SCHEDULE_FAMILY
 from tqec.computation.block_graph import BlockGraph
 from tqec.gallery.cnot import cnot
@@ -47,5 +35,3 @@ def make_graph(case: str) -> BlockGraph:
         second = graph.add_cube(position, "ZXX" if case == "hadamard" else "XZZ")
         graph.add_pipe(first, second)
     return graph
-
-

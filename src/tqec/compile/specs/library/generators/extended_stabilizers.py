@@ -4,7 +4,6 @@ from collections.abc import Sequence
 from dataclasses import dataclass, replace
 from typing import Literal, cast
 
-
 from tqec.circuit.moment import Moment
 from tqec.circuit.qubit import GridQubit
 from tqec.circuit.schedule.circuit import ScheduledCircuit

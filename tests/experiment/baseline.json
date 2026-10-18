@@ -3,252 +3,420 @@
     "physical": "bdc907060855e793c114c39dbc63c0a3642ded4f53e7881368aa8790f3a87c69",
     "measurements": 33,
     "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
-    "stim": "880c131035825f5847975cc957a9cb86966e0b21455ab6f56bca5dc727b4d3e7"
+    "stim": "880c131035825f5847975cc957a9cb86966e0b21455ab6f56bca5dc727b4d3e7",
+    "detector_space": "89052d7d8fdb9ffe27d30a0f2040b6497bcfe865961fa0644ed16563cbc147a1",
+    "detector_rank": 24,
+    "observables": "0f357082daf20185c2a381501d89b73970c44eabf6793aaa9cbed9ddf499d6be",
+    "coordinate_set": "0098f47e9db0c239c5f7859c86073442b176046d0c3cecb42eff8222c514c727"
   },
   "bulk-memory_x-2": {
     "physical": "6e74cf0bbccb78f674b132cc2b656eb72ace50fe4a02311e3fd409757606cd6e",
     "measurements": 145,
     "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
-    "stim": "b8cd34ecec19af5f1bc893d04dad103a032a1d091ae576e8613d1e5ccf14f5b0"
+    "stim": "b8cd34ecec19af5f1bc893d04dad103a032a1d091ae576e8613d1e5ccf14f5b0",
+    "detector_space": "823da583fbac88b4a0e8a427f9be1617907a005e3b9c323eaf824d41c522cba6",
+    "detector_rank": 120,
+    "observables": "d0ddaedfe17fa480f38ca84e8a864db24abf4a69710016a84166faab2c92df8e",
+    "coordinate_set": "052f8dbd09c7943367a9df9f02fbfe0f1c3b242d8590e93a910256818d74c0d8"
   },
   "bulk-memory_z-1": {
     "physical": "0c26987e6567d4c1c0036b55a296fdb7902fd2cd177143a826573642cb0b1c55",
     "measurements": 33,
     "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
-    "stim": "2971d9cce0b1482f21b70c9210b48044a579a5b183c85a2ec2793912b6bbbdd8"
+    "stim": "2971d9cce0b1482f21b70c9210b48044a579a5b183c85a2ec2793912b6bbbdd8",
+    "detector_space": "f81072862299b5f7590cfb340a68407a760f7f6522aeb4b82b7d24cf2dda4b83",
+    "detector_rank": 24,
+    "observables": "c4b9216c724163ff9a6722d9457a763372a4baac23ed44f7589864d3b315923a",
+    "coordinate_set": "0098f47e9db0c239c5f7859c86073442b176046d0c3cecb42eff8222c514c727"
   },
   "bulk-memory_z-2": {
     "physical": "73073a762d0970b338591d41c9d79fe8c934aeb6d42963ef174fd937d09f84de",
     "measurements": 145,
     "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
-    "stim": "e0c1bccbaef0865cab073850178afb9f1bbe45744009b1b8b1f4d81f85b07ca5"
+    "stim": "e0c1bccbaef0865cab073850178afb9f1bbe45744009b1b8b1f4d81f85b07ca5",
+    "detector_space": "446de2cbf17a9f4a95a0ec8ca13b9a15046e89059a781002c3ec9fa117c3288f",
+    "detector_rank": 120,
+    "observables": "4bcdadc759bce155e49d3e22e702b92f2ba6261dfca003c4de6fb695656fa583",
+    "coordinate_set": "052f8dbd09c7943367a9df9f02fbfe0f1c3b242d8590e93a910256818d74c0d8"
   },
   "bulk-temporal-1": {
     "physical": "d652c523fe9494e5789a1d4ff8120e631c3f44257986673a8b6b7462d3ec0dd5",
     "measurements": 57,
     "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
-    "stim": "1cc9c24c87d52d457bb5439a2ec07f00dfd69dcb4245a7b8cb35f7b58cb59913"
+    "stim": "1cc9c24c87d52d457bb5439a2ec07f00dfd69dcb4245a7b8cb35f7b58cb59913",
+    "detector_space": "01616f9c348b78e80bce2652dc3cafdb6d3dfdbee90302b1fb51581ef004132b",
+    "detector_rank": 48,
+    "observables": "152d6d162e877212bf31054b10b7cd5f2206f3be84bfc372b7ee661b6cd88b32",
+    "coordinate_set": "0098f47e9db0c239c5f7859c86073442b176046d0c3cecb42eff8222c514c727"
   },
   "bulk-temporal-2": {
     "physical": "ad0732177f130455084044a557cc90a061abebc61b2eb0e919a50c27487bd420",
     "measurements": 265,
     "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
-    "stim": "30c9c400fa5c1e188dc1c5440fb5407a3a97b2fd6abecd9263fbba6ebf39ab1a"
+    "stim": "30c9c400fa5c1e188dc1c5440fb5407a3a97b2fd6abecd9263fbba6ebf39ab1a",
+    "detector_space": "fda23726fd66a9e7880fe0c0a51f6a81f3780d92a930caf7f40ba05223710c7e",
+    "detector_rank": 240,
+    "observables": "08373dfcb39abb89ef0462ef9f26e2a216faf4b9dc30e0946a1b9550ec5d24b9",
+    "coordinate_set": "052f8dbd09c7943367a9df9f02fbfe0f1c3b242d8590e93a910256818d74c0d8"
   },
   "bulk-spatial-1": {
     "physical": "7089589a912daa3e9eed836e763a16830363693623ebfb3dff14231cdb5e5631",
     "measurements": 81,
     "qubits": "be00718e72a76d5b028c74885030dc8e951964db2690f7f35818287bce77a99b",
-    "stim": "8a9dc23a49e40459ca99416e4e7fd1284e93d6caf8eadf77c329655fa2475d38"
+    "stim": "8a9dc23a49e40459ca99416e4e7fd1284e93d6caf8eadf77c329655fa2475d38",
+    "detector_space": "2a3051c64428b2e752ceea8786243b91ef60f883d1c1821a31954ce05502c7cb",
+    "detector_rank": 56,
+    "observables": "11e624f24a1e67e7ef68a6b9a276fc6e4e08dc787e9902f85389ecc4a8d94e76",
+    "coordinate_set": "bc55f9f59a7821227a6bcb031a2407292c317cd14115452b5c2a38f4dad40734"
   },
   "bulk-spatial-2": {
     "physical": "9f4019c1f04e87c64d463993e89329d67006138c8d8d87fd179aeb129022bc3c",
     "measurements": 325,
     "qubits": "a9b8508a7c61d18639f17413fde53265417faa699f78bc36e956588b7ea0bf94",
-    "stim": "5d41953ed1b5756f9ad89713004beafc6e9018cd62d65148bdb76edf820406a4"
+    "stim": "5d41953ed1b5756f9ad89713004beafc6e9018cd62d65148bdb76edf820406a4",
+    "detector_space": "9af1e881741219b72fc8cdc996acfa4bfa778fb7ce6767cbfb187fc8c00fd70b",
+    "detector_rank": 264,
+    "observables": "cffd03f6911fc6e04a4f7baa481315de09e81392f22b5b8b49df7b5cdd90572d",
+    "coordinate_set": "e514b110b7ec6f21b3ec3ce90efbe1533332ca6e96d8a4aa50dd84ba0b2b213d"
   },
   "bulk-cnot-1": {
     "physical": "66c45fe1f5d94215531c148d06954e0be472584d827e23c927863164fa993767",
     "measurements": 297,
     "qubits": "6fd5ca8aa835851b0b1fd113201bdc37e10d6c43e8d72723c6b85fdd644afad5",
-    "stim": "d55e3b50d002f6bea66d884276b90560e9d864409a9c9361a7e7015e0fddab86"
+    "stim": "d55e3b50d002f6bea66d884276b90560e9d864409a9c9361a7e7015e0fddab86",
+    "detector_space": "26b29426e3a89d19eba595fc15d48c9ef92015f58e520111ed2a928d1dcedc78",
+    "detector_rank": 256,
+    "observables": "3840de09bd77016ae6bb10eb9d6a31f4d13db45be58ffb62aa83cc896dbb00c9",
+    "coordinate_set": "70257ced1ab7c3b933b572f9c89b051d4ed1d33aab6d39738408194176b45dad"
   },
   "bulk-cnot-2": {
     "physical": "9f5a9744f813b996501eaaea61b2c84ad1c5664f000e38c31813506c563fcbc9",
     "measurements": 1345,
     "qubits": "dab69ba0ee99b97a6a35d438ce1180e6101828d3e4155a687dd9e2d3ef67b0a6",
-    "stim": "4c34eda1878db966f18e2528ef71104c020ebc6ff5ff165e7feabed49d70faa8"
+    "stim": "4c34eda1878db966f18e2528ef71104c020ebc6ff5ff165e7feabed49d70faa8",
+    "detector_space": "22ff9adfe10c03f8e020894553458915dc0b2d63c636422525d136fdc5ba81df",
+    "detector_rank": 1248,
+    "observables": "099c2b5cecff40cb55768efb7c4f6053e586bd0dfe79ae5fa5b3250af8df25a3",
+    "coordinate_set": "da948c94dcd19b9a1d28ec3fbba16520f6bd0eec797000026aaa3985b67d6ae5"
   },
   "bulk-junction-1": {
     "physical": "a398199db295c31b7c14e111f66b18bfded669a5af9f11cc957253bdb4652087",
     "measurements": 171,
     "qubits": "545681313950ed32c816e123df00c50d51cecb7424cfc4c00b5426ecaeecfe7a",
-    "stim": "a5d5f0c69f5537a9e6f3d8068f2e86c9c7405daf989f0e51e0819d7292d01e7f"
+    "stim": "a5d5f0c69f5537a9e6f3d8068f2e86c9c7405daf989f0e51e0819d7292d01e7f",
+    "detector_space": "911ad720b7643885b326adc61849226651eafa500ae96d886c9bd508641eb423",
+    "detector_rank": 114,
+    "observables": "80b7c5c11fcbeacf14550a2cfbd0628338e825146174663e7132dc26441ef5b7",
+    "coordinate_set": "1990c4cd4b2b17bb9a4f70ae99942754a90e0413a7875e9b1bd65a5849622588"
   },
   "bulk-junction-2": {
     "physical": "a4f5bb4be39982a6a5f3cb38d61b486d4304cb9b949010acabcee8eeed3e41bb",
     "measurements": 677,
     "qubits": "5372344d996d70fa14daa1ba4722da528e70e071e561a5f5b5311106081b4d70",
-    "stim": "554b760b30f84cb528756b8c86dc61f7c5352e510fddc4fe89aba8c5f612c0f8"
+    "stim": "554b760b30f84cb528756b8c86dc61f7c5352e510fddc4fe89aba8c5f612c0f8",
+    "detector_space": "c76a5421a18cbfba115e5a62ae640ecc82e39ca5d4ba6c37bee32a1e22d9980e",
+    "detector_rank": 540,
+    "observables": "5ab58ba82ae6e0cc5f9fc88c9db576d9dec229813327699f8eda805dac48ced3",
+    "coordinate_set": "ce693148690f8929d431b57fe4f83c9311e36c79e716fcfa50afff7dc56290c3"
   },
   "bulk-hadamard-1": {
     "physical": "1e62ec7b87f37a5ae3d804e929c31803d2734b680a9a2c5dee905534e2f3067f",
     "measurements": 65,
     "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
-    "stim": "c0ddf45336543e818ac598d4c2e58e4fb686578895cd9fd0245615063231cce7"
+    "stim": "c0ddf45336543e818ac598d4c2e58e4fb686578895cd9fd0245615063231cce7",
+    "detector_space": "5284125294d51de50f1adcdc0300e4540ca226c5eaf61ae2d1e0e79bf4a1eaee",
+    "detector_rank": 56,
+    "observables": "961d7b52efcfa277e6ae5bd959abc27afff841334293dbd5675603d4cb882f4f",
+    "coordinate_set": "0098f47e9db0c239c5f7859c86073442b176046d0c3cecb42eff8222c514c727"
   },
   "bulk-hadamard-2": {
     "physical": "fdec9de757331b089faf31d57f2017c2010bed04749e9dfbc7266e71f4ce92ca",
     "measurements": 289,
     "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
-    "stim": "b650d7d5e08645ed1e10384b13cf0151a5da814c4051d914c695a38ce6c76b60"
+    "stim": "b650d7d5e08645ed1e10384b13cf0151a5da814c4051d914c695a38ce6c76b60",
+    "detector_space": "1842d0ef1cbfbca3ba5fe3c8278e199dc7107e2b81275237f92057b08a6e56a2",
+    "detector_rank": 264,
+    "observables": "22e2c20bac50afe90de24463449fd6d84f1760ac507c6f979c589d719122418f",
+    "coordinate_set": "052f8dbd09c7943367a9df9f02fbfe0f1c3b242d8590e93a910256818d74c0d8"
   },
   "diagonal-memory_x-1": {
     "physical": "1292dfd5e9e840d1e28f66d692066e42159bf27a97b75ce64d88037dd2388cc3",
     "measurements": 33,
     "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
-    "stim": "10ac0568fdaa6d87cdc4d0518eb215eee552753a2c55208155a8d1bf7e9c562a"
+    "stim": "10ac0568fdaa6d87cdc4d0518eb215eee552753a2c55208155a8d1bf7e9c562a",
+    "detector_space": "edab249b8a2b6c3586825eea6c689f3508912863f97b5a9935207f7deab7d4b9",
+    "detector_rank": 24,
+    "observables": "557b0a68fbd0953cc8f55512d91665d0e23e91a96f7af8eb3c00f841db9848e2",
+    "coordinate_set": "0098f47e9db0c239c5f7859c86073442b176046d0c3cecb42eff8222c514c727"
   },
   "diagonal-memory_x-2": {
     "physical": "a2d7202b95ea6d335e401ca94f644c3276a36bc7baed9ff874f90da1f32b0ef5",
     "measurements": 145,
     "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
-    "stim": "1a85a2bd321a4ba7ac79bd052d2e5aab8ceff085b9173b1ede64b94d7297a1d2"
+    "stim": "1a85a2bd321a4ba7ac79bd052d2e5aab8ceff085b9173b1ede64b94d7297a1d2",
+    "detector_space": "1da4862c6ce28051fd9aedf565a8c34ec2cce659e0a2951282ff23e25954d743",
+    "detector_rank": 120,
+    "observables": "6bc2052a34f304ed4bba6c951d10bd31e1dbf5f0cd2ded696ebb3ddeb2a48e8c",
+    "coordinate_set": "052f8dbd09c7943367a9df9f02fbfe0f1c3b242d8590e93a910256818d74c0d8"
   },
   "diagonal-memory_z-1": {
     "physical": "fb05eb5d26086fc054325f5deeba847fd9f758cf966c576ebc6bcd6725cf1f7e",
     "measurements": 33,
     "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
-    "stim": "daa31c5c0b76835338fc17fe1280c3ec6d2086d92935dc16f961d9b50d7b94b7"
+    "stim": "daa31c5c0b76835338fc17fe1280c3ec6d2086d92935dc16f961d9b50d7b94b7",
+    "detector_space": "aba29dce4e6e4f1f6993b163ad10cd7884f74aaf358b1362998d5361e8189519",
+    "detector_rank": 24,
+    "observables": "be5d3195f3d402b02a8bf98dd7d4aefc7d3f4f708c42b7bdce8c089f39f41d49",
+    "coordinate_set": "0098f47e9db0c239c5f7859c86073442b176046d0c3cecb42eff8222c514c727"
   },
   "diagonal-memory_z-2": {
     "physical": "ff2a64f44b7fb69bb78f06924c3186cf044c9e5823bbddd77913ca9f8e716cb3",
     "measurements": 145,
     "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
-    "stim": "317b144bc91b9b0b6a49abaece6dd65cb8b1df4805c92fb652f129e8c11f0b97"
+    "stim": "317b144bc91b9b0b6a49abaece6dd65cb8b1df4805c92fb652f129e8c11f0b97",
+    "detector_space": "46c3df2e6165d7510211e7e85e77f778b7422b6c7b4571c0275c9441bc304343",
+    "detector_rank": 120,
+    "observables": "d16a7f26e070d9e6d17680243fc0240715b879dbccbb221cfad83b1698165ba0",
+    "coordinate_set": "052f8dbd09c7943367a9df9f02fbfe0f1c3b242d8590e93a910256818d74c0d8"
   },
   "diagonal-temporal-1": {
     "physical": "5d247de46e1efb8a6f429e6a0e1ea8da1ef6d551554d29be54ca18b9f615dc3b",
     "measurements": 57,
     "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
-    "stim": "03ce89e4b0befc23c75dcfeb3fe232974e9283edcee31ac96052c68562d3fbdc"
+    "stim": "03ce89e4b0befc23c75dcfeb3fe232974e9283edcee31ac96052c68562d3fbdc",
+    "detector_space": "12ab56f774b073735e6461a4abc2d9947eb2b4f5327226d1663f3105a0e4f85d",
+    "detector_rank": 48,
+    "observables": "a700580b7a8411f25c7c5875f686cc7b2c01a302f4a79a8b01e9f2e18c03352a",
+    "coordinate_set": "0098f47e9db0c239c5f7859c86073442b176046d0c3cecb42eff8222c514c727"
   },
   "diagonal-temporal-2": {
     "physical": "2fe3b42759aefd6293c1184c528eb3dfd0f8d034bbd99c2881f1d84097d9cf0c",
     "measurements": 265,
     "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
-    "stim": "cdf2c0e0e98bf704e5094026f45333b9a70a4819f28b4bd074832bab1eb6de26"
+    "stim": "cdf2c0e0e98bf704e5094026f45333b9a70a4819f28b4bd074832bab1eb6de26",
+    "detector_space": "2b342b43ea575646be657698ef6d2431c8b182275c7439cbc3e5fbf70d060ae1",
+    "detector_rank": 240,
+    "observables": "f7599b3d4bdbc982a99cd91e6d2c4fb59dfadf98af2f79cf50729e264f6e82d1",
+    "coordinate_set": "052f8dbd09c7943367a9df9f02fbfe0f1c3b242d8590e93a910256818d74c0d8"
   },
   "diagonal-spatial-1": {
     "physical": "bdc432779e50d627847017fc78dda22fd37277b5029f6f2e14f59293edab4281",
     "measurements": 81,
     "qubits": "be00718e72a76d5b028c74885030dc8e951964db2690f7f35818287bce77a99b",
-    "stim": "f3c4c6f397baee7ea28baf68d7378ca6336f7a97fdd837434dd082acfacfe646"
+    "stim": "f3c4c6f397baee7ea28baf68d7378ca6336f7a97fdd837434dd082acfacfe646",
+    "detector_space": "c9cc10071a72d16e27c15392b3f0b7a19cf0ef6e3f31b58d5a3896c47f38f2cd",
+    "detector_rank": 56,
+    "observables": "04b9f3c95d5a9706921535d2de6858eddefc95b4beb898253a094d7cd097b322",
+    "coordinate_set": "bc55f9f59a7821227a6bcb031a2407292c317cd14115452b5c2a38f4dad40734"
   },
   "diagonal-spatial-2": {
     "physical": "905fd8c5e8a1e7fe851a24ee8e4e3dbfb44eadaa1924b7fa58e3e323d4bf5514",
     "measurements": 325,
     "qubits": "a9b8508a7c61d18639f17413fde53265417faa699f78bc36e956588b7ea0bf94",
-    "stim": "7aceac2ea124c9952c4c28077d5792ff979a29801325a0b1dfdd979bb009537f"
+    "stim": "7aceac2ea124c9952c4c28077d5792ff979a29801325a0b1dfdd979bb009537f",
+    "detector_space": "9a22904d641f9a3e742a168c45ea2159105f2b59921dfbac1d5eff093487dd64",
+    "detector_rank": 264,
+    "observables": "c93408479fc2da251c46fde10eed4a3052872982767ed15957057e85e6cadb36",
+    "coordinate_set": "e514b110b7ec6f21b3ec3ce90efbe1533332ca6e96d8a4aa50dd84ba0b2b213d"
   },
   "diagonal-cnot-1": {
     "physical": "f685aa3efd6eb42d2f2e5f9014f554e90e12a623abbb2d4e1946804c0a99c48d",
     "measurements": 297,
     "qubits": "6fd5ca8aa835851b0b1fd113201bdc37e10d6c43e8d72723c6b85fdd644afad5",
-    "stim": "3d6bc1585cdee08f1c6c4ebcc89e9a8936f519fa9030d350541ae4dd7821f56a"
+    "stim": "3d6bc1585cdee08f1c6c4ebcc89e9a8936f519fa9030d350541ae4dd7821f56a",
+    "detector_space": "dc056b3071ce673dc10d657d4fdce2e4675394a0716dc3d062ce1aed3f7968af",
+    "detector_rank": 256,
+    "observables": "718bbe318b86e14522a7aeadc74673886f1018db5995c06995b6be5b5944bcc2",
+    "coordinate_set": "70257ced1ab7c3b933b572f9c89b051d4ed1d33aab6d39738408194176b45dad"
   },
   "diagonal-cnot-2": {
     "physical": "d9c704e201c877602f667e6da687d26ff9719918499aa4603a0b8129b0cd4126",
     "measurements": 1345,
     "qubits": "dab69ba0ee99b97a6a35d438ce1180e6101828d3e4155a687dd9e2d3ef67b0a6",
-    "stim": "55b09ed2ceaf57ba6d310f6f85a4a00b708e7639dc8f7dd06b4c43686583ee3c"
+    "stim": "55b09ed2ceaf57ba6d310f6f85a4a00b708e7639dc8f7dd06b4c43686583ee3c",
+    "detector_space": "2f7a7d3e2cd2c95e8d5a98cc03f341404ce8ea2964325b7a604ec2b47c1c530e",
+    "detector_rank": 1248,
+    "observables": "2bbe4e5590a5b4d5842fac2992cb83844a64a248289fb81193225cd96966b24b",
+    "coordinate_set": "da948c94dcd19b9a1d28ec3fbba16520f6bd0eec797000026aaa3985b67d6ae5"
   },
   "diagonal-junction-1": {
     "physical": "9d6a497384f74fa7cb26b2072ac21db4361ce2be3603d6d7fad6b00596d692e9",
     "measurements": 171,
     "qubits": "545681313950ed32c816e123df00c50d51cecb7424cfc4c00b5426ecaeecfe7a",
-    "stim": "9d1a325fb157b871d9988c4bc44310de81eb85037be5fe415aa2eb5572e740ec"
+    "stim": "9d1a325fb157b871d9988c4bc44310de81eb85037be5fe415aa2eb5572e740ec",
+    "detector_space": "6c1247a1881bb0c85d4edc6c610b97abe53b7f2ad4ee4b6d80960df8160e47c2",
+    "detector_rank": 114,
+    "observables": "4cc16bfc8980e2a25e2497f726d04d5977e473d23f1384b7be1dc831687823a1",
+    "coordinate_set": "1990c4cd4b2b17bb9a4f70ae99942754a90e0413a7875e9b1bd65a5849622588"
   },
   "diagonal-junction-2": {
     "physical": "e18231701e9ed00063481c3e95e2fa8ef97332d14a7d1eda5e025908b0a91111",
     "measurements": 677,
     "qubits": "5372344d996d70fa14daa1ba4722da528e70e071e561a5f5b5311106081b4d70",
-    "stim": "127ffd255938a96b57e1984d65f0670fc2c9b44403cfd6adf8d11dca659c355d"
+    "stim": "127ffd255938a96b57e1984d65f0670fc2c9b44403cfd6adf8d11dca659c355d",
+    "detector_space": "a37e22504a88dc38d92ab4dffd45d2461c1f7e874b38b17211e83d90ac57c983",
+    "detector_rank": 540,
+    "observables": "8f07ecdfabcd1be02860ce7a8ec0d6f7e5e2906e9de59e206545a17df67313ad",
+    "coordinate_set": "ce693148690f8929d431b57fe4f83c9311e36c79e716fcfa50afff7dc56290c3"
   },
   "diagonal-hadamard-1": {
     "physical": "898e16cd684be8e02dc298b93105d1a23be9109c2554c0a6c471b3524880ff27",
     "measurements": 65,
     "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
-    "stim": "ec9964bd3201efa460b88ffdaa2c6f502955b79c3b8d7cf168ae20abce431ee3"
+    "stim": "ec9964bd3201efa460b88ffdaa2c6f502955b79c3b8d7cf168ae20abce431ee3",
+    "detector_space": "edcb34e44c59acfa1b2a755d40aeb977ff7eadac1e0a1e4f809de967ff360a1e",
+    "detector_rank": 56,
+    "observables": "14fea3df05da31af9484d45ce78e799eee26b0efc16d569493e8a1979f705cb8",
+    "coordinate_set": "0098f47e9db0c239c5f7859c86073442b176046d0c3cecb42eff8222c514c727"
   },
   "diagonal-hadamard-2": {
     "physical": "21c5e3a596cb748dfb732d0586693655199083c2bbd81d8be542d4621c6db9dd",
     "measurements": 289,
     "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
-    "stim": "45e0acec843452d902bac91f03dda60e2c1eacbf6d568a57cb0c755741e43641"
+    "stim": "45e0acec843452d902bac91f03dda60e2c1eacbf6d568a57cb0c755741e43641",
+    "detector_space": "5614897b467cd9b1f1a51a5342ccf585a0560881c457ecd15542ad20bdf48d73",
+    "detector_rank": 264,
+    "observables": "609cf1aef16f95d7df911659f6c8d4ea96c9580ec544af1913e48638b12bdd92",
+    "coordinate_set": "052f8dbd09c7943367a9df9f02fbfe0f1c3b242d8590e93a910256818d74c0d8"
   },
   "boundary-memory_x-1": {
     "physical": "e723b2f6ddcf9f807b18dc1090713efbd52b514912bb24bc62843093246ab159",
     "measurements": 33,
     "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
-    "stim": "5d577301d080b0e40c349a0a87bc9e7f676aad3053bc185de30e9a3d6bb8a516"
+    "stim": "5d577301d080b0e40c349a0a87bc9e7f676aad3053bc185de30e9a3d6bb8a516",
+    "detector_space": "89052d7d8fdb9ffe27d30a0f2040b6497bcfe865961fa0644ed16563cbc147a1",
+    "detector_rank": 24,
+    "observables": "0f357082daf20185c2a381501d89b73970c44eabf6793aaa9cbed9ddf499d6be",
+    "coordinate_set": "0098f47e9db0c239c5f7859c86073442b176046d0c3cecb42eff8222c514c727"
   },
   "boundary-memory_x-2": {
     "physical": "f6b05bd953be594715758b7ad41fc5368d0783c6a4877ec4420bdaf42891a5e6",
     "measurements": 145,
     "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
-    "stim": "7e9c1a61a2f0014de89ccf7e694b1abbb0636772ebd9a05f2eb8fa058e98986c"
+    "stim": "7e9c1a61a2f0014de89ccf7e694b1abbb0636772ebd9a05f2eb8fa058e98986c",
+    "detector_space": "823da583fbac88b4a0e8a427f9be1617907a005e3b9c323eaf824d41c522cba6",
+    "detector_rank": 120,
+    "observables": "d0ddaedfe17fa480f38ca84e8a864db24abf4a69710016a84166faab2c92df8e",
+    "coordinate_set": "052f8dbd09c7943367a9df9f02fbfe0f1c3b242d8590e93a910256818d74c0d8"
   },
   "boundary-memory_z-1": {
     "physical": "92704abe2d9614a9e40a24e61384bfd2a14158f2f6a200b73d3ed947b0240866",
     "measurements": 33,
     "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
-    "stim": "2c30dcd1396131061fd35c3c98473ae68d5e7bfe1b74d61336f15ab46fa13fc9"
+    "stim": "2c30dcd1396131061fd35c3c98473ae68d5e7bfe1b74d61336f15ab46fa13fc9",
+    "detector_space": "f81072862299b5f7590cfb340a68407a760f7f6522aeb4b82b7d24cf2dda4b83",
+    "detector_rank": 24,
+    "observables": "c4b9216c724163ff9a6722d9457a763372a4baac23ed44f7589864d3b315923a",
+    "coordinate_set": "0098f47e9db0c239c5f7859c86073442b176046d0c3cecb42eff8222c514c727"
   },
   "boundary-memory_z-2": {
     "physical": "0f5dc9d84b5c56e0c90323324e592167e9f96b51f6efb2fc8fa38ec2b0dcc277",
     "measurements": 145,
     "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
-    "stim": "f3904028b11ee3c62441ff48846b28cf6ca36a586d8ecf8184a767626d84a529"
+    "stim": "f3904028b11ee3c62441ff48846b28cf6ca36a586d8ecf8184a767626d84a529",
+    "detector_space": "446de2cbf17a9f4a95a0ec8ca13b9a15046e89059a781002c3ec9fa117c3288f",
+    "detector_rank": 120,
+    "observables": "4bcdadc759bce155e49d3e22e702b92f2ba6261dfca003c4de6fb695656fa583",
+    "coordinate_set": "052f8dbd09c7943367a9df9f02fbfe0f1c3b242d8590e93a910256818d74c0d8"
   },
   "boundary-temporal-1": {
     "physical": "63fe70681b992a6314263d12fa4937954b908e919721652ec88cac6cf2b3a187",
     "measurements": 57,
     "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
-    "stim": "a0b1c8ffec6161c44727788f838baa211ae8d9650dee14709666b4505db208d6"
+    "stim": "a0b1c8ffec6161c44727788f838baa211ae8d9650dee14709666b4505db208d6",
+    "detector_space": "01616f9c348b78e80bce2652dc3cafdb6d3dfdbee90302b1fb51581ef004132b",
+    "detector_rank": 48,
+    "observables": "152d6d162e877212bf31054b10b7cd5f2206f3be84bfc372b7ee661b6cd88b32",
+    "coordinate_set": "0098f47e9db0c239c5f7859c86073442b176046d0c3cecb42eff8222c514c727"
   },
   "boundary-temporal-2": {
     "physical": "05d23ba624749f692aab1507a6d1b1c93c5c8fffc9f87134977966e3342ccf2a",
     "measurements": 265,
     "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
-    "stim": "acd429ff42bf283a0cefbdc675819c97ee7fe32bccfe6ce4245a88c7c5114d45"
+    "stim": "acd429ff42bf283a0cefbdc675819c97ee7fe32bccfe6ce4245a88c7c5114d45",
+    "detector_space": "fda23726fd66a9e7880fe0c0a51f6a81f3780d92a930caf7f40ba05223710c7e",
+    "detector_rank": 240,
+    "observables": "08373dfcb39abb89ef0462ef9f26e2a216faf4b9dc30e0946a1b9550ec5d24b9",
+    "coordinate_set": "052f8dbd09c7943367a9df9f02fbfe0f1c3b242d8590e93a910256818d74c0d8"
   },
   "boundary-spatial-1": {
     "physical": "d00ae287e5ea110f07780018f1d8e7add9b2d3ff9940c459f26a4c73aedb2ff6",
     "measurements": 81,
     "qubits": "be00718e72a76d5b028c74885030dc8e951964db2690f7f35818287bce77a99b",
-    "stim": "e77fcf3052ad767f688aa50861315816dc0ebf8d73b6626969f1537edf495f50"
+    "stim": "e77fcf3052ad767f688aa50861315816dc0ebf8d73b6626969f1537edf495f50",
+    "detector_space": "2a3051c64428b2e752ceea8786243b91ef60f883d1c1821a31954ce05502c7cb",
+    "detector_rank": 56,
+    "observables": "11e624f24a1e67e7ef68a6b9a276fc6e4e08dc787e9902f85389ecc4a8d94e76",
+    "coordinate_set": "bc55f9f59a7821227a6bcb031a2407292c317cd14115452b5c2a38f4dad40734"
   },
   "boundary-spatial-2": {
     "physical": "970a3ac0ed931ef0c15905f767a0d2b70a85ce526868fdb72c3717006ff02151",
     "measurements": 325,
     "qubits": "a9b8508a7c61d18639f17413fde53265417faa699f78bc36e956588b7ea0bf94",
-    "stim": "4bb8232954bf362bf97050e61780497e6c70e1bd491ea138af97ead4e0ad82ce"
+    "stim": "4bb8232954bf362bf97050e61780497e6c70e1bd491ea138af97ead4e0ad82ce",
+    "detector_space": "9af1e881741219b72fc8cdc996acfa4bfa778fb7ce6767cbfb187fc8c00fd70b",
+    "detector_rank": 264,
+    "observables": "cffd03f6911fc6e04a4f7baa481315de09e81392f22b5b8b49df7b5cdd90572d",
+    "coordinate_set": "e514b110b7ec6f21b3ec3ce90efbe1533332ca6e96d8a4aa50dd84ba0b2b213d"
   },
   "boundary-cnot-1": {
     "physical": "fd94844fa0bb4c98ee4f9058ace2e2e4e627be98c429e48bb2370590ceab06d3",
     "measurements": 297,
     "qubits": "6fd5ca8aa835851b0b1fd113201bdc37e10d6c43e8d72723c6b85fdd644afad5",
-    "stim": "8babfec3d1835e8680e9d3295f0fa30e385b9235a0f6d73073f715cd2476adbf"
+    "stim": "8babfec3d1835e8680e9d3295f0fa30e385b9235a0f6d73073f715cd2476adbf",
+    "detector_space": "57caa86c9d618a1cff3b32b1569c7fb877378222b5258d11d0e244da05b4b812",
+    "detector_rank": 256,
+    "observables": "19fec325865bbaa4bea3fd4f3f124e6544538dd3bae47d971f8a3907a247ccdf",
+    "coordinate_set": "70257ced1ab7c3b933b572f9c89b051d4ed1d33aab6d39738408194176b45dad"
   },
   "boundary-cnot-2": {
     "physical": "c3b7e963595f97a91468b846999f94e11691b84a8972aa9e238ef120962eeb3a",
     "measurements": 1345,
     "qubits": "dab69ba0ee99b97a6a35d438ce1180e6101828d3e4155a687dd9e2d3ef67b0a6",
-    "stim": "1d243bfb5421fb9220b05202c0c9f590c31d34540e204e2dd78524a34f83ea4c"
+    "stim": "1d243bfb5421fb9220b05202c0c9f590c31d34540e204e2dd78524a34f83ea4c",
+    "detector_space": "fa8a475cfdb6b23f3d8b1ff0e65c14160598789459778c8996dc063a0d200113",
+    "detector_rank": 1248,
+    "observables": "842667527579b79a333d7bbb69fe61ecff68830d7e62f2b48bbc1b7165fcb2a9",
+    "coordinate_set": "da948c94dcd19b9a1d28ec3fbba16520f6bd0eec797000026aaa3985b67d6ae5"
   },
   "boundary-junction-1": {
     "physical": "44e24481dbd0fd2d3a474fbf8f3bd13db4e5ae66f160181336bbc4c59f3c49ad",
     "measurements": 165,
     "qubits": "da7ec50a03cd2f434d2c90e2fb01bcb286341be6d700b69723d7410a835fb7bd",
-    "stim": "96e7d8907fd8581543d7dc03d90b0b13139f15fb44c9102a74b2e0582606ea9d"
+    "stim": "96e7d8907fd8581543d7dc03d90b0b13139f15fb44c9102a74b2e0582606ea9d",
+    "detector_space": "e2280cec30b1d95aaaf2779f61a1cb8400165794037d7d40f7e1e80028e846c6",
+    "detector_rank": 112,
+    "observables": "d21cc31547b6053f128abc5153f1611aaff90ce214712c62c05b90cb117b96b2",
+    "coordinate_set": "d7e360d6c61a72394aea5a62e50b70e945f37f7e23dde606dea4e43ccd47248a"
   },
   "boundary-junction-2": {
     "physical": "f484b3ed6b0a64816342c2a0ecd45b15b7680ca3c74de682a3eb2213a0b2950d",
     "measurements": 657,
     "qubits": "8580e3f4bd01497747783dda68bd20f9e605bfbf90695a455fa2ced00ee5fbe0",
-    "stim": "709c58961b3c916f4068887737bee2247379d61ba8db3d0834b159e00df70239"
+    "stim": "709c58961b3c916f4068887737bee2247379d61ba8db3d0834b159e00df70239",
+    "detector_space": "13011e6616ab64c3b3c4fe155a13b7cd53d3e160c6afd67d4a93ab7657a0561f",
+    "detector_rank": 526,
+    "observables": "c2881628c17145b2f75b86f4aed3ba2392c6910637eb1fd3f6309b1150ddbf65",
+    "coordinate_set": "8c82afbc11e26b465e5b9d3a84e32a369fc381c7758ad04a1c6f768954d790a5"
   },
   "boundary-hadamard-1": {
     "physical": "2b83036600962c32f1471ac688e2b2f7f663108b5cb1d10b5c5031516e3e8139",
     "measurements": 57,
     "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
-    "stim": "4e1a18bd12ed0a742b5fb4f804f0f8819604b3161eabdcab190b4ba181d7fbb4"
+    "stim": "4e1a18bd12ed0a742b5fb4f804f0f8819604b3161eabdcab190b4ba181d7fbb4",
+    "detector_space": "01616f9c348b78e80bce2652dc3cafdb6d3dfdbee90302b1fb51581ef004132b",
+    "detector_rank": 48,
+    "observables": "152d6d162e877212bf31054b10b7cd5f2206f3be84bfc372b7ee661b6cd88b32",
+    "coordinate_set": "0098f47e9db0c239c5f7859c86073442b176046d0c3cecb42eff8222c514c727"
   },
   "boundary-hadamard-2": {
     "physical": "4d1d2ec64825a62a37c3ed745e7564b9376ef3afcd07905a4951806392ae8399",
     "measurements": 265,
     "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
-    "stim": "894a33282b1c6645706b4a6c653b46f0dc4d2892d6c47349847af24ca1c397f4"
+    "stim": "894a33282b1c6645706b4a6c653b46f0dc4d2892d6c47349847af24ca1c397f4",
+    "detector_space": "fda23726fd66a9e7880fe0c0a51f6a81f3780d92a930caf7f40ba05223710c7e",
+    "detector_rank": 240,
+    "observables": "08373dfcb39abb89ef0462ef9f26e2a216faf4b9dc30e0946a1b9550ec5d24b9",
+    "coordinate_set": "052f8dbd09c7943367a9df9f02fbfe0f1c3b242d8590e93a910256818d74c0d8"
   }
 }

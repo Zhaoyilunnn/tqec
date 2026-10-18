@@ -12,6 +12,7 @@ from tqec.plaquette.compilation.passes.transformer.simplifiers import (
     InstructionSimplifier,
     NoInstructionSimplification,
 )
+from tqec.utils.exceptions import TQECError
 
 
 @dataclass
@@ -128,7 +129,5 @@ class ScheduledCircuitTransformationPass(CompilationPass):
 
     @override
     def run(self, circuit: ScheduledCircuit, check_all_flows: bool = False) -> ScheduledCircuit:
-        modified_circuit = self._transformations.apply(circuit)
-        if check_all_flows:
-            self.check_flows(circuit, modified_circuit)  # pragma: no cover
-        return modified_circuit
+        """Reject Stim-specific transforms on native circuit storage."""
+        raise TQECError("This transformation needs a native Deltakit rewrite.")

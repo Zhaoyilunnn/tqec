@@ -5,6 +5,7 @@ from typing import Final
 
 from tqec.plaquette.compilation.passes.base import CompilationPass
 from tqec.plaquette.plaquette import Plaquette
+from tqec.utils.exceptions import TQECError
 from tqec.utils.instructions import (
     MEASUREMENT_INSTRUCTION_NAMES,
     RESET_INSTRUCTION_NAMES,
@@ -36,8 +37,9 @@ class PlaquetteCompiler:
 
         """
         if self._passes:
-            from tqec.utils.exceptions import TQECError
-            raise TQECError("Custom plaquette passes need native Deltakit rewrites; no pass was skipped.")
+            raise TQECError(
+                "Custom plaquette passes need native Deltakit rewrites; no pass was skipped."
+            )
         circuit = plaquette.circuit
         for compilation_pass in self._passes:
             circuit = compilation_pass.run(circuit)

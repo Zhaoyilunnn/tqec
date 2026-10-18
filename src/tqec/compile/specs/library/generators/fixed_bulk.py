@@ -3,7 +3,6 @@ from __future__ import annotations
 import inspect
 from typing import Literal
 
-
 from tqec.circuit.moment import Moment
 from tqec.circuit.schedule.circuit import ScheduledCircuit
 from tqec.compile.specs.base import CubeSpec

@@ -1,10 +1,15 @@
 """One physical time slice stored as native Deltakit operations and qubit SSA."""
+
 from __future__ import annotations
 
 from copy import deepcopy
+from io import StringIO
 
 from deltakit_compile.dialects import qcore, qref
-from xdsl.ir import Block
+from deltakit_compile.frontend.logical_assembler import LogicalAssembler
+from xdsl.ir import Block, Region
+from xdsl.parser import Parser
+from xdsl.printer import Printer
 
 from tqec.circuit.native import gate_name, make_operation
 from tqec.utils.exceptions import TQECError
@@ -12,6 +17,7 @@ from tqec.utils.exceptions import TQECError
 
 class MultipleOperationsOnSameQubitError(TQECError):
     def __init__(self, qubits):
+        """Describe conflicting quantum resources."""
         self.qubits = sorted(qubits)
         super().__init__(f"Conflicting operations on qubits {self.qubits} in one moment.")
 
@@ -19,11 +25,16 @@ class MultipleOperationsOnSameQubitError(TQECError):
 class Moment:
     """Own a native block; integer labels map directly to its qubit arguments."""
 
+    __hash__ = None
+
     def __init__(self, circuit=None, used_qubits=None, _avoid_checks=False):
+        """Take ownership of a native block and validate its qubit scope."""
         if circuit is not None and not isinstance(circuit, Block):
             raise TQECError("Moment requires a native xDSL Block; Stim storage is unsupported.")
         self._circuit = circuit if circuit is not None else Block()
-        labels = list(range(len(self._circuit.args))) if used_qubits is None else sorted(used_qubits)
+        labels = (
+            list(range(len(self._circuit.args))) if used_qubits is None else sorted(used_qubits)
+        )
         if len(labels) != len(self._circuit.args):
             raise TQECError("Native qubit labels must match block arguments.")
         self._labels = labels
@@ -154,10 +165,39 @@ class Moment:
 
     def append_annotation(self, instruction):
         """Reject old annotation objects rather than mixing representations."""
-        raise TQECError("Attach annotations to the assembled native circuit or explicit export boundary.")
+        raise TQECError(
+            "Attach annotations to the assembled native circuit or explicit export boundary."
+        )
 
     def __eq__(self, other):
-        return isinstance(other, Moment) and self._labels == other._labels and self._circuit.is_structurally_equivalent(other._circuit)
+        return (
+            isinstance(other, Moment)
+            and self._labels == other._labels
+            and self._circuit.is_structurally_equivalent(other._circuit)
+        )
+
+    def to_dict(self):
+        """Serialize the native region, retaining the existing integer qubit labels."""
+        stream = StringIO()
+        Printer(stream=stream).print_region(Region(deepcopy(self)._circuit))
+        return {"native_region": stream.getvalue(), "qubit_indices": self._labels}
+
+    @staticmethod
+    def from_dict(data):
+        """Parse native xDSL only; old Stim-backed cache entries need regeneration."""
+        if "native_region" not in data:
+            raise TQECError("Legacy Stim-backed moment cache is incompatible; regenerate it.")
+        region = Parser(LogicalAssembler.make_context(), data["native_region"]).parse_region()
+        block = region.detach_block(0)
+        result = Moment()
+        result._circuit = block
+        result._labels = list(data["qubit_indices"])
+        if len(result._labels) != len(block.args) or len(set(result._labels)) != len(
+            result._labels
+        ):
+            raise TQECError("Invalid native qubit labels in cached moment.")
+        result.check_is_valid_moment(block)
+        return result
 
     @staticmethod
     def from_instructions(instructions):

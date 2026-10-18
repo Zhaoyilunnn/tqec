@@ -24,12 +24,14 @@ import warnings
 from collections.abc import Iterable, Sequence
 
 import stim
+from deltakit_compile.dialects import qcore
+from xdsl.ir import Block
 
 from tqec.circuit.moment import Moment
+from tqec.circuit.native import gate_name, make_operation
 from tqec.circuit.qubit import GridQubit
 from tqec.circuit.qubit_map import QubitMap
 from tqec.circuit.schedule.circuit import ScheduledCircuit
-from tqec.circuit.schedule.schedule import Schedule
 from tqec.utils.exceptions import TQECError, TQECWarning
 
 
@@ -238,9 +240,6 @@ def merge_instructions(
 
 def merge_scheduled_circuits(circuits, global_qubit_map, mergeable_instructions=()):
     """Merge scoped native operations at equal schedules, deduplicating only allowed gates."""
-    from tqec.circuit.native import gate_name
-    from xdsl.ir import Block
-    from deltakit_compile.dialects import qcore
     by_time = {}
     for circuit in circuits:
         for time, moment in circuit.scheduled_moments:
@@ -263,11 +262,9 @@ def merge_scheduled_circuits(circuits, global_qubit_map, mergeable_instructions=
                     seen.add(key)
                     # Native broadcasts are split before deduplication; all
                     # retained operations use this moment's own SSA arguments.
-                    from tqec.circuit.native import make_operation
                     block.add_op(make_operation(name, [global_ssa[i] for i in targets]))
         result.append(Moment(block, set(labels)))
     return ScheduledCircuit(result, sorted(by_time), global_qubit_map)
-
 
 
 def relabel_circuits_qubit_indices(

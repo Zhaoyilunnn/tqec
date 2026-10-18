@@ -1,10 +1,12 @@
+# ruff: noqa: PLC0415
 """Boundary interoperability controls, never used by the native producer."""
+
 from pathlib import Path
 
 import pytest
 import stim
 
-from tests.experiment.capture import physical
+from tests.experiment.oracles import physical
 
 
 @pytest.mark.parametrize("basis", ("x", "z"))
@@ -15,9 +17,8 @@ def test_import_export_control(basis, k):
         deltakit_stim_circuit_to_physical_circuit_ir,
         physical_circuit_ir_to_deltakit_stim_circuit,
     )
-    path = Path(f"/tmp/direct-baseline-bulk-memory_{basis}-{k}.stim")
-    if not path.exists():
-        pytest.skip("Run the baseline capture on the pinned upstream commit first.")
+
+    path = Path(__file__).with_name("fixtures") / f"memory_{basis}-{k}.stim"
     expected = stim.Circuit(path.read_text())
     module = deltakit_stim_circuit_to_physical_circuit_ir(deltakit_stim.Circuit(str(expected)))
     module.verify()

@@ -13,10 +13,10 @@ from dataclasses import dataclass, field
 
 import numpy
 import stim
+from deltakit_compile.dialects.qref import MeasureOp
 
 from tqec.circuit.qubit import GridQubit
 from tqec.circuit.qubit_map import QubitMap
-from tqec.circuit.schedule import ScheduledCircuit
 from tqec.utils.exceptions import TQECError
 from tqec.utils.instructions import (
     is_multi_qubit_measurement_instruction,
@@ -72,31 +72,20 @@ class MeasurementRecordsMap:
             )
 
     @staticmethod
-    def from_scheduled_circuit(circuit: ScheduledCircuit) -> MeasurementRecordsMap:
-        """Build a :class:`MeasurementRecordsMap` from a scheduled circuit.
-
-        Args:
-            circuit: circuit containing the measurements to map.
-
-        Raises:
-            TQECError: if the provided ``circuit`` contains a ``REPEAT`` block.
-            TQECError: if the provided ``circuit`` contains an unsupported
-                measurement instruction. Currently, this method supports all
-                single-qubit measurement instructions (see the value of
-                ``SINGLE_QUBIT_MEASUREMENT_INSTRUCTION_NAMES``).
-            TQECError: if one of the measurement counted in
-                ``circuit.num_measurements`` was not processed (this should never
-                raise, but the post-condition is easy to check so this method
-                performs the check just in case).
-
-        Returns:
-            a :class:`MeasurementRecordsMap` linking measurements in the provided
-            ``circuit`` to their offset.
-
-        """
-        return MeasurementRecordsMap.from_circuit(
-            circuit.get_circuit(include_qubit_coords=False), circuit.qubit_map
-        )
+    def from_scheduled_circuit(circuit):
+        """Derive compatibility offsets from native measurement SSA, without exporting."""
+        mapping = {}
+        index = -circuit.num_measurements
+        for _, moment in circuit.scheduled_moments:
+            for op in moment.instructions:
+                if not isinstance(op, MeasureOp):
+                    continue
+                for target, result in zip(moment.targets(op), op.results, strict=True):
+                    mapping.setdefault(circuit.qubit_map.i2q[target], []).append(index)
+                    index += 1
+        if index:
+            raise TQECError("Native measurement accounting failed.")
+        return MeasurementRecordsMap(mapping)
 
     @staticmethod
     def from_circuit(

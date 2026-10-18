@@ -17,11 +17,13 @@ from typing import Any
 
 import stim
 
-from tqec.circuit.moment import Moment, iter_stim_circuit_without_repeat_by_moments
+from tqec.circuit.moment import Moment
+from tqec.circuit.native import assemble, compile_module
 from tqec.circuit.qubit import GridQubit
-from tqec.circuit.qubit_map import QubitMap, get_qubit_map
+from tqec.circuit.qubit_map import QubitMap
 from tqec.circuit.schedule.exception import ScheduleError
 from tqec.circuit.schedule.schedule import Schedule
+from tqec.post_processing.shift import shift_to_only_positive
 from tqec.utils.exceptions import TQECError
 from tqec.utils.instructions import is_annotation_instruction
 
@@ -116,25 +118,26 @@ class ScheduledCircuit:
         """
         return self._qubit_map.to_circuit(shift_to_positive)
 
-    def get_native_module(self):
-        """Assemble this schedule as a verified native Deltakit physical module."""
-        from tqec.circuit.native import assemble, compile_module
+    def _assemble_native_module(self):
+        """Clone this schedule into a verified native module."""
         by_time = dict(self.scheduled_moments)
         moments = [by_time.get(t) for t in range(self.schedule.max_schedule + 1)] if by_time else []
-        return compile_module(assemble(moments, self.qubit_map)).module
+        return assemble(moments, self.qubit_map)
+
+    def get_native_module(self):
+        """Run the native physical compiler without a Stim input boundary."""
+        return compile_module(self._assemble_native_module()).module
 
     def get_circuit(self, include_qubit_coords=True, shift_to_positive=False):
         """Export native physical IR to Stim at an explicit compatibility boundary."""
-        from tqec.circuit.native import compile_module
         if self.is_empty():
             return stim.Circuit()
-        result = stim.Circuit(compile_module(self.get_native_module(), export="stim").program)
+        result = stim.Circuit(compile_module(self._assemble_native_module(), export="stim").program)
         if len(result) and result[-1].name == "TICK":
             result = result[:-1]
         if not include_qubit_coords:
             result = stim.Circuit("\n".join(str(op) for op in result if op.name != "QUBIT_COORDS"))
         if shift_to_positive:
-            from tqec.post_processing.shift import shift_to_only_positive
             result = shift_to_only_positive(result)
         return result
 

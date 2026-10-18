@@ -70,7 +70,6 @@ from tqec.compile.tree.tree import LayerTree
 from tqec.templates.enums import TemplateBorder
 from tqec.utils.exceptions import TQECError
 from tqec.utils.noise_model import NoiseModel
-from tqec.utils.paths import DEFAULT_DETECTOR_DATABASE_PATH
 from tqec.utils.position import BlockPosition3D, Direction3D, SignedDirection3D
 from tqec.utils.scale import PhysicalQubitScalable2D
 
@@ -472,7 +471,7 @@ class TopologicalComputationGraph:
         noise_model: NoiseModel | None = None,
         manhattan_radius: int = 2,
         detector_database: DetectorDatabase | None = None,
-        database_path: str | Path | None = DEFAULT_DETECTOR_DATABASE_PATH,
+        database_path: str | Path | None = None,
         reschedule_measurements: bool = True,
     ) -> stim.Circuit:
         """Generate the ``stim.Circuit`` from the compiled graph.
@@ -518,7 +517,7 @@ class TopologicalComputationGraph:
         noise_model: NoiseModel | None = None,
         manhattan_radius: int = 2,
         detector_database: DetectorDatabase | None = None,
-        database_path: str | Path | None = DEFAULT_DETECTOR_DATABASE_PATH,
+        database_path: str | Path | None = None,
         reschedule_measurements: bool = True,
     ) -> Iterator[stim.Circuit]:
         """Generate the ``stim.Circuit`` from the compiled graph.

@@ -8,6 +8,7 @@ from typing_extensions import override
 from tqec.circuit.moment import Moment
 from tqec.circuit.schedule.circuit import ScheduledCircuit
 from tqec.plaquette.compilation.passes.base import CompilationPass
+from tqec.utils.exceptions import TQECError
 
 
 def _with_targets_sorted(moments: Iterator[Moment]) -> list[Moment]:
@@ -28,9 +29,5 @@ class SortTargetsPass(CompilationPass):
 
     @override
     def run(self, circuit: ScheduledCircuit, check_all_flows: bool = False) -> ScheduledCircuit:
-        modified_circuit = ScheduledCircuit(
-            _with_targets_sorted(circuit.moments), circuit.schedule, circuit.qubit_map
-        )
-        if check_all_flows:
-            self.check_flows(circuit, modified_circuit)  # pragma: no cover
-        return modified_circuit
+        """Reject Stim-specific transforms on native circuit storage."""
+        raise TQECError("This transformation needs a native Deltakit rewrite.")
