@@ -3,8 +3,8 @@ from __future__ import annotations
 import inspect
 from typing import Literal
 
-import stim
 
+from tqec.circuit.moment import Moment
 from tqec.circuit.schedule.circuit import ScheduledCircuit
 from tqec.compile.specs.base import CubeSpec
 from tqec.compile.specs.enums import (
@@ -65,16 +65,13 @@ def make_fixed_bulk_realignment_plaquette(
         case Basis.X, Orientation.HORIZONTAL:
             cx_targets = [(4, 0), (4, 1), (2, 4), (0, 4)]
             cx_schedule = [1, 2, 3, 5]
-    circuit = stim.Circuit()
-    circuit.append(f"R{mq_reset.value}", qubits.syndrome_qubits_indices, [])
-    circuit.append("TICK", [], [])
-    for targets in cx_targets:
-        circuit.append("CX", targets, [])
-        circuit.append("TICK", [], [])
-    circuit.append(f"M{mq_measurement.value}", qubits.syndrome_qubits_indices, [])
-    circuit.append("H", qubits.data_qubits_indices, [])
-    schedule = [0, *cx_schedule, 6]
-    scheduled_circuit = ScheduledCircuit.from_circuit(circuit, schedule, qubits.qubit_map)
+    moments = [Moment() for _ in range(6)]
+    moments[0].append(f"R{mq_reset.value}", qubits.syndrome_qubits_indices)
+    for moment, targets in zip(moments[1:5], cx_targets):
+        moment.append("CX", targets)
+    moments[-1].append(f"M{mq_measurement.value}", qubits.syndrome_qubits_indices)
+    moments[-1].append("H", qubits.data_qubits_indices)
+    scheduled_circuit = ScheduledCircuit(moments, [0, *cx_schedule, 6], qubits.qubit_map)
     return Plaquette(
         f"fixed_bulk_realignment_{stabilizer_basis}_{z_orientation.value}_R{mq_reset}_M{mq_measurement}",
         qubits,

@@ -4,7 +4,6 @@ from collections.abc import Sequence
 from dataclasses import dataclass, replace
 from typing import Literal, cast
 
-import stim
 
 from tqec.circuit.moment import Moment
 from tqec.circuit.qubit import GridQubit
@@ -167,15 +166,16 @@ def _make_spatial_cube_arm_memory_plaquette(
     # Define the base moments, only containing the reset on s2 as that is the
     # only operation that does not depend on the parameters of this function.
     base_moments = [
-        Moment(stim.Circuit(f"RZ {s2}")),
-        Moment(stim.Circuit()),
-        Moment(stim.Circuit()),
-        Moment(stim.Circuit()),
-        Moment(stim.Circuit()),
-        Moment(stim.Circuit()),
-        Moment(stim.Circuit()),
-        Moment(stim.Circuit()),
+        Moment(),
+        Moment(),
+        Moment(),
+        Moment(),
+        Moment(),
+        Moment(),
+        Moment(),
+        Moment(),
     ]
+    base_moments[0].append("RZ", [s2])
     # Add data-qubit reset/measurement if needed.
     # Note about resets: data-qubits (i.e., the 4 corners) should be reset
     # when the neighboring cube has no bottom temporal pipe. Internal qubits

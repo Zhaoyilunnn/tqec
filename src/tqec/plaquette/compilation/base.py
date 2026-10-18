@@ -20,7 +20,7 @@ class PlaquetteCompiler:
     ):
         """Wrap a list of :class:`.CompilationPass` instances."""
         self._name = name
-        self._passes = passes
+        self._passes = tuple(passes)
         self._mergeable_instructions_modifier = mergeable_instructions_modifier
 
     def compile(self, plaquette: Plaquette) -> Plaquette:
@@ -35,6 +35,9 @@ class PlaquetteCompiler:
             modified name.
 
         """
+        if self._passes:
+            from tqec.utils.exceptions import TQECError
+            raise TQECError("Custom plaquette passes need native Deltakit rewrites; no pass was skipped.")
         circuit = plaquette.circuit
         for compilation_pass in self._passes:
             circuit = compilation_pass.run(circuit)

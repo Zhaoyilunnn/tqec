@@ -236,7 +236,7 @@ class Plaquette:
         An empty plaquette is a plaquette that contain empty scheduled circuit.
 
         """
-        return bool(self.circuit.get_circuit(include_qubit_coords=False) == stim.Circuit())
+        return self.circuit.is_empty()
 
     def with_debug_information(self, debug_information: PlaquetteDebugInformation) -> Plaquette:
         """Create a copy of ``self`` with the provided ``debug_information``."""
