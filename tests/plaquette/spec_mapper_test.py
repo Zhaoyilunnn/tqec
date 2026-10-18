@@ -9,6 +9,7 @@ from tqec.compile.specs.library.generators.schedules import (
 )
 from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler
 from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
+from tqec.plaquette.spec import RPNGPlaquetteSpec
 from tqec.plaquette.spec_mapper import PlaquetteSpecMapper
 from tqec.utils.enums import Orientation
 
@@ -25,6 +26,9 @@ def test_spec_mapping_preserves_descriptions_without_translation(schedule) -> No
     with patch.object(DefaultRPNGTranslator, "translate", side_effect=AssertionError):
         specs = mapper(generator.get_memory_qubit_rpng_descriptions)(Orientation.HORIZONTAL)
     for index, description in descriptions.items():
-        assert specs[index].description == description
-        assert specs[index].measurement_schedule == schedule.measurement_schedule
+        spec = specs[index]
+        assert isinstance(spec, RPNGPlaquetteSpec)
+        assert spec.description == description
+        assert spec.measurement_schedule == schedule.measurement_schedule
+    assert isinstance(specs.collection.default_value, RPNGPlaquetteSpec)
     assert specs.collection.default_value.description == descriptions.default_value

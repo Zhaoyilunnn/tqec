@@ -21,6 +21,6 @@ def test_immutable_identity_and_collection_operations() -> None:
     assert hash(empty) == hash(RPNGPlaquetteSpec(RPNGDescription.empty()))
     assert empty != other
     with pytest.raises(FrozenInstanceError):
-        empty.measurement_schedule = 7
+        setattr(empty, "measurement_schedule", 7)
     with pytest.raises(TQECError, match="Index 0"):
         original.map_indices(lambda _: 0)

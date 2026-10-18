@@ -119,7 +119,9 @@ class LayerTree:
             return
         from tqec.compile.lowering.stim import StimMaterializer  # noqa: PLC0415
 
-        self._root = LayerNode(StimMaterializer().materialize_layer(self._root._layer))
+        materialized = StimMaterializer().materialize_layer(self._root._layer)
+        if materialized is not self._root._layer:
+            self._root = LayerNode(materialized)
         self._stim_materialized = True
 
     def to_dict(self) -> dict[str, Any]:
@@ -238,6 +240,7 @@ class LayerTree:
             a string representing the Crumble URL of the quantum circuit.
 
         """
+        require_stim()
         import stim  # noqa: PLC0415
 
         from tqec.post_processing.shift import shift_to_only_positive  # noqa: PLC0415
@@ -355,6 +358,7 @@ class LayerTree:
             by ``self``.
 
         """
+        require_stim()
         import stim  # noqa: PLC0415
 
         circuit = stim.Circuit()

@@ -131,6 +131,19 @@ class LayoutLayer(BaseLayer):
     def __hash__(self) -> int:
         raise NotImplementedError(f"Cannot hash efficiently a {type(self).__name__}.")
 
+    @property
+    def measurement_schedule(self) -> int | None:
+        """Return the common measurement target without changing any local construction."""
+        return max(
+            (
+                p.num_moments - 1
+                for layer in self.layers.values()
+                if isinstance(layer, TemplateLayer)
+                for p in layer.plaquettes.collection.values()
+            ),
+            default=None,
+        )
+
     def reschedule_measurements(self) -> None:
         """Re-schedule measurements to be in the same moment.
 
@@ -140,6 +153,8 @@ class LayoutLayer(BaseLayer):
         would corrupt every other ``LayoutLayer`` that shares them.
 
         """
+        if any(isinstance(layer, SpecPlaquetteLayer) for layer in self.layers.values()):
+            raise TQECError("Materialize specification layers before rescheduling measurements.")
         plaquette_layers = [
             (pos, layer) for pos, layer in self.layers.items() if isinstance(layer, PlaquetteLayer)
         ]
@@ -150,7 +165,8 @@ class LayoutLayer(BaseLayer):
         ]
         if not all_plaquettes:
             return
-        max_schedule = max(p.circuit.schedule.max_schedule for p in all_plaquettes)
+        max_schedule = self.measurement_schedule
+        assert max_schedule is not None
 
         rescheduled: dict[int, Plaquette] = {}
 
@@ -265,7 +281,12 @@ class LayoutLayer(BaseLayer):
         can build a global qubit map ahead of streaming circuit generation.
 
         """
-        template, plaquettes = self.to_template_and_plaquettes()
+        description_only = all(
+            isinstance(layer, SpecPlaquetteLayer) for layer in self.layers.values()
+        )
+        template, plaquettes = (
+            self.to_template_and_specs() if description_only else self.to_template_and_plaquettes()
+        )
         plaquette_array = template.instantiate(k)
         increments = template.get_increments()
         mincube, _ = self.bounds
@@ -281,7 +302,12 @@ class LayoutLayer(BaseLayer):
                 plaquette = plaquettes[int(plaquette_index)]
                 offset_x = plaquette.origin.x + column_index * increments.x + layer_shift.x
                 offset_y = plaquette.origin.y + row_index * increments.y + layer_shift.y
-                for q in plaquette.circuit.qubits:
+                used_qubits = (
+                    plaquette.circuit.qubits
+                    if isinstance(plaquette, Plaquette)
+                    else plaquette.used_qubits
+                )
+                for q in used_qubits:
                     qubits.add(GridQubit(q.x + offset_x, q.y + offset_y))
         return qubits
 

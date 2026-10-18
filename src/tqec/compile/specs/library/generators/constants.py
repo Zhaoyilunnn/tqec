@@ -1,9 +1,8 @@
 from typing import Final
 
-EXTENDED_PLAQUETTE_SCHEDULES: Final[dict[bool, tuple[int, int, int, int]]] = {
-    False: (2, 4, 3, 5),
-    True: (5, 3, 4, 2),
-}
+# Keep the original import location available to callers.
+from tqec.plaquette.constants import EXTENDED_PLAQUETTE_SCHEDULES  # noqa: F401
+
 VERTICAL_HOOK_SCHEDULES: Final[dict[bool, tuple[int, int, int, int]]] = {
     False: (1, 4, 3, 5),
     True: (5, 3, 4, 1),

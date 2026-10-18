@@ -19,6 +19,7 @@ def test_compiler_and_layer_tree_do_not_import_stim() -> None:
                     raise ModuleNotFoundError(fullname, name=fullname)
         sys.meta_path.insert(0, NoBackend())
         import tqec
+        from tqec.plaquette.extended_specs import ExtendedSpecCollection
         from tqec.compile.convention import (
             FIXED_BULK_CONVENTION, FIXED_BOUNDARY_CONVENTION, fixed_bulk_convention,
         )
@@ -45,12 +46,15 @@ def test_compiler_and_layer_tree_do_not_import_stim() -> None:
                 tree = compiled.to_layer_tree()
                 assert tree._root._layer.scalable_timesteps is not None
         assert not any(m.split('.')[0] in {'stim', 'tqecd'} for m in sys.modules)
-        try:
-            compiled.generate_stim_circuit(1)
-        except TQECError as error:
-            assert 'Stim output requires Stim and tqecd' in str(error)
-        else:
-            raise AssertionError('Missing backend did not fail')
+        for output in (lambda: compiled.generate_stim_circuit(1),
+                       lambda: tree.generate_circuit(1),
+                       lambda: tree.generate_crumble_url(1)):
+            try:
+                output()
+            except TQECError as error:
+                assert 'Stim output requires Stim and tqecd' in str(error)
+            else:
+                raise AssertionError('Missing backend did not fail')
     """),
         ],
         check=False,

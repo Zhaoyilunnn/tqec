@@ -23,6 +23,8 @@ def assert_specs(layer):
     elif isinstance(layer, RepeatedLayer):
         assert_specs(layer.internal_layer)
     elif isinstance(layer, LayoutLayer):
+        assert layer.qubits(1)
+        assert layer.measurement_schedule is not None
         for child in layer.layers.values():
             assert isinstance(child, SpecPlaquetteLayer)
     else:
@@ -32,6 +34,9 @@ def assert_specs(layer):
 @pytest.mark.parametrize("convention", (FIXED_BULK_CONVENTION, FIXED_BOUNDARY_CONVENTION))
 @pytest.mark.parametrize("kind", ("memory", "hadamard", "junction"))
 def test_compile_does_not_construct_physical_circuits(convention, kind):
+    for builder in (convention.triplet.cube_builder, convention.triplet.pipe_builder):
+        getattr(builder, "build_specs").cache_clear()
+        getattr(builder, "_call_impl").cache_clear()
     graph = BlockGraph()
     first = graph.add_cube(Position3D(0, 0, 0), "ZZX" if kind == "junction" else "XZZ")
     if kind == "hadamard":

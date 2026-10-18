@@ -46,6 +46,14 @@ A user starts with a computation and an observable. The input computation can be
 structure while an observable is represented as a correlation surface. The end goal of ``tqec`` is to generate a ``stim.Circuit``
 such that the input is transformed into a topologically quantum error corrected quantum computation protected by a surface code.
 
+The physical construction description and its Stim materialization boundary are
+specified in :doc:`construction_lowering`.
+
+.. toctree::
+   :hidden:
+
+   construction_lowering
+
 .. _interop_ref:
 
 :mod:`.interop`

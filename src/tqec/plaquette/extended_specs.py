@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass, fields
 
-from tqec.compile.specs.library.generators.constants import EXTENDED_PLAQUETTE_SCHEDULES
+from tqec.plaquette.constants import EXTENDED_PLAQUETTE_SCHEDULES
 from tqec.plaquette.rpng.rpng import RPNGDescription
 from tqec.plaquette.spec import ExtendedPlaquetteDataQubitsOperations, ExtendedPlaquetteSpec
 from tqec.utils.enums import Basis, Orientation

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import inspect
 from copy import copy
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Any, Literal, cast
 
 from tqec.compile.specs.base import CubeSpec
 from tqec.compile.specs.enums import (
@@ -97,7 +97,7 @@ def make_fixed_bulk_realignment_plaquette(
 class FixedBulkConventionGenerator:
     def __init__(
         self,
-        translator: RPNGTranslator,
+        translator: RPNGTranslator | None,
         compiler: PlaquetteCompiler,
         schedule_family: PlaquetteScheduleFamily = DEFAULT_SCHEDULE_FAMILY,
     ):
@@ -136,7 +136,9 @@ class FixedBulkConventionGenerator:
             if self._mapper._translator is not None
             else self._mapper._measurement_schedule
         )
-        generator = copy(self)
+        # Only this copied adapter changes the output factories; the original
+        # generator retains its concrete-plaquette public API.
+        generator = cast(Any, copy(self))
         generator._mapper = PlaquetteSpecMapper(schedule)
         generator._collection = PlaquetteSpecs
         generator._extended_collection = ExtendedSpecCollection

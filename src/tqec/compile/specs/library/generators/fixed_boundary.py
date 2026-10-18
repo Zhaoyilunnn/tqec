@@ -8,7 +8,7 @@ obtained for the fixed boundary convention.
 from __future__ import annotations
 
 from copy import copy
-from typing import Final, Literal
+from typing import Any, Final, Literal, cast
 
 from tqec.compile.specs.base import CubeSpec
 from tqec.compile.specs.enums import SpatialArms
@@ -49,7 +49,7 @@ from tqec.utils.position import Direction3D
 
 
 class FixedBoundaryConventionGenerator:
-    def __init__(self, translator: RPNGTranslator, compiler: PlaquetteCompiler):
+    def __init__(self, translator: RPNGTranslator | None, compiler: PlaquetteCompiler):
         """Low-level helper class centralising all the plaquette creation for the fixed boundary
         convention.
 
@@ -79,7 +79,9 @@ class FixedBoundaryConventionGenerator:
             if self._mapper._translator is not None
             else self._mapper._measurement_schedule
         )
-        generator = copy(self)
+        # Only this copied adapter changes the output factories; the original
+        # generator retains its concrete-plaquette public API.
+        generator = cast(Any, copy(self))
         generator._mapper = PlaquetteSpecMapper(schedule)
         generator._collection = PlaquetteSpecs
         generator._extended_collection = ExtendedSpecCollection

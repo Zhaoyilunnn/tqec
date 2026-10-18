@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from functools import cached_property
-from typing import TYPE_CHECKING, Final, Generic, Literal, TypeVar
+from typing import TYPE_CHECKING, Final, Generic, Literal, TypeVar, cast
 
 from typing_extensions import override
 
@@ -166,13 +166,13 @@ class TemplateLayer(BaseLayer, Generic[CollectionT]):
             border_indices.update(self.template.get_border_indices(border.to_template_border()))
         return type(self)(
             self.template,
-            self.plaquettes.without_plaquettes(border_indices),
+            cast(CollectionT, self.plaquettes.without_plaquettes(border_indices)),
             trimmed_spatial_borders=self.trimmed_spatial_borders | borders,
         )
 
     def __eq__(self, value: object) -> bool:
         return (
-            type(value) is type(self)
+            isinstance(value, TemplateLayer)
             and self._template == value._template
             and self._plaquettes == value._plaquettes
         )

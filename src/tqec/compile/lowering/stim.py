@@ -2,9 +2,11 @@
 
 from tqec.compile.blocks.layers.atomic.layout import LayoutLayer
 from tqec.compile.blocks.layers.atomic.plaquettes import PlaquetteLayer
+from tqec.compile.blocks.layers.atomic.raw import RawCircuitLayer
 from tqec.compile.blocks.layers.atomic.spec_plaquettes import SpecPlaquetteLayer
 from tqec.compile.blocks.layers.composed.repeated import RepeatedLayer
 from tqec.compile.blocks.layers.composed.sequenced import SequencedLayers
+from tqec.compile.lowering.base import UnsupportedLoweringError
 from tqec.compile.specs.library.generators.extended_stabilizers import ExtendedPlaquetteCollection
 from tqec.compile.specs.library.generators.fixed_bulk import make_fixed_bulk_realignment_plaquette
 from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler
@@ -16,7 +18,6 @@ from tqec.plaquette.spec import (
     RealignmentPlaquetteSpec,
     RPNGPlaquetteSpec,
 )
-from tqec.utils.exceptions import TQECError
 
 
 class StimMaterializer:
@@ -58,11 +59,13 @@ class StimMaterializer:
             if spec.boundary is not None:
                 result = result.project_on_boundary(spec.boundary)
         else:
-            raise TQECError(f"Stim lowering does not support {type(spec).__name__}.")
+            raise UnsupportedLoweringError(
+                "stim", type(spec).__name__, "unknown plaquette specification"
+            )
         self._plaquettes[spec] = result
         return result
 
-    def materialize_layer(self, layer):
+    def materialize_layer(self, layer, *, location: tuple = ()):  # noqa: PLR0911
         """Preserve geometry and repetition while replacing specs with concrete plaquettes.
 
         Existing concrete layers, including RawCircuitLayer, are legacy Stim-only
@@ -75,12 +78,26 @@ class StimMaterializer:
                 layer.trimmed_spatial_borders,
             )
         if isinstance(layer, LayoutLayer):
-            return LayoutLayer(
-                {pos: self.materialize_layer(child) for pos, child in layer.layers.items()},
-                layer.element_shape,
-            )
+            children = {
+                pos: self.materialize_layer(child, location=(*location, pos))
+                for pos, child in layer.layers.items()
+            }
+            if all(children[pos] is child for pos, child in layer.layers.items()):
+                return layer
+            return LayoutLayer(children, layer.element_shape)
         if isinstance(layer, RepeatedLayer):
-            return RepeatedLayer(self.materialize_layer(layer.internal_layer), layer.repetitions)
+            child = self.materialize_layer(layer.internal_layer, location=(*location, "repeat"))
+            return (
+                layer if child is layer.internal_layer else RepeatedLayer(child, layer.repetitions)
+            )
         if isinstance(layer, SequencedLayers):
-            return type(layer)([self.materialize_layer(child) for child in layer.layer_sequence])
-        return layer
+            children = [
+                self.materialize_layer(child, location=(*location, i))
+                for i, child in enumerate(layer.layer_sequence)
+            ]
+            if all(child is original for child, original in zip(children, layer.layer_sequence)):
+                return layer
+            return type(layer)(children)
+        if isinstance(layer, (PlaquetteLayer, RawCircuitLayer)):
+            return layer
+        raise UnsupportedLoweringError("stim", type(layer).__name__, "unknown layer type", location)

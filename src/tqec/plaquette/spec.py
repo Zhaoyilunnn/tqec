@@ -3,16 +3,26 @@
 from collections.abc import Callable, Collection, Mapping
 from dataclasses import dataclass, replace
 
+from tqec.circuit.qubit import GridQubit
 from tqec.plaquette.constants import MEASUREMENT_SCHEDULE
 from tqec.plaquette.enums import PlaquetteOrientation
+from tqec.plaquette.qubit import SquarePlaquetteQubits
 from tqec.plaquette.rpng.rpng import PauliBasis, RPNGDescription
 from tqec.utils.enums import Basis, Orientation
 from tqec.utils.exceptions import TQECError
 from tqec.utils.frozendefaultdict import FrozenDefaultDict
+from tqec.utils.position import PhysicalQubitPosition2D
+
+
+class _SpecGeometry:
+    @property
+    def origin(self) -> PhysicalQubitPosition2D:
+        """Return the center of the local plaquette coordinates."""
+        return PhysicalQubitPosition2D(0, 0)
 
 
 @dataclass(frozen=True)
-class RPNGPlaquetteSpec:
+class RPNGPlaquetteSpec(_SpecGeometry):
     """Describe a square plaquette using the standard RPNG construction.
 
     Measurement timing is a construction parameter. Circuit transformations and
@@ -22,6 +32,18 @@ class RPNGPlaquetteSpec:
     description: RPNGDescription
     measurement_schedule: int = MEASUREMENT_SCHEDULE
     compiled: bool = False
+
+    @property
+    def used_qubits(self) -> frozenset[GridQubit]:
+        """Return the qubit map footprint of the standard RPNG construction."""
+        square = SquarePlaquetteQubits()
+        return frozenset(square.syndrome_qubits) | frozenset(
+            square.data_qubits[i]
+            for i, corner in enumerate(self.description.corners)
+            if corner.r is not None
+            or corner.g is not None
+            or (corner.p is not None and corner.n is not None)
+        )
 
     @property
     def num_moments(self) -> int:
@@ -50,7 +72,7 @@ class ExtendedPlaquetteDataQubitsOperations:
 
 
 @dataclass(frozen=True)
-class ExtendedPlaquetteSpec:
+class ExtendedPlaquetteSpec(_SpecGeometry):
     """Select one shaped half of the existing extended stabilizer construction."""
 
     description: RPNGDescription
@@ -61,6 +83,27 @@ class ExtendedPlaquetteSpec:
     data_operations: ExtendedPlaquetteDataQubitsOperations
     shape: str
     second: bool
+
+    @property
+    def used_qubits(self) -> frozenset[GridQubit]:
+        """Return both syndrome qubits and the data corners selected by the shape."""
+        side = 1 if self.second else -1
+        if self.orientation == Orientation.VERTICAL:
+            data = (GridQubit(-1, side), GridQubit(1, side))
+            other = (GridQubit(-1, -side), GridQubit(1, -side))
+        else:
+            data = (GridQubit(side, -1), GridQubit(side, 1))
+            other = (GridQubit(-side, -1), GridQubit(-side, 1))
+        kept = {
+            "bulk": ((0, 1), (0, 1)),
+            "bottom_right_triangle": ((1,), (0, 1)),
+            "right_half_rectangle": ((1,), (1,)),
+            "top_left_triangle": ((0, 1), (0,)),
+            "left_half_rectangle": ((0,), (0,)),
+            "bottom_left_triangle": ((0,), (0, 1)),
+            "top_right_triangle": ((0, 1), (1,)),
+        }[self.shape][self.second]
+        return frozenset([GridQubit(0, 0), other[self.is_reversed], *(data[i] for i in kept)])
 
     @property
     def num_moments(self) -> int:
@@ -76,7 +119,7 @@ class ExtendedPlaquetteSpec:
 
 
 @dataclass(frozen=True)
-class RealignmentPlaquetteSpec:
+class RealignmentPlaquetteSpec(_SpecGeometry):
     """Parameters of the fixed-bulk temporal Hadamard realignment construction."""
 
     stabilizer_basis: Basis
@@ -91,6 +134,17 @@ class RealignmentPlaquetteSpec:
         if self.boundary is not None:
             raise TQECError("Repeated realignment boundary projection is not supported.")
         return replace(self, boundary=orientation)
+
+    @property
+    def used_qubits(self) -> frozenset[GridQubit]:
+        """Return the square footprint after any boundary projection."""
+        square = SquarePlaquetteQubits()
+        data = (
+            square.data_qubits
+            if self.boundary is None
+            else square.get_qubits_on_side(self.boundary.to_plaquette_side())
+        )
+        return frozenset([*data, *square.syndrome_qubits])
 
     @property
     def num_moments(self) -> int:
