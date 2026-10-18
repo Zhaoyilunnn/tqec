@@ -1,0 +1,254 @@
+{
+  "bulk-memory_x-1": {
+    "physical": "bdc907060855e793c114c39dbc63c0a3642ded4f53e7881368aa8790f3a87c69",
+    "measurements": 33,
+    "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
+    "stim": "880c131035825f5847975cc957a9cb86966e0b21455ab6f56bca5dc727b4d3e7"
+  },
+  "bulk-memory_x-2": {
+    "physical": "6e74cf0bbccb78f674b132cc2b656eb72ace50fe4a02311e3fd409757606cd6e",
+    "measurements": 145,
+    "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
+    "stim": "b8cd34ecec19af5f1bc893d04dad103a032a1d091ae576e8613d1e5ccf14f5b0"
+  },
+  "bulk-memory_z-1": {
+    "physical": "0c26987e6567d4c1c0036b55a296fdb7902fd2cd177143a826573642cb0b1c55",
+    "measurements": 33,
+    "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
+    "stim": "2971d9cce0b1482f21b70c9210b48044a579a5b183c85a2ec2793912b6bbbdd8"
+  },
+  "bulk-memory_z-2": {
+    "physical": "73073a762d0970b338591d41c9d79fe8c934aeb6d42963ef174fd937d09f84de",
+    "measurements": 145,
+    "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
+    "stim": "e0c1bccbaef0865cab073850178afb9f1bbe45744009b1b8b1f4d81f85b07ca5"
+  },
+  "bulk-temporal-1": {
+    "physical": "d652c523fe9494e5789a1d4ff8120e631c3f44257986673a8b6b7462d3ec0dd5",
+    "measurements": 57,
+    "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
+    "stim": "1cc9c24c87d52d457bb5439a2ec07f00dfd69dcb4245a7b8cb35f7b58cb59913"
+  },
+  "bulk-temporal-2": {
+    "physical": "ad0732177f130455084044a557cc90a061abebc61b2eb0e919a50c27487bd420",
+    "measurements": 265,
+    "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
+    "stim": "30c9c400fa5c1e188dc1c5440fb5407a3a97b2fd6abecd9263fbba6ebf39ab1a"
+  },
+  "bulk-spatial-1": {
+    "physical": "7089589a912daa3e9eed836e763a16830363693623ebfb3dff14231cdb5e5631",
+    "measurements": 81,
+    "qubits": "be00718e72a76d5b028c74885030dc8e951964db2690f7f35818287bce77a99b",
+    "stim": "8a9dc23a49e40459ca99416e4e7fd1284e93d6caf8eadf77c329655fa2475d38"
+  },
+  "bulk-spatial-2": {
+    "physical": "9f4019c1f04e87c64d463993e89329d67006138c8d8d87fd179aeb129022bc3c",
+    "measurements": 325,
+    "qubits": "a9b8508a7c61d18639f17413fde53265417faa699f78bc36e956588b7ea0bf94",
+    "stim": "5d41953ed1b5756f9ad89713004beafc6e9018cd62d65148bdb76edf820406a4"
+  },
+  "bulk-cnot-1": {
+    "physical": "66c45fe1f5d94215531c148d06954e0be472584d827e23c927863164fa993767",
+    "measurements": 297,
+    "qubits": "6fd5ca8aa835851b0b1fd113201bdc37e10d6c43e8d72723c6b85fdd644afad5",
+    "stim": "d55e3b50d002f6bea66d884276b90560e9d864409a9c9361a7e7015e0fddab86"
+  },
+  "bulk-cnot-2": {
+    "physical": "9f5a9744f813b996501eaaea61b2c84ad1c5664f000e38c31813506c563fcbc9",
+    "measurements": 1345,
+    "qubits": "dab69ba0ee99b97a6a35d438ce1180e6101828d3e4155a687dd9e2d3ef67b0a6",
+    "stim": "4c34eda1878db966f18e2528ef71104c020ebc6ff5ff165e7feabed49d70faa8"
+  },
+  "bulk-junction-1": {
+    "physical": "a398199db295c31b7c14e111f66b18bfded669a5af9f11cc957253bdb4652087",
+    "measurements": 171,
+    "qubits": "545681313950ed32c816e123df00c50d51cecb7424cfc4c00b5426ecaeecfe7a",
+    "stim": "a5d5f0c69f5537a9e6f3d8068f2e86c9c7405daf989f0e51e0819d7292d01e7f"
+  },
+  "bulk-junction-2": {
+    "physical": "a4f5bb4be39982a6a5f3cb38d61b486d4304cb9b949010acabcee8eeed3e41bb",
+    "measurements": 677,
+    "qubits": "5372344d996d70fa14daa1ba4722da528e70e071e561a5f5b5311106081b4d70",
+    "stim": "554b760b30f84cb528756b8c86dc61f7c5352e510fddc4fe89aba8c5f612c0f8"
+  },
+  "bulk-hadamard-1": {
+    "physical": "1e62ec7b87f37a5ae3d804e929c31803d2734b680a9a2c5dee905534e2f3067f",
+    "measurements": 65,
+    "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
+    "stim": "c0ddf45336543e818ac598d4c2e58e4fb686578895cd9fd0245615063231cce7"
+  },
+  "bulk-hadamard-2": {
+    "physical": "fdec9de757331b089faf31d57f2017c2010bed04749e9dfbc7266e71f4ce92ca",
+    "measurements": 289,
+    "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
+    "stim": "b650d7d5e08645ed1e10384b13cf0151a5da814c4051d914c695a38ce6c76b60"
+  },
+  "diagonal-memory_x-1": {
+    "physical": "1292dfd5e9e840d1e28f66d692066e42159bf27a97b75ce64d88037dd2388cc3",
+    "measurements": 33,
+    "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
+    "stim": "10ac0568fdaa6d87cdc4d0518eb215eee552753a2c55208155a8d1bf7e9c562a"
+  },
+  "diagonal-memory_x-2": {
+    "physical": "a2d7202b95ea6d335e401ca94f644c3276a36bc7baed9ff874f90da1f32b0ef5",
+    "measurements": 145,
+    "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
+    "stim": "1a85a2bd321a4ba7ac79bd052d2e5aab8ceff085b9173b1ede64b94d7297a1d2"
+  },
+  "diagonal-memory_z-1": {
+    "physical": "fb05eb5d26086fc054325f5deeba847fd9f758cf966c576ebc6bcd6725cf1f7e",
+    "measurements": 33,
+    "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
+    "stim": "daa31c5c0b76835338fc17fe1280c3ec6d2086d92935dc16f961d9b50d7b94b7"
+  },
+  "diagonal-memory_z-2": {
+    "physical": "ff2a64f44b7fb69bb78f06924c3186cf044c9e5823bbddd77913ca9f8e716cb3",
+    "measurements": 145,
+    "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
+    "stim": "317b144bc91b9b0b6a49abaece6dd65cb8b1df4805c92fb652f129e8c11f0b97"
+  },
+  "diagonal-temporal-1": {
+    "physical": "5d247de46e1efb8a6f429e6a0e1ea8da1ef6d551554d29be54ca18b9f615dc3b",
+    "measurements": 57,
+    "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
+    "stim": "03ce89e4b0befc23c75dcfeb3fe232974e9283edcee31ac96052c68562d3fbdc"
+  },
+  "diagonal-temporal-2": {
+    "physical": "2fe3b42759aefd6293c1184c528eb3dfd0f8d034bbd99c2881f1d84097d9cf0c",
+    "measurements": 265,
+    "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
+    "stim": "cdf2c0e0e98bf704e5094026f45333b9a70a4819f28b4bd074832bab1eb6de26"
+  },
+  "diagonal-spatial-1": {
+    "physical": "bdc432779e50d627847017fc78dda22fd37277b5029f6f2e14f59293edab4281",
+    "measurements": 81,
+    "qubits": "be00718e72a76d5b028c74885030dc8e951964db2690f7f35818287bce77a99b",
+    "stim": "f3c4c6f397baee7ea28baf68d7378ca6336f7a97fdd837434dd082acfacfe646"
+  },
+  "diagonal-spatial-2": {
+    "physical": "905fd8c5e8a1e7fe851a24ee8e4e3dbfb44eadaa1924b7fa58e3e323d4bf5514",
+    "measurements": 325,
+    "qubits": "a9b8508a7c61d18639f17413fde53265417faa699f78bc36e956588b7ea0bf94",
+    "stim": "7aceac2ea124c9952c4c28077d5792ff979a29801325a0b1dfdd979bb009537f"
+  },
+  "diagonal-cnot-1": {
+    "physical": "f685aa3efd6eb42d2f2e5f9014f554e90e12a623abbb2d4e1946804c0a99c48d",
+    "measurements": 297,
+    "qubits": "6fd5ca8aa835851b0b1fd113201bdc37e10d6c43e8d72723c6b85fdd644afad5",
+    "stim": "3d6bc1585cdee08f1c6c4ebcc89e9a8936f519fa9030d350541ae4dd7821f56a"
+  },
+  "diagonal-cnot-2": {
+    "physical": "d9c704e201c877602f667e6da687d26ff9719918499aa4603a0b8129b0cd4126",
+    "measurements": 1345,
+    "qubits": "dab69ba0ee99b97a6a35d438ce1180e6101828d3e4155a687dd9e2d3ef67b0a6",
+    "stim": "55b09ed2ceaf57ba6d310f6f85a4a00b708e7639dc8f7dd06b4c43686583ee3c"
+  },
+  "diagonal-junction-1": {
+    "physical": "9d6a497384f74fa7cb26b2072ac21db4361ce2be3603d6d7fad6b00596d692e9",
+    "measurements": 171,
+    "qubits": "545681313950ed32c816e123df00c50d51cecb7424cfc4c00b5426ecaeecfe7a",
+    "stim": "9d1a325fb157b871d9988c4bc44310de81eb85037be5fe415aa2eb5572e740ec"
+  },
+  "diagonal-junction-2": {
+    "physical": "e18231701e9ed00063481c3e95e2fa8ef97332d14a7d1eda5e025908b0a91111",
+    "measurements": 677,
+    "qubits": "5372344d996d70fa14daa1ba4722da528e70e071e561a5f5b5311106081b4d70",
+    "stim": "127ffd255938a96b57e1984d65f0670fc2c9b44403cfd6adf8d11dca659c355d"
+  },
+  "diagonal-hadamard-1": {
+    "physical": "898e16cd684be8e02dc298b93105d1a23be9109c2554c0a6c471b3524880ff27",
+    "measurements": 65,
+    "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
+    "stim": "ec9964bd3201efa460b88ffdaa2c6f502955b79c3b8d7cf168ae20abce431ee3"
+  },
+  "diagonal-hadamard-2": {
+    "physical": "21c5e3a596cb748dfb732d0586693655199083c2bbd81d8be542d4621c6db9dd",
+    "measurements": 289,
+    "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
+    "stim": "45e0acec843452d902bac91f03dda60e2c1eacbf6d568a57cb0c755741e43641"
+  },
+  "boundary-memory_x-1": {
+    "physical": "e723b2f6ddcf9f807b18dc1090713efbd52b514912bb24bc62843093246ab159",
+    "measurements": 33,
+    "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
+    "stim": "5d577301d080b0e40c349a0a87bc9e7f676aad3053bc185de30e9a3d6bb8a516"
+  },
+  "boundary-memory_x-2": {
+    "physical": "f6b05bd953be594715758b7ad41fc5368d0783c6a4877ec4420bdaf42891a5e6",
+    "measurements": 145,
+    "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
+    "stim": "7e9c1a61a2f0014de89ccf7e694b1abbb0636772ebd9a05f2eb8fa058e98986c"
+  },
+  "boundary-memory_z-1": {
+    "physical": "92704abe2d9614a9e40a24e61384bfd2a14158f2f6a200b73d3ed947b0240866",
+    "measurements": 33,
+    "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
+    "stim": "2c30dcd1396131061fd35c3c98473ae68d5e7bfe1b74d61336f15ab46fa13fc9"
+  },
+  "boundary-memory_z-2": {
+    "physical": "0f5dc9d84b5c56e0c90323324e592167e9f96b51f6efb2fc8fa38ec2b0dcc277",
+    "measurements": 145,
+    "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
+    "stim": "f3904028b11ee3c62441ff48846b28cf6ca36a586d8ecf8184a767626d84a529"
+  },
+  "boundary-temporal-1": {
+    "physical": "63fe70681b992a6314263d12fa4937954b908e919721652ec88cac6cf2b3a187",
+    "measurements": 57,
+    "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
+    "stim": "a0b1c8ffec6161c44727788f838baa211ae8d9650dee14709666b4505db208d6"
+  },
+  "boundary-temporal-2": {
+    "physical": "05d23ba624749f692aab1507a6d1b1c93c5c8fffc9f87134977966e3342ccf2a",
+    "measurements": 265,
+    "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
+    "stim": "acd429ff42bf283a0cefbdc675819c97ee7fe32bccfe6ce4245a88c7c5114d45"
+  },
+  "boundary-spatial-1": {
+    "physical": "d00ae287e5ea110f07780018f1d8e7add9b2d3ff9940c459f26a4c73aedb2ff6",
+    "measurements": 81,
+    "qubits": "be00718e72a76d5b028c74885030dc8e951964db2690f7f35818287bce77a99b",
+    "stim": "e77fcf3052ad767f688aa50861315816dc0ebf8d73b6626969f1537edf495f50"
+  },
+  "boundary-spatial-2": {
+    "physical": "970a3ac0ed931ef0c15905f767a0d2b70a85ce526868fdb72c3717006ff02151",
+    "measurements": 325,
+    "qubits": "a9b8508a7c61d18639f17413fde53265417faa699f78bc36e956588b7ea0bf94",
+    "stim": "4bb8232954bf362bf97050e61780497e6c70e1bd491ea138af97ead4e0ad82ce"
+  },
+  "boundary-cnot-1": {
+    "physical": "fd94844fa0bb4c98ee4f9058ace2e2e4e627be98c429e48bb2370590ceab06d3",
+    "measurements": 297,
+    "qubits": "6fd5ca8aa835851b0b1fd113201bdc37e10d6c43e8d72723c6b85fdd644afad5",
+    "stim": "8babfec3d1835e8680e9d3295f0fa30e385b9235a0f6d73073f715cd2476adbf"
+  },
+  "boundary-cnot-2": {
+    "physical": "c3b7e963595f97a91468b846999f94e11691b84a8972aa9e238ef120962eeb3a",
+    "measurements": 1345,
+    "qubits": "dab69ba0ee99b97a6a35d438ce1180e6101828d3e4155a687dd9e2d3ef67b0a6",
+    "stim": "1d243bfb5421fb9220b05202c0c9f590c31d34540e204e2dd78524a34f83ea4c"
+  },
+  "boundary-junction-1": {
+    "physical": "44e24481dbd0fd2d3a474fbf8f3bd13db4e5ae66f160181336bbc4c59f3c49ad",
+    "measurements": 165,
+    "qubits": "da7ec50a03cd2f434d2c90e2fb01bcb286341be6d700b69723d7410a835fb7bd",
+    "stim": "96e7d8907fd8581543d7dc03d90b0b13139f15fb44c9102a74b2e0582606ea9d"
+  },
+  "boundary-junction-2": {
+    "physical": "f484b3ed6b0a64816342c2a0ecd45b15b7680ca3c74de682a3eb2213a0b2950d",
+    "measurements": 657,
+    "qubits": "8580e3f4bd01497747783dda68bd20f9e605bfbf90695a455fa2ced00ee5fbe0",
+    "stim": "709c58961b3c916f4068887737bee2247379d61ba8db3d0834b159e00df70239"
+  },
+  "boundary-hadamard-1": {
+    "physical": "2b83036600962c32f1471ac688e2b2f7f663108b5cb1d10b5c5031516e3e8139",
+    "measurements": 57,
+    "qubits": "463e88f4237d73b7d886931e515f913899288cf9e9ebcfc2509c0c41ee30ba18",
+    "stim": "4e1a18bd12ed0a742b5fb4f804f0f8819604b3161eabdcab190b4ba181d7fbb4"
+  },
+  "boundary-hadamard-2": {
+    "physical": "4d1d2ec64825a62a37c3ed745e7564b9376ef3afcd07905a4951806392ae8399",
+    "measurements": 265,
+    "qubits": "eb25c58307a3df5eeafb48ab4297f636e881bb15ef1a013711d41eb3f98d80fe",
+    "stim": "894a33282b1c6645706b4a6c653b46f0dc4d2892d6c47349847af24ca1c397f4"
+  }
+}
