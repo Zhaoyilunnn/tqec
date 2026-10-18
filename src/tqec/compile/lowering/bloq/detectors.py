@@ -33,7 +33,12 @@ def qec_relations(all_moments, registry: MeasurementRegistry, regions):
     previous = []
     seen = {}
     for instance, moments in enumerate(all_moments):
-        creation, destruction = fragment_flows(moments, qubits)
+        try:
+            creation, destruction = fragment_flows(moments, qubits)
+        except UnsupportedLoweringError as error:
+            raise UnsupportedLoweringError(
+                "bloq", error.construction, error.reason, instance
+            ) from error
         offset = registry.offsets[instance]
         creation = [(x, z, m << offset, sign) for x, z, m, sign in creation]
         destruction = [(x, z, m << offset, sign) for x, z, m, sign in destruction]
@@ -54,12 +59,17 @@ def qec_relations(all_moments, registry: MeasurementRegistry, regions):
             for family in (creation, destruction, previous + destruction)
             for relation in closed_relations(family, len(qubits))
         ]
+        first_record = registry.offsets[max(0, instance - 1)]
+        stop_record = (
+            registry.offsets[instance + 1]
+            if instance + 1 < len(registry.offsets)
+            else len(registry.outputs)
+        )
         for center, (rx, ry), syndrome in regions[instance]:
             allowed = 0
             owned = 0
-            for record, (owner, _local, q, _t) in enumerate(registry.outputs):
-                if owner not in (instance - 1, instance):
-                    continue
+            for record in range(first_record, stop_record):
+                _owner, _local, q, _t = registry.outputs[record]
                 if abs(q[0] - center[0]) <= rx and abs(q[1] - center[1]) <= ry:
                     allowed |= 1 << record
                 if q in syndrome:

@@ -85,3 +85,14 @@ def test_layout_boundary_flows(case, convention) -> None:
                         measurements=parity_indices(records),
                     )
                 )
+
+
+def test_negative_y_boundary_relation() -> None:
+    moments = [[("RY", ((0, 0),))], [("H", ((0, 0),))], [("MY", ((0, 0),))]]
+    qubits = [(0, 0)]
+    creation, destruction = fragment_flows(moments, qubits)
+    circuit = circuit_for(moments, qubits)
+    for family in (creation, destruction):
+        relations = list(closed_relations(family, 1))
+        assert relations == [(1, 1)]
+        assert circuit.has_flow(stim.Flow(output=stim.PauliString("-I"), measurements=[0]))

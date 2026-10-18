@@ -53,6 +53,7 @@ specified in :doc:`construction_lowering`.
    :hidden:
 
    construction_lowering
+   bloq_lowering
 
 .. _interop_ref:
 

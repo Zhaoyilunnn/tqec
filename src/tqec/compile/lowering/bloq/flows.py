@@ -130,7 +130,10 @@ def fragment_flows(moments, qubits):
             elif gate.startswith("M"):
                 if any(q in measured for q in ids):
                     raise UnsupportedLoweringError(
-                        "bloq", "flow", "multiple measurements on one fragment qubit"
+                        "bloq",
+                        "flow",
+                        "multiple measurements on one fragment qubit; "
+                        "enable rescheduling or gates_only",
                     )
                 measurements.extend((q, gate[-1] if gate != "M" else "Z") for q in ids)
                 measured.update(ids)

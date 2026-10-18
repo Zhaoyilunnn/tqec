@@ -22,3 +22,27 @@ Custom translators, custom plaquette compilers and raw circuit layers are not
 recoverable from construction specifications. Bloq lowering must reject them.
 The existing diagonal spatial-H expected failures remain unsupported. A physical
 operation test alone does not establish detector, flow or logical correctness.
+
+The new differential tests compare gates by moment and physical coordinate,
+measurement ownership, exact logical parity and the full detector parity space.
+They do not require identical detector generators or declaration counts. Memory
+and spatial-pipe tests also check distance `2k+1` under uniform depolarizing noise.
+Every creation and destruction flow in the tested layouts is independently
+checked with Stim, including the extended and realignment constructions.
+
+The cold-process test blocks imports of Stim, tqecd, Bloq and the Stim lowering
+package before importing the compiler. It then emits complete memory, junction
+and temporal-H programs. Integration tests use the real pinned Bloq package and
+are skipped if that optional package is absent.
+
+A local run of `python benchmarks/bloq_text.py` with the environment above gave:
+
+| Case | Templates | Instances | Stored detectors | Text bytes | Seconds | Peak Python MiB |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Memory, k=2 | 4 | 5 | 138 | 23843 | 0.329 | 0.478 |
+| Memory, 100 repeated rounds, k=1 | 4 | 102 | 820 | 43763 | 1.095 | 2.568 |
+
+These are local measurements with `tracemalloc` enabled, not runtime guarantees.
+Stored detector declarations count pooled templates once; expanded detector
+counts can differ. Expansion budgets reject oversized trees before dense template
+allocation and bound the number of qubits used by Pauli propagation.

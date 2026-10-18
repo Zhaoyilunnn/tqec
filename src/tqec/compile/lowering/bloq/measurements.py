@@ -5,6 +5,8 @@ from tqec.compile.lowering.bloq.text import identifier
 
 def indices(parity: int):
     """Enumerate the records in an XOR parity deterministically."""
+    if parity < 0:
+        raise ValueError("A measurement parity mask must be nonnegative.")
     while parity:
         bit = parity & -parity
         yield bit.bit_length() - 1
