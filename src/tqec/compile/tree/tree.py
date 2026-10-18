@@ -220,6 +220,10 @@ class LayerTree:
             a string representing the Crumble URL of the quantum circuit.
 
         """
+        if add_polygons:
+            raise TQECError(
+                "Native Crumble polygon assembly is not supported; use add_polygons=False."
+            )
         if not add_polygons:
             circuit = self.generate_circuit(
                 k,

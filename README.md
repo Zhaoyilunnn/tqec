@@ -4,7 +4,12 @@
 
 # TQEC
 
-![Python](https://img.shields.io/badge/python-3.10%20|%203.11%20|%203.12%20|%203.13-blue)
+This branch contains the **direct Deltakit ScheduledCircuit experiment**.
+It requires Python 3.11 or later and changes low-level circuit interfaces.
+See the [experiment report](https://github.com/Zhaoyilunnn/tqec/blob/experiment/deltakit-direct-scheduled-circuit/docs/direct_deltakit_experiment.rst) for supported
+paths, validation, performance measurements and compatibility limits.
+
+![Python](https://img.shields.io/badge/python-3.11%20|%203.12%20|%203.13-blue)
 [![build](https://github.com/tqec/tqec/actions/workflows/ci.yml/badge.svg)](https://github.com/tqec/tqec/actions/workflows/ci.yml)
 [![docs](https://github.com/tqec/tqec/actions/workflows/gh-pages.yml/badge.svg)](https://github.com/tqec/tqec/actions/workflows/gh-pages.yml)
 [![Stars](https://img.shields.io/github/stars/tqec/tqec.svg)](https://github.com/tqec/tqec/stargazers)

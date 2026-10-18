@@ -102,5 +102,24 @@ def test_explicit_unsupported_paths_and_budget():
     tree = compile_block_graph(make_graph("memory_z")).to_layer_tree()
     with pytest.raises(TQECError, match="budget"):
         tree.get_native_module(2, max_rounds=1)
+    with pytest.raises(TQECError, match="polygons"):
+        tree.generate_crumble_url(1)
     with pytest.raises(TQECError, match="observables"):
         tree.get_native_module(1, annotation_mode="auto", include_observables=True)
+
+
+def test_custom_pass_is_rejected_without_stim_fallback():
+    from tqec.plaquette.compilation.base import PlaquetteCompiler
+    from tqec.plaquette.compilation.passes.sort_targets import SortTargetsPass
+    from tqec.plaquette.rpng import RPNGDescription
+    from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
+    from tqec.utils.exceptions import TQECError
+
+    plaquette = DefaultRPNGTranslator().translate(
+        RPNGDescription.from_string("-x1- -x2- -x3- -x4-")
+    )
+    compiler = PlaquetteCompiler("unsupported", iter([SortTargetsPass()]), lambda names: names)
+    with pytest.raises(TQECError, match="native Deltakit rewrites"):
+        compiler.compile(plaquette)
+    with pytest.raises(TQECError, match="native Deltakit rewrite"):
+        SortTargetsPass().run(plaquette.circuit)

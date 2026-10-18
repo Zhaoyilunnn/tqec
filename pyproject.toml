@@ -15,7 +15,7 @@ license-files = ["LICENSE"]
 keywords = ["topological quantum error correction", "qec"]
 # Upper bound: Some packages do not build on Python 3.14 yet
 # e.g., docformatter, see https://github.com/PyCQA/docformatter/issues/327
-requires-python = ">=3.10,<3.14"
+requires-python = ">=3.11,<3.14"
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
@@ -27,7 +27,6 @@ classifiers = [
   "Operating System :: POSIX :: Linux",
   "Programming Language :: JavaScript",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
@@ -39,6 +38,9 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
+  "deltakit-compile @ git+https://github.com/Deltakit/deltakit-compile.git@e242562f1387b7efdff23d2bc7ea351f8b6edd03",
+  "xdsl==0.68.0",
+  "deltakit-stim==0.2.7",
   "matplotlib>=3.9",
   "networkx>=3.0",
   "numpy>=1.22",
@@ -148,6 +150,8 @@ exclude_also = [
 
 
 [tool.ruff]
+# Keep the upstream style without rewriting unrelated compatibility imports.
+target-version = "py310"
 # exclude = ["__init__.py"]
 line-length = 100
 exclude = ["*.ipynb"]

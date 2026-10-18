@@ -166,3 +166,8 @@ Plotting functions are in this module too.
 References
 -----------
 .. footbibliography::
+
+.. toctree::
+   :hidden:
+
+   direct_deltakit_experiment

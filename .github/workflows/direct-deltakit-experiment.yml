@@ -1,0 +1,21 @@
+name: Direct Deltakit experiment
+on:
+  push:
+    branches: [experiment/deltakit-direct-scheduled-circuit]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  experiment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+      - run: uv sync --locked --group test --group dev --python 3.11
+      - run: uv run ruff check src tests/experiment
+      - run: uv run ty check src
+      - run: uv run pytest tests/experiment -q -o timeout=240
+      - name: Unmodified upstream integration tests
+        run: >-
+          uv run pytest tests/compile/compile_test.py -q -o timeout=240
+          -k 'memory or connected_in_time or connected_in_space or logical_cnot or temporal_hadamard or L_spatial_junction'

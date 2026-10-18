@@ -1,0 +1,697 @@
+{
+  "date": "2026-10-19",
+  "environment": {
+    "python": "3.11.16",
+    "system": "Linux",
+    "machine": "x86_64",
+    "packages": {
+      "stim": "1.16.0",
+      "deltakit-compile": "0.1.0",
+      "deltakit-stim": "0.2.7",
+      "xdsl": "0.68.0",
+      "tqecd": "0.2.1",
+      "numpy": "2.4.6"
+    }
+  },
+  "revisions": {
+    "upstream": "2cfbbba4cc4696f011f630d279da36aacda529ca",
+    "spec": "1a1b14dd296e1cf4f3543ba83a5387f23c81e327",
+    "deltakit_compile": "e242562f1387b7efdff23d2bc7ea351f8b6edd03",
+    "direct_source_tree": "9ac05c3b0a065d5be3ef1d5721327c41032ea461"
+  },
+  "checks": {
+    "physical_baseline": 42,
+    "legacy_detector_subspace_and_observable_parity": 42,
+    "unmodified_compile_test_selection": 139,
+    "native_core": 7,
+    "import_export_controls": 4,
+    "native_auto_memory": 4,
+    "source_type_check": "passed",
+    "pre_commit": "passed",
+    "uv_locked_resolution": "passed",
+    "wheel_and_sdist": "passed",
+    "docs": "built; stale import_module autosummary warnings",
+    "all_upstream_unit_tests": "not claimed; Stim-backed low-level APIs intentionally incompatible",
+    "monte_carlo_ler": "not measured"
+  },
+  "source_cost": {
+    "direct": {
+      "files": 15,
+      "insertions": 651,
+      "deletions": 896,
+      "core_responsibilities_rewritten": 6
+    },
+    "spec": {
+      "files": 80,
+      "insertions": 3269,
+      "deletions": 571
+    },
+    "qualification": "Different scope: spec includes Stim, Bloq and Deltakit backends; direct removes legacy low-level behavior."
+  },
+  "benchmark_method": {
+    "case": "memory_z",
+    "convention": "fixed bulk",
+    "output": "Stim with detectors and observables",
+    "warmups": 1,
+    "wall_runs": 3,
+    "allocation_run": "separate tracemalloc run; excludes C++ allocations",
+    "profile_run": "separate cProfile run; inclusive times overlap",
+    "execution": "sequential processes after test jobs completed",
+    "cache_policy": "fresh tree and DetectorDatabase each run; library caches warm",
+    "clone": "1000 deep copies of a five-qubit MX Moment; spec does not use Moment",
+    "scope": "k=1,2 only; shared host, no large-scale or Monte Carlo conclusions"
+  },
+  "measurements": [
+    {
+      "route": "upstream",
+      "k": 1,
+      "seconds": [
+        0.1994396990048699,
+        0.2085311980044935,
+        0.19966909900540486
+      ],
+      "median_seconds": 0.19966909900540486,
+      "peak_python_bytes": 281843,
+      "clone_microseconds": 1.4831000007689,
+      "profile": [
+        {
+          "file": "/mnt/d/forks/tqec/tests/experiment/performance.py",
+          "function": "run",
+          "inclusive_seconds": 0.24181779900000003,
+          "calls": 1
+        },
+        {
+          "file": "tqec/compile/tree/tree.py",
+          "function": "generate_circuit",
+          "inclusive_seconds": 0.24064669900000002,
+          "calls": 1
+        },
+        {
+          "file": "tqec/compile/tree/tree.py",
+          "function": "generate_circuit_stream",
+          "inclusive_seconds": 0.240581699,
+          "calls": 6
+        },
+        {
+          "file": "tqec/compile/tree/node.py",
+          "function": "_generate_circuit_stream",
+          "inclusive_seconds": 0.23874919900000002,
+          "calls": 5
+        },
+        {
+          "file": "tqec/compile/tree/node.py",
+          "function": "_generate_circuits_with_potential_polygons_stream",
+          "inclusive_seconds": 0.238729399,
+          "calls": 18
+        },
+        {
+          "file": "tqec/compile/tree/annotators/detectors.py",
+          "function": "visit_node",
+          "inclusive_seconds": 0.21850749900000002,
+          "calls": 3
+        },
+        {
+          "file": "tqec/compile/detectors/compute.py",
+          "function": "compute_detectors_for_fixed_radius",
+          "inclusive_seconds": 0.216001399,
+          "calls": 3
+        },
+        {
+          "file": "tqec/compile/blocks/layers/atomic/layout.py",
+          "function": "to_circuit",
+          "inclusive_seconds": 0.0162406,
+          "calls": 3
+        },
+        {
+          "file": "tqec/compile/generation.py",
+          "function": "generate_circuit",
+          "inclusive_seconds": 0.015107,
+          "calls": 3
+        },
+        {
+          "file": "tqec/compile/generation.py",
+          "function": "generate_circuit_from_instantiation",
+          "inclusive_seconds": 0.014798200000000001,
+          "calls": 3
+        },
+        {
+          "file": "tqec/circuit/schedule/manipulation.py",
+          "function": "merge_scheduled_circuits",
+          "inclusive_seconds": 0.010286100000000001,
+          "calls": 3
+        },
+        {
+          "file": "tqec/compile/detectors/database.py",
+          "function": "add_situation",
+          "inclusive_seconds": 0.0045588,
+          "calls": 48
+        },
+        {
+          "file": "tqec/compile/detectors/database.py",
+          "function": "__hash__",
+          "inclusive_seconds": 0.0043499,
+          "calls": 48
+        },
+        {
+          "file": "tqec/compile/detectors/database.py",
+          "function": "reliable_hash",
+          "inclusive_seconds": 0.0041675,
+          "calls": 48
+        },
+        {
+          "file": "tqec/templates/subtemplates.py",
+          "function": "get_spatially_distinct_3d_subtemplates",
+          "inclusive_seconds": 0.0037659000000000004,
+          "calls": 3
+        }
+      ],
+      "output_bytes": 2284
+    },
+    {
+      "route": "upstream",
+      "k": 2,
+      "seconds": [
+        0.32860079800593667,
+        0.32008549899910577,
+        0.3201274979801383
+      ],
+      "median_seconds": 0.3201274979801383,
+      "peak_python_bytes": 634898,
+      "clone_microseconds": 1.5275000187102705,
+      "profile": [
+        {
+          "file": "/mnt/d/forks/tqec/tests/experiment/performance.py",
+          "function": "run",
+          "inclusive_seconds": 0.44082009800000005,
+          "calls": 1
+        },
+        {
+          "file": "tqec/compile/tree/tree.py",
+          "function": "generate_circuit",
+          "inclusive_seconds": 0.439462098,
+          "calls": 1
+        },
+        {
+          "file": "tqec/compile/tree/tree.py",
+          "function": "generate_circuit_stream",
+          "inclusive_seconds": 0.439390698,
+          "calls": 6
+        },
+        {
+          "file": "tqec/compile/tree/node.py",
+          "function": "_generate_circuit_stream",
+          "inclusive_seconds": 0.436286198,
+          "calls": 5
+        },
+        {
+          "file": "tqec/compile/tree/node.py",
+          "function": "_generate_circuits_with_potential_polygons_stream",
+          "inclusive_seconds": 0.43626609800000005,
+          "calls": 18
+        },
+        {
+          "file": "tqec/compile/tree/annotators/detectors.py",
+          "function": "visit_node",
+          "inclusive_seconds": 0.39523469800000005,
+          "calls": 3
+        },
+        {
+          "file": "tqec/compile/detectors/compute.py",
+          "function": "compute_detectors_for_fixed_radius",
+          "inclusive_seconds": 0.39194639800000003,
+          "calls": 3
+        },
+        {
+          "file": "tqec/compile/blocks/layers/atomic/layout.py",
+          "function": "to_circuit",
+          "inclusive_seconds": 0.0350878,
+          "calls": 3
+        },
+        {
+          "file": "tqec/compile/generation.py",
+          "function": "generate_circuit",
+          "inclusive_seconds": 0.0337821,
+          "calls": 3
+        },
+        {
+          "file": "tqec/compile/generation.py",
+          "function": "generate_circuit_from_instantiation",
+          "inclusive_seconds": 0.033371200000000004,
+          "calls": 3
+        },
+        {
+          "file": "tqec/circuit/schedule/manipulation.py",
+          "function": "merge_scheduled_circuits",
+          "inclusive_seconds": 0.0217503,
+          "calls": 3
+        },
+        {
+          "file": "tqec/compile/detectors/database.py",
+          "function": "add_situation",
+          "inclusive_seconds": 0.0093834,
+          "calls": 108
+        },
+        {
+          "file": "tqec/compile/detectors/database.py",
+          "function": "__hash__",
+          "inclusive_seconds": 0.0090123,
+          "calls": 108
+        },
+        {
+          "file": "tqec/compile/detectors/database.py",
+          "function": "reliable_hash",
+          "inclusive_seconds": 0.008640700000000001,
+          "calls": 108
+        },
+        {
+          "file": "tqec/circuit/schedule/manipulation.py",
+          "function": "relabel_circuits_qubit_indices",
+          "inclusive_seconds": 0.007768000000000001,
+          "calls": 3
+        }
+      ],
+      "output_bytes": 6543
+    },
+    {
+      "route": "spec",
+      "k": 1,
+      "seconds": [
+        0.4806048980099149,
+        0.5341111019952223,
+        0.5312047019833699
+      ],
+      "median_seconds": 0.5312047019833699,
+      "peak_python_bytes": 5312238,
+      "clone_microseconds": null,
+      "profile": [
+        {
+          "file": "/mnt/d/forks/tqec/tests/experiment/performance.py",
+          "function": "run",
+          "inclusive_seconds": 1.609285306,
+          "calls": 1
+        },
+        {
+          "file": "tqec/compile/lowering/deltakit/backend.py",
+          "function": "compile_to_deltakit",
+          "inclusive_seconds": 1.6081560060000002,
+          "calls": 1
+        },
+        {
+          "file": "deltakit_compile/frontend/logical_assembler.py",
+          "function": "compile",
+          "inclusive_seconds": 1.0069082040000001,
+          "calls": 1
+        },
+        {
+          "file": "deltakit_compile/passes/common/pipeline.py",
+          "function": "apply",
+          "inclusive_seconds": 0.9786573040000001,
+          "calls": 1
+        },
+        {
+          "file": "xdsl/passes.py",
+          "function": "apply",
+          "inclusive_seconds": 0.976283204,
+          "calls": 1
+        },
+        {
+          "file": "xdsl/pattern_rewriter.py",
+          "function": "rewrite_region",
+          "inclusive_seconds": 0.8431888030000001,
+          "calls": 34
+        },
+        {
+          "file": "xdsl/pattern_rewriter.py",
+          "function": "rewrite_module",
+          "inclusive_seconds": 0.7931898030000001,
+          "calls": 26
+        },
+        {
+          "file": "xdsl/pattern_rewriter.py",
+          "function": "_process_worklist",
+          "inclusive_seconds": 0.663252403,
+          "calls": 46
+        },
+        {
+          "file": "tqec/compile/lowering/deltakit/backend.py",
+          "function": "build_deltakit_program",
+          "inclusive_seconds": 0.5920069020000001,
+          "calls": 1
+        },
+        {
+          "file": "xdsl/pattern_rewriter.py",
+          "function": "match_and_rewrite",
+          "inclusive_seconds": 0.576858803,
+          "calls": 14831
+        },
+        {
+          "file": "xdsl/pattern_rewriter.py",
+          "function": "impl",
+          "inclusive_seconds": 0.392280301,
+          "calls": 88190
+        },
+        {
+          "file": "xdsl/transforms/canonicalize.py",
+          "function": "apply",
+          "inclusive_seconds": 0.288428801,
+          "calls": 6
+        },
+        {
+          "file": "deltakit_compile/passes/log_asm_api/lower_qubit_tensors_to_qcore.py",
+          "function": "apply",
+          "inclusive_seconds": 0.284153102,
+          "calls": 1
+        },
+        {
+          "file": "xdsl/ir/core.py",
+          "function": "verify",
+          "inclusive_seconds": 0.26972070200000003,
+          "calls": 2505
+        },
+        {
+          "file": "xdsl/ir/core.py",
+          "function": "verify",
+          "inclusive_seconds": 0.26775930200000003,
+          "calls": 574
+        }
+      ],
+      "output_bytes": 2776
+    },
+    {
+      "route": "spec",
+      "k": 2,
+      "seconds": [
+        1.9337865640118252,
+        2.0038019719941076,
+        1.9592895490059163
+      ],
+      "median_seconds": 1.9592895490059163,
+      "peak_python_bytes": 18790875,
+      "clone_microseconds": null,
+      "profile": [
+        {
+          "file": "/mnt/d/forks/tqec/tests/experiment/performance.py",
+          "function": "run",
+          "inclusive_seconds": 6.149335883,
+          "calls": 1
+        },
+        {
+          "file": "tqec/compile/lowering/deltakit/backend.py",
+          "function": "compile_to_deltakit",
+          "inclusive_seconds": 6.148239483,
+          "calls": 1
+        },
+        {
+          "file": "deltakit_compile/frontend/logical_assembler.py",
+          "function": "compile",
+          "inclusive_seconds": 4.427853669,
+          "calls": 1
+        },
+        {
+          "file": "deltakit_compile/passes/common/pipeline.py",
+          "function": "apply",
+          "inclusive_seconds": 4.337212873,
+          "calls": 1
+        },
+        {
+          "file": "xdsl/passes.py",
+          "function": "apply",
+          "inclusive_seconds": 4.334853873,
+          "calls": 1
+        },
+        {
+          "file": "xdsl/pattern_rewriter.py",
+          "function": "rewrite_region",
+          "inclusive_seconds": 3.662632909,
+          "calls": 34
+        },
+        {
+          "file": "xdsl/pattern_rewriter.py",
+          "function": "rewrite_module",
+          "inclusive_seconds": 3.4482736210000002,
+          "calls": 26
+        },
+        {
+          "file": "xdsl/pattern_rewriter.py",
+          "function": "_process_worklist",
+          "inclusive_seconds": 2.946960249,
+          "calls": 46
+        },
+        {
+          "file": "xdsl/pattern_rewriter.py",
+          "function": "match_and_rewrite",
+          "inclusive_seconds": 2.5917456700000003,
+          "calls": 59732
+        },
+        {
+          "file": "xdsl/pattern_rewriter.py",
+          "function": "impl",
+          "inclusive_seconds": 1.8314128980000002,
+          "calls": 398879
+        },
+        {
+          "file": "tqec/compile/lowering/deltakit/backend.py",
+          "function": "build_deltakit_program",
+          "inclusive_seconds": 1.693751417,
+          "calls": 1
+        },
+        {
+          "file": "deltakit_compile/passes/log_asm_api/lower_qubit_tensors_to_qcore.py",
+          "function": "apply",
+          "inclusive_seconds": 1.5456916230000002,
+          "calls": 1
+        },
+        {
+          "file": "xdsl/transforms/canonicalize.py",
+          "function": "apply",
+          "inclusive_seconds": 1.09536894,
+          "calls": 6
+        },
+        {
+          "file": "xdsl/ir/core.py",
+          "function": "verify",
+          "inclusive_seconds": 0.7947515620000001,
+          "calls": 7507
+        },
+        {
+          "file": "xdsl/ir/core.py",
+          "function": "verify",
+          "inclusive_seconds": 0.790045062,
+          "calls": 1758
+        }
+      ],
+      "output_bytes": 12395
+    },
+    {
+      "route": "direct",
+      "k": 1,
+      "seconds": [
+        1.9278047909901943,
+        1.9270175310084596,
+        1.925959212007001
+      ],
+      "median_seconds": 1.9270175310084596,
+      "peak_python_bytes": 4582232,
+      "clone_microseconds": 46.48468998493627,
+      "profile": [
+        {
+          "file": "/mnt/d/forks/tqec/tests/experiment/performance.py",
+          "function": "run",
+          "inclusive_seconds": 6.258640188,
+          "calls": 1
+        },
+        {
+          "file": "tqec/compile/tree/tree.py",
+          "function": "generate_circuit",
+          "inclusive_seconds": 6.257561488,
+          "calls": 1
+        },
+        {
+          "file": "tqec/compile/tree/tree.py",
+          "function": "get_native_module",
+          "inclusive_seconds": 5.966033991000001,
+          "calls": 1
+        },
+        {
+          "file": "tqec/compile/tree/native.py",
+          "function": "build_native",
+          "inclusive_seconds": 5.965995591,
+          "calls": 1
+        },
+        {
+          "file": "tqec/compile/tree/tree.py",
+          "function": "_annotate_detectors",
+          "inclusive_seconds": 5.549024016000001,
+          "calls": 1
+        },
+        {
+          "file": "tqec/compile/tree/node.py",
+          "function": "walk",
+          "inclusive_seconds": 5.549002616,
+          "calls": 6
+        },
+        {
+          "file": "tqec/compile/tree/annotators/detectors.py",
+          "function": "visit_node",
+          "inclusive_seconds": 5.548924316,
+          "calls": 6
+        },
+        {
+          "file": "tqec/compile/detectors/compute.py",
+          "function": "compute_detectors_for_fixed_radius",
+          "inclusive_seconds": 5.546555417,
+          "calls": 3
+        },
+        {
+          "file": "tqec/compile/detectors/compute.py",
+          "function": "<dictcomp>",
+          "inclusive_seconds": 5.541896018,
+          "calls": 3
+        },
+        {
+          "file": "tqec/compile/detectors/compute.py",
+          "function": "compute_detectors_at_end_of_situation",
+          "inclusive_seconds": 5.541655518000001,
+          "calls": 48
+        },
+        {
+          "file": "tqec/compile/detectors/compute.py",
+          "function": "_compute_detectors_at_end_of_situation",
+          "inclusive_seconds": 5.531212619000001,
+          "calls": 48
+        },
+        {
+          "file": "tqec/compile/detectors/compute.py",
+          "function": "<listcomp>",
+          "inclusive_seconds": 4.832113738,
+          "calls": 24
+        },
+        {
+          "file": "tqec/circuit/schedule/circuit.py",
+          "function": "get_circuit",
+          "inclusive_seconds": 4.8320181380000005,
+          "calls": 40
+        },
+        {
+          "file": "tqec/circuit/native.py",
+          "function": "compile_module",
+          "inclusive_seconds": 4.5808718530000005,
+          "calls": 42
+        },
+        {
+          "file": "deltakit_compile/frontend/logical_assembler.py",
+          "function": "compile",
+          "inclusive_seconds": 4.373817178,
+          "calls": 42
+        }
+      ],
+      "output_bytes": 2236
+    },
+    {
+      "route": "direct",
+      "k": 2,
+      "seconds": [
+        9.506274112005485,
+        9.789098657987779,
+        10.016514157992788
+      ],
+      "median_seconds": 9.789098657987779,
+      "peak_python_bytes": 12358722,
+      "clone_microseconds": 48.14769999939017,
+      "profile": [
+        {
+          "file": "/mnt/d/forks/tqec/tests/experiment/performance.py",
+          "function": "run",
+          "inclusive_seconds": 31.277312561000002,
+          "calls": 1
+        },
+        {
+          "file": "tqec/compile/tree/tree.py",
+          "function": "generate_circuit",
+          "inclusive_seconds": 31.275993461000002,
+          "calls": 1
+        },
+        {
+          "file": "tqec/compile/tree/tree.py",
+          "function": "get_native_module",
+          "inclusive_seconds": 30.036521863,
+          "calls": 1
+        },
+        {
+          "file": "tqec/compile/tree/native.py",
+          "function": "build_native",
+          "inclusive_seconds": 30.036464863000003,
+          "calls": 1
+        },
+        {
+          "file": "tqec/compile/tree/tree.py",
+          "function": "_annotate_detectors",
+          "inclusive_seconds": 28.176327763000003,
+          "calls": 1
+        },
+        {
+          "file": "tqec/compile/tree/node.py",
+          "function": "walk",
+          "inclusive_seconds": 28.176294163,
+          "calls": 6
+        },
+        {
+          "file": "tqec/compile/tree/annotators/detectors.py",
+          "function": "visit_node",
+          "inclusive_seconds": 28.176197563000002,
+          "calls": 6
+        },
+        {
+          "file": "tqec/compile/detectors/compute.py",
+          "function": "compute_detectors_for_fixed_radius",
+          "inclusive_seconds": 28.170639363000003,
+          "calls": 3
+        },
+        {
+          "file": "tqec/compile/detectors/compute.py",
+          "function": "<dictcomp>",
+          "inclusive_seconds": 28.163464363000003,
+          "calls": 3
+        },
+        {
+          "file": "tqec/compile/detectors/compute.py",
+          "function": "compute_detectors_at_end_of_situation",
+          "inclusive_seconds": 28.162804763,
+          "calls": 108
+        },
+        {
+          "file": "tqec/compile/detectors/compute.py",
+          "function": "_compute_detectors_at_end_of_situation",
+          "inclusive_seconds": 28.137033063,
+          "calls": 108
+        },
+        {
+          "file": "tqec/compile/detectors/compute.py",
+          "function": "<listcomp>",
+          "inclusive_seconds": 24.101683256,
+          "calls": 72
+        },
+        {
+          "file": "tqec/circuit/schedule/circuit.py",
+          "function": "get_circuit",
+          "inclusive_seconds": 24.101369156,
+          "calls": 120
+        },
+        {
+          "file": "tqec/circuit/native.py",
+          "function": "compile_module",
+          "inclusive_seconds": 22.089194445,
+          "calls": 122
+        },
+        {
+          "file": "deltakit_compile/frontend/logical_assembler.py",
+          "function": "compile",
+          "inclusive_seconds": 21.220764441,
+          "calls": 122
+        }
+      ],
+      "output_bytes": 9468
+    }
+  ],
+  "conclusion": "Physical native migration verified; legacy QEC compatible in the tested matrix. Native auto finding is not a logical-QEC replacement. Keep the spec boundary for the multi-backend fork."
+}
