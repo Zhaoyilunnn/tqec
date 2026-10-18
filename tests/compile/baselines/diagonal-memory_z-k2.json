@@ -1,0 +1,8 @@
+{
+  "sha256": "317b144bc91b9b0b6a49abaece6dd65cb8b1df4805c92fb652f129e8c11f0b97",
+  "num_qubits": 61,
+  "num_measurements": 145,
+  "num_detectors": 120,
+  "num_observables": 1,
+  "num_ticks": 44
+}
