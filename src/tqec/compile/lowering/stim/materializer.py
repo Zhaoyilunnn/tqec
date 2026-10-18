@@ -28,6 +28,12 @@ class StimMaterializer:
 
     def materialize_plaquette(self, spec: PlaquetteSpec) -> Plaquette:
         """Build a concrete plaquette, preserving its original name and debug data."""
+        if not isinstance(
+            spec, (RPNGPlaquetteSpec, ExtendedPlaquetteSpec, RealignmentPlaquetteSpec)
+        ):
+            raise UnsupportedLoweringError(
+                "stim", type(spec).__name__, "unknown plaquette specification"
+            )
         if spec in self._plaquettes:
             return self._plaquettes[spec]
         if isinstance(spec, RPNGPlaquetteSpec):
@@ -57,10 +63,6 @@ class StimMaterializer:
             )
             if spec.boundary is not None:
                 result = result.project_on_boundary(spec.boundary)
-        else:
-            raise UnsupportedLoweringError(
-                "stim", type(spec).__name__, "unknown plaquette specification"
-            )
         self._plaquettes[spec] = result
         return result
 
@@ -87,7 +89,9 @@ class StimMaterializer:
         if isinstance(layer, RepeatedLayer):
             child = self.materialize_layer(layer.internal_layer, location=(*location, "repeat"))
             return (
-                layer if child is layer.internal_layer else RepeatedLayer(child, layer.repetitions)
+                layer
+                if child is layer.internal_layer
+                else RepeatedLayer(child, layer.repetitions, layer.trimmed_spatial_borders)
             )
         if isinstance(layer, SequencedLayers):
             children = [
@@ -96,7 +100,7 @@ class StimMaterializer:
             ]
             if all(child is original for child, original in zip(children, layer.layer_sequence)):
                 return layer
-            return type(layer)(children)
+            return type(layer)(children, layer.trimmed_spatial_borders)
         if isinstance(layer, (PlaquetteLayer, RawCircuitLayer)):
             return layer
         raise UnsupportedLoweringError("stim", type(layer).__name__, "unknown layer type", location)

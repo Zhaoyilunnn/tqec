@@ -1,9 +1,13 @@
 from dataclasses import fields
+from typing import cast
 
 import pytest
 
+from tqec.compile.blocks.enums import SpatialBlockBorder
 from tqec.compile.blocks.layers.atomic.layout import LayoutLayer
 from tqec.compile.blocks.layers.atomic.spec_plaquettes import SpecPlaquetteLayer
+from tqec.compile.blocks.layers.composed.repeated import RepeatedLayer
+from tqec.compile.blocks.layers.composed.sequenced import SequencedLayers
 from tqec.compile.blocks.positioning import LayoutPosition2D
 from tqec.compile.lowering.base import UnsupportedLoweringError
 from tqec.compile.lowering.stim.compiler import IdentityPlaquetteCompiler
@@ -13,11 +17,12 @@ from tqec.compile.lowering.stim.translator import DefaultRPNGTranslator
 from tqec.compile.specs.library.generators.fixed_bulk import FixedBulkConventionGenerator
 from tqec.plaquette.extended_specs import ExtendedSpecCollection
 from tqec.plaquette.rpng.rpng import RPNGDescription
-from tqec.plaquette.spec import PlaquetteSpecs, RPNGPlaquetteSpec
+from tqec.plaquette.spec import PlaquetteSpec, PlaquetteSpecs, RPNGPlaquetteSpec
 from tqec.templates.qubit import QubitTemplate
 from tqec.utils.enums import Basis, Orientation
 from tqec.utils.frozendefaultdict import FrozenDefaultDict
 from tqec.utils.position import BlockPosition2D
+from tqec.utils.scale import LinearFunction
 
 
 @pytest.mark.parametrize("schedule", (6, 8))
@@ -103,3 +108,34 @@ def test_alignment_policy_and_layout_footprint_before_lowering() -> None:
         for p in child.plaquettes.collection.values()
     )
     assert layer.specs[1].num_moments == 7
+
+
+def test_composed_layers_preserve_trimmed_borders() -> None:
+
+    description = RPNGDescription.from_string("-x1- -x2- -x3- -x4-")
+    atomic = SpecPlaquetteLayer(
+        QubitTemplate(),
+        PlaquetteSpecs(
+            FrozenDefaultDict({i: RPNGPlaquetteSpec(description) for i in range(1, 15)})
+        ),
+    )
+    for border in SpatialBlockBorder:
+        trimmed = atomic.with_spatial_borders_trimmed([border])
+        borders = frozenset({border})
+        repeated = RepeatedLayer(trimmed, LinearFunction(2, 1), borders)
+        sequence = SequencedLayers([trimmed, repeated], borders)
+        lowered = StimMaterializer().materialize_layer(sequence)
+        assert lowered.trimmed_spatial_borders == sequence.trimmed_spatial_borders == borders
+        assert lowered.scalable_shape == sequence.scalable_shape
+        assert lowered.scalable_timesteps == sequence.scalable_timesteps
+        lowered_repeat = lowered.layer_sequence[1]
+        assert lowered_repeat.trimmed_spatial_borders == repeated.trimmed_spatial_borders == borders
+        assert lowered_repeat.repetitions == repeated.repetitions
+        assert lowered_repeat.internal_layer.trimmed_spatial_borders == borders
+        assert isinstance(repeated.internal_layer, SpecPlaquetteLayer)
+
+
+@pytest.mark.parametrize("unknown", (object(), []))
+def test_unknown_spec_fails_explicitly(unknown) -> None:
+    with pytest.raises(UnsupportedLoweringError, match="unknown plaquette specification"):
+        StimMaterializer().materialize_plaquette(cast(PlaquetteSpec, unknown))

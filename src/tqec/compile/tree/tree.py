@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import warnings
 from collections.abc import Iterator, Mapping, Sequence
+from functools import cached_property
 from multiprocessing import cpu_count
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from typing_extensions import override
 
@@ -107,28 +108,37 @@ class LayerTree:
 
         """
         self._root = LayerNode(root)
-        self._stim_materialized = False
         self._abstract_observables = abstract_observables or []
         self._annotations = dict(annotations) if annotations is not None else {}
         self._observable_builder = observable_builder
         self._slices_with_temporal_hadamard_layer = slices_with_temporal_hadamard_layer or set()
 
-    def _materialize_stim(self) -> None:
+    @property
+    def construction_root(self) -> SequencedLayers:
+        """Return the original construction, unchanged by Stim output or annotations.
+
+        Built-in conventions retain specifications here for other physical backends.
+        Custom Stim-only conventions may contain concrete layers instead.
+        """
+        return cast(SequencedLayers, self._root._layer)
+
+    @cached_property
+    def _stim_root(self) -> LayerNode:
         require_stim()
-        if self._stim_materialized:
-            return
         from tqec.compile.lowering.stim.materializer import StimMaterializer  # noqa: PLC0415
 
-        materialized = StimMaterializer().materialize_layer(self._root._layer)
-        if materialized is not self._root._layer:
-            self._root = LayerNode(materialized)
-        self._stim_materialized = True
+        materialized = StimMaterializer().materialize_layer(self.construction_root)
+        # Annotations belong to this view, including for concrete custom inputs.
+        return LayerNode(materialized)
+
+    def _materialize_stim(self) -> None:
+        _ = self._stim_root
 
     def to_dict(self) -> dict[str, Any]:
         """Return a dictionary representation of ``self``."""
         self._materialize_stim()
         return {  # pragma: no cover
-            "root": self._root.to_dict(),
+            "root": self._stim_root.to_dict(),
             "abstract_observables": self._abstract_observables,
             "annotations": {k: annotation.to_dict() for k, annotation in self._annotations.items()},
         }
@@ -136,7 +146,7 @@ class LayerTree:
     def _annotate_circuits(self, k: int, reschedule_measurements: bool = True) -> None:
         from tqec.compile.tree.annotators.circuit import AnnotateCircuitOnLayerNode  # noqa: PLC0415
 
-        self._root.walk(
+        self._stim_root.walk(
             AnnotateCircuitOnLayerNode(k, reschedule_measurements=reschedule_measurements)
         )
 
@@ -147,7 +157,7 @@ class LayerTree:
         self, k: int, qubit_lister_cls: type[QubitLister] = QubitLister
     ) -> QubitMap:
         qubit_lister = qubit_lister_cls(k)
-        self._root.walk(qubit_lister)
+        self._stim_root.walk(qubit_lister)
         return QubitMap.from_qubits(sorted(qubit_lister.seen_qubits))
 
     def _annotate_observables(self, k: int) -> None:
@@ -155,7 +165,7 @@ class LayerTree:
 
         for obs_idx, observable in enumerate(self._abstract_observables):
             annotate_observable(
-                self._root,
+                self._stim_root,
                 k,
                 observable,
                 obs_idx,
@@ -176,7 +186,7 @@ class LayerTree:
 
         if manhattan_radius <= 0:
             return  # pragma: no cover
-        self._root.walk(
+        self._stim_root.walk(
             AnnotateDetectorsOnLayerNode(
                 k,
                 manhattan_radius,
@@ -196,7 +206,7 @@ class LayerTree:
     ) -> None:
         from tqec.compile.tree.annotators.polygons import AnnotatePolygonOnLayerNode  # noqa: PLC0415
 
-        self._root.walk(AnnotatePolygonOnLayerNode(k))  # pragma: no cover
+        self._stim_root.walk(AnnotatePolygonOnLayerNode(k))  # pragma: no cover
 
     def generate_crumble_url(
         self,
@@ -259,7 +269,7 @@ class LayerTree:
         annotations = self._get_annotation(k)
         qubit_map = annotations.qubit_map
         assert qubit_map is not None
-        circuits_with_polygons = self._root.generate_circuits_with_potential_polygons(
+        circuits_with_polygons = self._stim_root.generate_circuits_with_potential_polygons(
             k, qubit_map, add_polygons=True
         )
         qubit_map_circuit = qubit_map.to_circuit()
@@ -432,7 +442,7 @@ class LayerTree:
             assert annotations.qubit_map is not None
             if include_qubit_coords:
                 yield annotations.qubit_map.to_circuit()
-            yield from self._root._generate_circuit_stream(
+            yield from self._stim_root._generate_circuit_stream(
                 k, annotations.qubit_map, reschedule_measurements
             )
         else:
@@ -514,7 +524,9 @@ class LayerTree:
             if include_qubit_coords:
                 yield annotations.qubit_map.to_circuit()
 
-            subtree_to_z = {subtree_root: z for (z, subtree_root) in enumerate(self._root.children)}
+            subtree_to_z = {
+                subtree_root: z for (z, subtree_root) in enumerate(self._stim_root.children)
+            }
 
             ctx = AnnotationContext(
                 detectors_walker,
@@ -525,7 +537,7 @@ class LayerTree:
             )
 
             try:
-                yield from self._root._generate_circuit_stream(
+                yield from self._stim_root._generate_circuit_stream(
                     k, annotations.qubit_map, reschedule_measurements, ctx
                 )
             finally:
@@ -600,5 +612,5 @@ class LayerTree:
         visualiser = LayerVisualiser(
             k, errors, show_observable, top_left_qubit=tl, bottom_right_qubit=br
         )
-        self._root.walk(visualiser)
+        self._stim_root.walk(visualiser)
         return visualiser.visualisations

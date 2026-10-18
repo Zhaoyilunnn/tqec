@@ -3,6 +3,10 @@ from functools import partial
 import pytest
 import stim
 
+from tqec.compile.blocks.layers.atomic.layout import LayoutLayer
+from tqec.compile.blocks.layers.atomic.spec_plaquettes import SpecPlaquetteLayer
+from tqec.compile.blocks.layers.composed.repeated import RepeatedLayer
+from tqec.compile.blocks.layers.composed.sequenced import SequencedLayers
 from tqec.compile.compile import compile_block_graph
 from tqec.compile.convention import FIXED_BULK_CONVENTION, Convention, ConventionTriplet
 from tqec.compile.detectors.database import DetectorDatabase
@@ -117,3 +121,37 @@ def test_bare_translation_and_identity_policy() -> None:
     )
     assert identity.circuit == bare.circuit
     assert identity.debug_information == bare.debug_information
+
+
+def test_stim_output_preserves_construction_tree() -> None:
+
+    compiled = compile_block_graph(memory())
+    tree = compiled.to_layer_tree()
+    root = tree.construction_root
+    node = tree._root
+    observables = tuple(tree._abstract_observables)
+
+    def specs(layer):
+        if isinstance(layer, LayoutLayer):
+            return [spec for child in layer.layers.values() for spec in specs(child)]
+        if isinstance(layer, SequencedLayers):
+            return [spec for child in layer.layer_sequence for spec in specs(child)]
+        if isinstance(layer, RepeatedLayer):
+            return specs(layer.internal_layer)
+        assert isinstance(layer, SpecPlaquetteLayer)
+        return [layer.specs]
+
+    original_specs = specs(root)
+    first = tree.generate_circuit(1, detector_database=DetectorDatabase(), database_path=None)
+    second = tree.generate_circuit(2, detector_database=DetectorDatabase(), database_path=None)
+    assert first == tree.generate_circuit(1, database_path=None)
+    assert second.num_measurements > first.num_measurements
+    assert tree.construction_root is root
+    assert tree._root is node
+    assert tree._stim_root is not node
+    assert not node._annotations
+    assert all(not child._annotations for child in node.children)
+    assert specs(root) == original_specs
+    assert tuple(tree._abstract_observables) == observables
+    assert compiled.generate_stim_circuit(1, database_path=None) == first
+    assert specs(compiled.to_layer_tree().construction_root) == original_specs
