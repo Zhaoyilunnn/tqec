@@ -9,12 +9,13 @@ qubit-related information from ``stim.Circuit`` instances.
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import cast
-
-import stim
+from typing import TYPE_CHECKING, cast
 
 from tqec.utils.coordinates import StimCoordinates
 from tqec.utils.position import PhysicalQubitPosition2D, Shift2D
+
+if TYPE_CHECKING:
+    import stim
 
 
 class GridQubit:
@@ -41,6 +42,8 @@ class GridQubit:
 
     def to_qubit_coords_instruction(self, index: int) -> stim.CircuitInstruction:
         """Return the ``QUBIT_COORDS`` instruction defining ``self`` in a ``stim.Circuit``."""
+        import stim  # noqa: PLC0415
+
         return stim.CircuitInstruction(
             "QUBIT_COORDS",
             [index],
@@ -142,6 +145,8 @@ def count_qubit_accesses(circuit: stim.Circuit) -> dict[int, int]:
         instructions that have this qubit index as target (as values).
 
     """
+    import stim  # noqa: PLC0415
+
     counter: defaultdict[int, int] = defaultdict(int)
     for instruction in circuit:
         if isinstance(instruction, stim.CircuitRepeatBlock):

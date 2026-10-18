@@ -33,7 +33,6 @@ from tqec.plaquette.extended_specs import ExtendedSpecCollection
 from tqec.plaquette.plaquette import Plaquette, Plaquettes
 from tqec.plaquette.rpng.rpng import ExtendedBasis, RPNGDescription
 from tqec.plaquette.rpng.translators.base import RPNGTranslator
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.plaquette.spec import PlaquetteSpecs
 from tqec.plaquette.spec_mapper import PlaquetteSpecMapper
 from tqec.templates.base import RectangularTemplate
@@ -68,13 +67,20 @@ class FixedBoundaryConventionGenerator:
         Custom translators and passes retain their explicit legacy Stim path;
         their transformed footprint cannot be inferred from RPNG parameters.
         """
-        if (
-            type(self._mapper._translator) is not DefaultRPNGTranslator
-            or self._mapper._compiler is not IdentityPlaquetteCompiler
-        ):
+        if self._mapper._compiler is not IdentityPlaquetteCompiler:
             return self
+        if self._mapper._translator is not None:
+            from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator  # noqa: PLC0415
+
+            if type(self._mapper._translator) is not DefaultRPNGTranslator:
+                return self
+        schedule = (
+            self._mapper._translator._measurement_schedule
+            if self._mapper._translator is not None
+            else self._mapper._measurement_schedule
+        )
         generator = copy(self)
-        generator._mapper = PlaquetteSpecMapper(self._mapper._translator._measurement_schedule)
+        generator._mapper = PlaquetteSpecMapper(schedule)
         generator._collection = PlaquetteSpecs
         generator._extended_collection = ExtendedSpecCollection
         return generator

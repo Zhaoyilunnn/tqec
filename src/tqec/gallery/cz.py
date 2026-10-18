@@ -1,11 +1,16 @@
 """Block graph that represents a CZ gate."""
 
-import stim
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from tqec.computation.block_graph import BlockGraph
 from tqec.computation.cube import ZXCube
 from tqec.utils.exceptions import TQECError
 from tqec.utils.position import Position3D
+
+if TYPE_CHECKING:
+    pass
 
 
 def cz(support_flows: str | list[str] | None = None) -> BlockGraph:
@@ -61,6 +66,8 @@ def cz(support_flows: str | list[str] | None = None) -> BlockGraph:
 
 
 def _resolve_ports(flows: list[str]) -> list[ZXCube]:
+    import stim  # noqa: PLC0415
+
     if any("Y" in f for f in flows):
         raise TQECError("Y basis initialization/measurements are not supported yet.")
 

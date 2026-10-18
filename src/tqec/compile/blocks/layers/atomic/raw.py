@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable
+from typing import TYPE_CHECKING
 
 from typing_extensions import override
 
-from tqec.circuit.schedule.circuit import ScheduledCircuit
 from tqec.compile.blocks.enums import SpatialBlockBorder
 from tqec.compile.blocks.layers.atomic.base import BaseLayer
 from tqec.utils.scale import LinearFunction, PhysicalQubitScalable2D
+
+if TYPE_CHECKING:
+    from tqec.circuit.schedule.circuit import ScheduledCircuit
 
 
 class RawCircuitLayer(BaseLayer):

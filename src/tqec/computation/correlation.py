@@ -9,12 +9,12 @@ from itertools import chain
 from operator import xor
 from typing import TYPE_CHECKING, Any, NamedTuple
 
-import stim
-
 from tqec.utils.enums import Basis, Pauli
 from tqec.utils.exceptions import TQECError
 from tqec.utils.position import Position3D
 
+if TYPE_CHECKING:
+    import stim
 if TYPE_CHECKING:
     from pyzx.pauliweb import PauliWeb
 
@@ -421,6 +421,8 @@ def reduce_observables_to_minimal_generators(
         A mapping from the generators' stabilizers to the correlation surfaces.
 
     """
+    import stim  # noqa: PLC0415
+
     if not stabilizers_to_surfaces:
         return {}
     # Sort the stabilizers by its corresponding correlation surface's area to
@@ -462,6 +464,8 @@ def _can_be_generated_by(
        given stabilizers.
 
     """
+    import stim  # noqa: PLC0415
+
     if not basis:
         return False
     tableau = stim.Tableau.from_stabilizers(

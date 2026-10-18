@@ -5,18 +5,18 @@ import hashlib
 import warnings
 from collections.abc import Callable, Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
-from typing import Any, Literal, cast
-
-import stim
+from typing import TYPE_CHECKING, Any, Literal, cast
 
 from tqec.circuit.qubit import GridQubit
-from tqec.circuit.schedule import ScheduledCircuit
 from tqec.plaquette.debug import PlaquetteDebugInformation
 from tqec.plaquette.enums import PlaquetteOrientation
 from tqec.plaquette.qubit import PlaquetteQubits
 from tqec.utils.exceptions import TQECError, TQECWarning
 from tqec.utils.frozendefaultdict import FrozenDefaultDict
 from tqec.utils.position import PhysicalQubitPosition2D
+
+if TYPE_CHECKING:
+    from tqec.circuit.schedule import ScheduledCircuit
 
 
 @dataclass(frozen=True)
@@ -236,6 +236,8 @@ class Plaquette:
         An empty plaquette is a plaquette that contain empty scheduled circuit.
 
         """
+        import stim  # noqa: PLC0415
+
         return bool(self.circuit.get_circuit(include_qubit_coords=False) == stim.Circuit())
 
     def with_debug_information(self, debug_information: PlaquetteDebugInformation) -> Plaquette:
@@ -276,6 +278,8 @@ class Plaquette:
             ``debug_information``.
 
         """
+        from tqec.circuit.schedule import ScheduledCircuit  # noqa: PLC0415
+
         name = data["name"]
         qubits = PlaquetteQubits.from_dict(data["qubits"])
         circuit = ScheduledCircuit.from_dict(data["circuit"])

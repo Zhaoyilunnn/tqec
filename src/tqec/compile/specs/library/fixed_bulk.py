@@ -27,7 +27,6 @@ from tqec.computation.cube import ConditionalCubeKind, LeafCubeKind, ZXCube
 from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler, PlaquetteCompiler
 from tqec.plaquette.plaquette import Plaquettes
 from tqec.plaquette.rpng.translators.base import RPNGTranslator
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.templates.base import RectangularTemplate
 from tqec.utils.enums import Basis, Orientation
 from tqec.utils.exceptions import TQECError
@@ -56,8 +55,6 @@ class FixedBulkCubeBuilder(SpecificationBuilder, CubeBuilder):
             schedule_family: two-qubit gate and measurement schedule configuration.
 
         """
-        if translator is None:
-            translator = DefaultRPNGTranslator(schedule_family.measurement_schedule)
         self._generator = FixedBulkConventionGenerator(
             translator, compiler, schedule_family=schedule_family
         )
@@ -136,8 +133,6 @@ class FixedBulkPipeBuilder(SpecificationBuilder, PipeBuilder):
             schedule_family: two-qubit gate and measurement schedule configuration.
 
         """
-        if translator is None:
-            translator = DefaultRPNGTranslator(schedule_family.measurement_schedule)
         self._generator = FixedBulkConventionGenerator(
             translator, compiler, schedule_family=schedule_family
         )

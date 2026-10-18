@@ -2,11 +2,8 @@ from __future__ import annotations
 
 import inspect
 from copy import copy
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
-import stim
-
-from tqec.circuit.schedule.circuit import ScheduledCircuit
 from tqec.compile.specs.base import CubeSpec
 from tqec.compile.specs.enums import (
     FIXED_BULK_CONVENTION_SPATIAL_HADAMARD_TRANSLATION,
@@ -30,7 +27,6 @@ from tqec.plaquette.plaquette import Plaquette, Plaquettes
 from tqec.plaquette.qubit import SquarePlaquetteQubits
 from tqec.plaquette.rpng.rpng import PauliBasis, RPNGDescription
 from tqec.plaquette.rpng.translators.base import RPNGTranslator
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.plaquette.spec import PlaquetteSpecs, RealignmentPlaquetteSpec
 from tqec.plaquette.spec_mapper import PlaquetteSpecMapper
 from tqec.templates.base import RectangularTemplate
@@ -44,6 +40,9 @@ from tqec.utils.enums import Basis, Orientation
 from tqec.utils.exceptions import TQECError
 from tqec.utils.frozendefaultdict import FrozenDefaultDict
 
+if TYPE_CHECKING:
+    pass
+
 
 def make_fixed_bulk_realignment_plaquette(
     stabilizer_basis: Basis,
@@ -53,6 +52,10 @@ def make_fixed_bulk_realignment_plaquette(
     debug_basis: PauliBasis | None = None,
 ) -> Plaquette:
     """Make the plaquette used for fixed-bulk temporal Hadamard transition."""
+    import stim  # noqa: PLC0415
+
+    from tqec.circuit.schedule.circuit import ScheduledCircuit  # noqa: PLC0415
+
     qubits = SquarePlaquetteQubits()
     cx_targets: list[tuple[int, int]]
     # used to match the 5-timestep schedule in the other part of computation
@@ -109,7 +112,7 @@ class FixedBulkConventionGenerator:
                 should be generated for this convention.
 
         """
-        self._mapper = PlaquetteMapper(translator, compiler)
+        self._mapper = PlaquetteMapper(translator, compiler, schedule_family.measurement_schedule)
         self._collection = Plaquettes
         self._extended_collection = ExtendedPlaquetteCollection
         self._realignment = make_fixed_bulk_realignment_plaquette
@@ -121,13 +124,20 @@ class FixedBulkConventionGenerator:
         Custom translators and passes retain their explicit legacy Stim path;
         their transformed footprint cannot be inferred from RPNG parameters.
         """
-        if (
-            type(self._mapper._translator) is not DefaultRPNGTranslator
-            or self._mapper._compiler is not IdentityPlaquetteCompiler
-        ):
+        if self._mapper._compiler is not IdentityPlaquetteCompiler:
             return self
+        if self._mapper._translator is not None:
+            from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator  # noqa: PLC0415
+
+            if type(self._mapper._translator) is not DefaultRPNGTranslator:
+                return self
+        schedule = (
+            self._mapper._translator._measurement_schedule
+            if self._mapper._translator is not None
+            else self._mapper._measurement_schedule
+        )
         generator = copy(self)
-        generator._mapper = PlaquetteSpecMapper(self._mapper._translator._measurement_schedule)
+        generator._mapper = PlaquetteSpecMapper(schedule)
         generator._collection = PlaquetteSpecs
         generator._extended_collection = ExtendedSpecCollection
         generator._realignment = RealignmentPlaquetteSpec

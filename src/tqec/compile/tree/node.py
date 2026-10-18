@@ -6,17 +6,10 @@ from dataclasses import dataclass
 from functools import partial
 from typing import TYPE_CHECKING, Any, TypeGuard
 
-import stim
-
-if TYPE_CHECKING:
-    from tqec.compile.tree.annotators.detectors import AnnotateDetectorsOnLayerNode
-
 from tqec.circuit.qubit_map import QubitMap
-from tqec.circuit.schedule.circuit import ScheduledCircuit
 from tqec.compile.blocks.layers.atomic.base import BaseLayer
 from tqec.compile.blocks.layers.atomic.layout import LayoutLayer
 from tqec.compile.blocks.layers.atomic.plaquettes import PlaquetteLayer
-from tqec.compile.blocks.layers.atomic.raw import RawCircuitLayer
 from tqec.compile.blocks.layers.composed.base import BaseComposedLayer
 from tqec.compile.blocks.layers.composed.repeated import RepeatedLayer
 from tqec.compile.blocks.layers.composed.sequenced import SequencedLayers
@@ -25,14 +18,17 @@ from tqec.compile.observables.builder import (
     ObservableBuilder,
     ObservableComponent,
 )
-from tqec.compile.tree.annotations import LayerNodeAnnotations, Polygon
-from tqec.compile.tree.annotators.observables import (
-    _annotate_observable_at_node,
-    get_ordered_leaves,
-)
 from tqec.utils.coordinates import StimCoordinates
 from tqec.utils.exceptions import TQECError
 from tqec.utils.scale import LinearFunction
+
+if TYPE_CHECKING:
+    import stim
+
+    from tqec.circuit.schedule.circuit import ScheduledCircuit
+    from tqec.compile.tree.annotations import LayerNodeAnnotations, Polygon
+if TYPE_CHECKING:
+    from tqec.compile.tree.annotators.detectors import AnnotateDetectorsOnLayerNode
 
 
 def contains_only_layout_or_composed_layers(
@@ -86,6 +82,8 @@ class LayerNode:
 
     @staticmethod
     def _get_children(layer: LayoutLayer | BaseComposedLayer) -> list[LayerNode]:
+        from tqec.compile.blocks.layers.atomic.raw import RawCircuitLayer  # noqa: PLC0415
+
         if isinstance(layer, LayoutLayer):
             return []
         if isinstance(layer, SequencedLayers):
@@ -153,6 +151,8 @@ class LayerNode:
 
     def get_annotations(self, k: int) -> LayerNodeAnnotations:
         """Return the annotations associated with the provided scaling parameter ``k``."""
+        from tqec.compile.tree.annotations import LayerNodeAnnotations  # noqa: PLC0415
+
         return self._annotations.setdefault(k, LayerNodeAnnotations())
 
     def set_circuit_annotation(self, k: int, circuit: ScheduledCircuit) -> None:
@@ -227,6 +227,13 @@ class LayerNode:
             will be kept.
 
         """
+        import stim  # noqa: PLC0415
+
+        from tqec.compile.tree.annotators.observables import (  # noqa: PLC0415
+            _annotate_observable_at_node,
+            get_ordered_leaves,
+        )
+
         should_annotate = ctx is not None
 
         if should_annotate and ctx.detectors_walker is not None:
@@ -390,6 +397,8 @@ class LayerNode:
             ``global_qubit_map``.
 
         """
+        import stim  # noqa: PLC0415
+
         circuit = stim.Circuit()
         stream = self._generate_circuit_stream(k, global_qubit_map)
         for circ in stream:
@@ -421,6 +430,8 @@ class LayerNode:
             ``global_qubit_map``.
 
         """
+        import stim  # noqa: PLC0415
+
         circuits = self._generate_circuits_with_potential_polygons_stream(
             k,
             global_qubit_map,

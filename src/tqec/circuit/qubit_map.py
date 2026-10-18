@@ -14,15 +14,17 @@ import functools
 from collections import Counter
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy
-import stim
 
 from tqec.circuit.qubit import GridQubit
 from tqec.utils.coordinates import StimCoordinates
 from tqec.utils.exceptions import TQECError
 from tqec.utils.scale import round_or_fail
+
+if TYPE_CHECKING:
+    import stim
 
 
 @dataclass(frozen=True)
@@ -152,6 +154,8 @@ class QubitMap:
             a ``stim.Circuit`` containing only ``QUBIT_COORDS`` instructions.
 
         """
+        import stim  # noqa: PLC0415
+
         shiftx, shifty = 0, 0
         if shift_to_positive:
             shiftx = -min((q.x for q in self.i2q.values()), default=0)

@@ -11,16 +11,49 @@ Because we do not have a module to perform simple geometry operations on qubits
 (yet), the :mod:`tqec.plaquette.qubit` module is providing classes to represent
 the qubits a plaquette is applied to and perform some operations on them (e.g.,
 get the qubits on a specific side of the plaquette).
-
 """
 
-from ..utils.frozendefaultdict import FrozenDefaultDict as FrozenDefaultDict
-from .enums import PlaquetteOrientation as PlaquetteOrientation
-from .enums import PlaquetteSide as PlaquetteSide
-from .plaquette import Plaquette as Plaquette
-from .plaquette import Plaquettes as Plaquettes
-from .qubit import PlaquetteQubits as PlaquetteQubits
-from .qubit import SquarePlaquetteQubits as SquarePlaquetteQubits
-from .rpng import RG as RG
-from .rpng import RPNG as RPNG
-from .rpng import RPNGDescription as RPNGDescription
+from importlib import import_module
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..utils.frozendefaultdict import FrozenDefaultDict as FrozenDefaultDict
+    from .enums import PlaquetteOrientation as PlaquetteOrientation
+    from .enums import PlaquetteSide as PlaquetteSide
+    from .plaquette import Plaquette as Plaquette
+    from .plaquette import Plaquettes as Plaquettes
+    from .qubit import PlaquetteQubits as PlaquetteQubits
+    from .qubit import SquarePlaquetteQubits as SquarePlaquetteQubits
+    from .rpng import RG as RG
+    from .rpng import RPNG as RPNG
+    from .rpng import RPNGDescription as RPNGDescription
+
+
+_EXPORTS = {
+    "FrozenDefaultDict": ("..utils.frozendefaultdict", "FrozenDefaultDict"),
+    "PlaquetteOrientation": (".enums", "PlaquetteOrientation"),
+    "PlaquetteSide": (".enums", "PlaquetteSide"),
+    "Plaquette": (".plaquette", "Plaquette"),
+    "Plaquettes": (".plaquette", "Plaquettes"),
+    "PlaquetteQubits": (".qubit", "PlaquetteQubits"),
+    "SquarePlaquetteQubits": (".qubit", "SquarePlaquetteQubits"),
+    "RG": (".rpng", "RG"),
+    "RPNG": (".rpng", "RPNG"),
+    "RPNGDescription": (".rpng", "RPNGDescription"),
+}
+__all__ = list(_EXPORTS)
+
+
+def __getattr__(name: str):
+    """Load public exports without importing circuit backends eagerly."""
+    if name not in _EXPORTS:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    module, attribute = _EXPORTS[name]
+    value = getattr(import_module(module, __name__), attribute)
+    globals()[name] = value
+    return value
+
+
+def __dir__():
+    """Include lazily loaded public exports in module introspection."""
+    return sorted(set(globals()) | set(__all__))

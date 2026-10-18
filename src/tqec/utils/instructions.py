@@ -1,6 +1,12 @@
 """Defines a few functions to analyse and create ``stim.CircuitInstruction`` instances."""
 
-import stim
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import stim
+
 
 COMBINED_RESET_AND_MEASUREMENT_INSTRUCTION_NAMES: frozenset[str] = frozenset(
     ["MR", "MRX", "MRY", "MRZ"]

@@ -1,13 +1,12 @@
 """Provides helper functions to add observables to circuits."""
 
+from __future__ import annotations
+
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from enum import Enum
-from typing import Protocol
+from typing import TYPE_CHECKING, Protocol
 
-import stim
-
-from tqec.circuit.measurement_map import MeasurementRecordsMap
 from tqec.circuit.qubit import GridQubit
 from tqec.compile.observables.abstract_observable import (
     AbstractObservable,
@@ -19,6 +18,11 @@ from tqec.templates.layout import LayoutTemplate
 from tqec.utils.exceptions import TQECError
 from tqec.utils.position import PlaquetteShape2D, Position3D
 from tqec.utils.scale import round_or_fail
+
+if TYPE_CHECKING:
+    import stim
+
+    from tqec.circuit.measurement_map import MeasurementRecordsMap
 
 
 @dataclass(frozen=True)
@@ -49,6 +53,8 @@ class Observable:
 
     def to_instruction(self) -> stim.CircuitInstruction:
         """Return the ``stim`` instruction represented by ``self``."""
+        import stim  # noqa: PLC0415
+
         return stim.CircuitInstruction(
             "OBSERVABLE_INCLUDE",
             [stim.target_rec(offset) for offset in sorted(self.measurement_offsets)],

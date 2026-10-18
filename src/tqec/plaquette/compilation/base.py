@@ -1,14 +1,18 @@
 """Introduces :class:`.PlaquetteCompiler`, the class used to implement a plaquette compiler."""
 
-from collections.abc import Callable, Iterable
-from typing import Final
+from __future__ import annotations
 
-from tqec.plaquette.compilation.passes.base import CompilationPass
+from collections.abc import Callable, Iterable
+from typing import TYPE_CHECKING, Final
+
 from tqec.plaquette.plaquette import Plaquette
 from tqec.utils.instructions import (
     MEASUREMENT_INSTRUCTION_NAMES,
     RESET_INSTRUCTION_NAMES,
 )
+
+if TYPE_CHECKING:
+    from tqec.plaquette.compilation.passes.base import CompilationPass
 
 
 class PlaquetteCompiler:

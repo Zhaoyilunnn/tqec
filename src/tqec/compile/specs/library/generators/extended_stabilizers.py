@@ -2,13 +2,9 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from dataclasses import dataclass, replace
-from typing import Literal, cast
+from typing import TYPE_CHECKING, Literal, cast
 
-import stim
-
-from tqec.circuit.moment import Moment
 from tqec.circuit.qubit import GridQubit
-from tqec.circuit.schedule.circuit import ScheduledCircuit
 from tqec.circuit.schedule.schedule import Schedule
 from tqec.compile.specs.library.generators.constants import EXTENDED_PLAQUETTE_SCHEDULES
 from tqec.plaquette.plaquette import Plaquette
@@ -23,6 +19,9 @@ from tqec.visualisation.computation.plaquette.extended import (
     ExtendedPlaquettePosition,
     ExtendedPlaquetteType,
 )
+
+if TYPE_CHECKING:
+    pass
 
 
 def _get_spatial_cube_arm_name(
@@ -85,6 +84,11 @@ def _make_spatial_cube_arm_memory_plaquette(
     """
     # DOWN and RIGHT emit the RX-first GHZ sequence when ``is_reversed`` is
     # True, i.e. exactly when ``is_reversed == reversed_phase``.
+    import stim  # noqa: PLC0415
+
+    from tqec.circuit.moment import Moment  # noqa: PLC0415
+    from tqec.circuit.schedule.circuit import ScheduledCircuit  # noqa: PLC0415
+
     reversed_phase = direction in (
         ExtendedPlaquettePosition.DOWN,
         ExtendedPlaquettePosition.RIGHT,

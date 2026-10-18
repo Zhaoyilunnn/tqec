@@ -2,12 +2,11 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from functools import cached_property
-from typing import Final, TypeGuard
+from typing import TYPE_CHECKING, Final, TypeGuard
 
 from typing_extensions import override
 
 from tqec.circuit.qubit import GridQubit
-from tqec.circuit.schedule.circuit import ScheduledCircuit
 from tqec.compile.blocks.enums import SpatialBlockBorder
 from tqec.compile.blocks.layers.atomic.base import BaseLayer
 from tqec.compile.blocks.layers.atomic.plaquettes import PlaquetteLayer
@@ -18,7 +17,6 @@ from tqec.compile.blocks.positioning import (
     LayoutPipePosition2D,
     LayoutPosition2D,
 )
-from tqec.compile.generation import generate_circuit
 from tqec.plaquette.plaquette import Plaquette, Plaquettes
 from tqec.plaquette.spec import PlaquetteSpecs
 from tqec.templates.enums import TemplateBorder
@@ -28,6 +26,10 @@ from tqec.utils.exceptions import TQECError
 from tqec.utils.frozendefaultdict import FrozenDefaultDict
 from tqec.utils.position import BlockPosition2D, Direction3D, Shift2D
 from tqec.utils.scale import LinearFunction, PhysicalQubitScalable2D
+
+if TYPE_CHECKING:
+    from tqec.circuit.schedule.circuit import ScheduledCircuit
+
 
 DEFAULT_SHARED_QUBIT_DEPTH_AT_BORDER: Final[int] = 1
 """Default number of qubits that are shared between two neighbouring layers."""
@@ -297,6 +299,8 @@ class LayoutLayer(BaseLayer):
             quantum circuit representing the layer.
 
         """
+        from tqec.compile.generation import generate_circuit  # noqa: PLC0415
+
         if reschedule_measurements:
             self.reschedule_measurements()
         template, plaquettes = self.to_template_and_plaquettes()

@@ -43,11 +43,11 @@ For temporal pipes, the layers are replaced in-place within block instances.
 
 """
 
+from __future__ import annotations
+
 from collections.abc import Iterator
 from pathlib import Path
-from typing import Final
-
-import stim
+from typing import TYPE_CHECKING, Final
 
 from tqec.compile.blocks.block import Block, merge_parallel_block_layers
 from tqec.compile.blocks.enums import (
@@ -63,16 +63,21 @@ from tqec.compile.blocks.positioning import (
     LayoutPosition2D,
     LayoutPosition3D,
 )
-from tqec.compile.detectors.database import DetectorDatabase
+from tqec.compile.lowering.requirements import require_stim
 from tqec.compile.observables.abstract_observable import AbstractObservable
 from tqec.compile.observables.builder import ObservableBuilder
-from tqec.compile.tree.tree import LayerTree
 from tqec.templates.enums import TemplateBorder
 from tqec.utils.exceptions import TQECError
-from tqec.utils.noise_model import NoiseModel
 from tqec.utils.paths import DEFAULT_DETECTOR_DATABASE_PATH
 from tqec.utils.position import BlockPosition3D, Direction3D, SignedDirection3D
 from tqec.utils.scale import PhysicalQubitScalable2D
+
+if TYPE_CHECKING:
+    import stim
+
+    from tqec.compile.detectors.database import DetectorDatabase
+    from tqec.compile.tree.tree import LayerTree
+    from tqec.utils.noise_model import NoiseModel
 
 
 def substitute_plaquettes(
@@ -439,6 +444,8 @@ class TopologicalComputationGraph:
             :class:`~tqec.compile.blocks.layers.composed.sequenced.SequencedLayers`.
 
         """
+        from tqec.compile.tree.tree import LayerTree  # noqa: PLC0415
+
         zs = [pos.z for pos in self._blocks.keys()]
         min_z, max_z = min(zs), max(zs)
         blocks_by_z: list[dict[LayoutPosition2D, Block]] = [{} for _ in range(min_z, max_z + 1)]
@@ -500,6 +507,7 @@ class TopologicalComputationGraph:
             A compiled stim circuit.
 
         """
+        require_stim()
         circuit = self.to_layer_tree().generate_circuit(
             k,
             manhattan_radius=manhattan_radius,
@@ -546,6 +554,9 @@ class TopologicalComputationGraph:
             A compiled stim circuit.
 
         """
+        require_stim()
+        import stim  # noqa: PLC0415
+
         tree = self.to_layer_tree()
         circuit_iter: Iterator[stim.Circuit] = tree.generate_circuit_stream(
             k,
@@ -624,6 +635,7 @@ class TopologicalComputationGraph:
             a string representing the Crumble URL of the quantum circuit.
 
         """
+        require_stim()
         return self.to_layer_tree().generate_crumble_url(  # pragma: no cover
             k, manhattan_radius, detector_database, add_polygons=add_polygons
         )

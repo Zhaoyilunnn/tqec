@@ -8,6 +8,8 @@ from one that returns `FrozenDefaultDict[int, RPNGDescription]`.
 
 """
 
+from __future__ import annotations
+
 from collections.abc import Callable
 from functools import wraps
 from types import FunctionType
@@ -15,10 +17,10 @@ from typing import Final, Literal, ParamSpec, cast
 
 from tqec.compile.specs.base import CubeSpec
 from tqec.plaquette.compilation.base import IdentityPlaquetteCompiler, PlaquetteCompiler
+from tqec.plaquette.constants import MEASUREMENT_SCHEDULE
 from tqec.plaquette.plaquette import Plaquette, Plaquettes
 from tqec.plaquette.rpng.rpng import RPNGDescription
 from tqec.plaquette.rpng.translators.base import RPNGTranslator
-from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator
 from tqec.utils.enums import Basis
 from tqec.utils.exceptions import TQECError
 from tqec.utils.frozendefaultdict import FrozenDefaultDict
@@ -71,15 +73,21 @@ def get_reset_measurement_indices_for_spatial_arms(
 class PlaquetteMapper:
     def __init__(
         self,
-        translator: RPNGTranslator = DefaultRPNGTranslator(),
+        translator: RPNGTranslator | None = None,
         compiler: PlaquetteCompiler = IdentityPlaquetteCompiler,
+        measurement_schedule: int = MEASUREMENT_SCHEDULE,
     ) -> None:
         """Wrap a translator and a compiler to ease plaquette generation."""
+        self._measurement_schedule = measurement_schedule
         self._translator = translator
         self._compiler = compiler
 
     def get_plaquette(self, description: RPNGDescription) -> Plaquette:
         """Successively call the translator and the compiler to return a plaquette."""
+        from tqec.plaquette.rpng.translators.default import DefaultRPNGTranslator  # noqa: PLC0415
+
+        if self._translator is None:
+            self._translator = DefaultRPNGTranslator(self._measurement_schedule)
         return self._compiler.compile(self._translator.translate(description))
 
     def __call__(

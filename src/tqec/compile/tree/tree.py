@@ -4,27 +4,26 @@ import warnings
 from collections.abc import Iterator, Mapping, Sequence
 from multiprocessing import cpu_count
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-import stim
 from typing_extensions import override
 
 from tqec.circuit.qubit import GridQubit
 from tqec.circuit.qubit_map import QubitMap
 from tqec.compile.blocks.layers.atomic.layout import LayoutLayer
 from tqec.compile.blocks.layers.composed.sequenced import SequencedLayers
-from tqec.compile.detectors.database import CURRENT_DATABASE_VERSION, DetectorDatabase
+from tqec.compile.lowering.requirements import require_stim
 from tqec.compile.observables.abstract_observable import AbstractObservable
 from tqec.compile.observables.builder import ObservableBuilder
-from tqec.compile.tree.annotations import LayerTreeAnnotations, Polygon
-from tqec.compile.tree.annotators.circuit import AnnotateCircuitOnLayerNode
-from tqec.compile.tree.annotators.detectors import AnnotateDetectorsOnLayerNode
-from tqec.compile.tree.annotators.observables import annotate_observable
-from tqec.compile.tree.annotators.polygons import AnnotatePolygonOnLayerNode
 from tqec.compile.tree.node import AnnotationContext, LayerNode, NodeWalker
-from tqec.post_processing.shift import shift_to_only_positive
 from tqec.utils.exceptions import TQECError, TQECWarning
 from tqec.utils.paths import DEFAULT_DETECTOR_DATABASE_PATH
+
+if TYPE_CHECKING:
+    import stim
+
+    from tqec.compile.detectors.database import DetectorDatabase
+    from tqec.compile.tree.annotations import LayerTreeAnnotations, Polygon
 
 
 class QubitLister(NodeWalker):
@@ -115,6 +114,7 @@ class LayerTree:
         self._slices_with_temporal_hadamard_layer = slices_with_temporal_hadamard_layer or set()
 
     def _materialize_stim(self) -> None:
+        require_stim()
         if self._stim_materialized:
             return
         from tqec.compile.lowering.stim import StimMaterializer  # noqa: PLC0415
@@ -132,6 +132,8 @@ class LayerTree:
         }
 
     def _annotate_circuits(self, k: int, reschedule_measurements: bool = True) -> None:
+        from tqec.compile.tree.annotators.circuit import AnnotateCircuitOnLayerNode  # noqa: PLC0415
+
         self._root.walk(
             AnnotateCircuitOnLayerNode(k, reschedule_measurements=reschedule_measurements)
         )
@@ -147,6 +149,8 @@ class LayerTree:
         return QubitMap.from_qubits(sorted(qubit_lister.seen_qubits))
 
     def _annotate_observables(self, k: int) -> None:
+        from tqec.compile.tree.annotators.observables import annotate_observable  # noqa: PLC0415
+
         for obs_idx, observable in enumerate(self._abstract_observables):
             annotate_observable(
                 self._root,
@@ -166,6 +170,8 @@ class LayerTree:
         lookback: int = 2,
         parallel_process_count: int = 1,
     ) -> None:
+        from tqec.compile.tree.annotators.detectors import AnnotateDetectorsOnLayerNode  # noqa: PLC0415
+
         if manhattan_radius <= 0:
             return  # pragma: no cover
         self._root.walk(
@@ -186,6 +192,8 @@ class LayerTree:
         self,
         k: int,
     ) -> None:
+        from tqec.compile.tree.annotators.polygons import AnnotatePolygonOnLayerNode  # noqa: PLC0415
+
         self._root.walk(AnnotatePolygonOnLayerNode(k))  # pragma: no cover
 
     def generate_crumble_url(
@@ -230,6 +238,10 @@ class LayerTree:
             a string representing the Crumble URL of the quantum circuit.
 
         """
+        import stim  # noqa: PLC0415
+
+        from tqec.post_processing.shift import shift_to_only_positive  # noqa: PLC0415
+
         if not add_polygons:
             circuit = self.generate_circuit(
                 k,
@@ -279,6 +291,7 @@ class LayerTree:
     ) -> None:
         """Annotate the tree with circuits, qubit maps, detectors and observables."""
         # If already annotated, no need to re-annotate.
+        require_stim()
         self._materialize_stim()
         if k in self._annotations:
             return  # pragma: no cover
@@ -342,6 +355,8 @@ class LayerTree:
             by ``self``.
 
         """
+        import stim  # noqa: PLC0415
+
         circuit = stim.Circuit()
         stream = self.generate_circuit_stream(
             k,
@@ -403,6 +418,10 @@ class LayerTree:
 
         """
         # If already annotated, no need to re-annotate.
+        require_stim()
+        from tqec.compile.detectors.database import CURRENT_DATABASE_VERSION, DetectorDatabase  # noqa: PLC0415
+        from tqec.compile.tree.annotators.detectors import AnnotateDetectorsOnLayerNode  # noqa: PLC0415
+
         self._materialize_stim()
         if k in self._annotations:
             annotations = self._get_annotation(k)
@@ -513,6 +532,8 @@ class LayerTree:
                     detector_database.to_file(database_path)
 
     def _get_annotation(self, k: int) -> LayerTreeAnnotations:
+        from tqec.compile.tree.annotations import LayerTreeAnnotations  # noqa: PLC0415
+
         return self._annotations.setdefault(k, LayerTreeAnnotations())
 
     def layers_to_svg(
@@ -545,6 +566,9 @@ class LayerTree:
         """
         # Warning explicitly disabled because this intended and the only way to
         # avoid the costly svg import.
+        require_stim()
+        from tqec.compile.tree.annotations import LayerTreeAnnotations  # noqa: PLC0415
+
         self._materialize_stim()
         from tqec.visualisation.computation.tree import LayerVisualiser  # noqa: PLC0415
 
