@@ -70,7 +70,7 @@ def build_deltakit_program(tree: LayerTree, k: int, *, options=DeltakitOptions()
     from deltakit_compile.dialects.qstruct import OutputOp
     from deltakit_compile.dialects.stim import ObservableIdAttr
     from deltakit_compile.frontend.circuit import CircuitBuilder, QubitReg
-    from deltakit_compile.frontend.circuit_builder import CircuitProgramBuilder
+    from deltakit_compile.frontend.circuit_builder import CircuitProgram, CircuitProgramBuilder
 
     fragments = []
     layers = []
@@ -163,15 +163,15 @@ def build_deltakit_program(tree: LayerTree, k: int, *, options=DeltakitOptions()
     returned = program.call_circuit(fragment(register))
     if returned is not None:
         program.add_return(returned)
-    result = program.build_program()
+    module = program.build_program().module
     from xdsl.dialects.builtin import StringAttr
 
-    result.module.attributes["tqec.capability"] = StringAttr(
+    module.attributes["tqec.capability"] = StringAttr(
         {"none": "physical-only", "explicit": "static-qec", "auto": "experimental-auto"}[
             options.annotation_mode
         ]
     )
-    result.module.attributes["tqec.provenance"] = StringAttr(
+    module.attributes["tqec.provenance"] = StringAttr(
         json.dumps(
             {
                 "scale": k,
@@ -182,8 +182,8 @@ def build_deltakit_program(tree: LayerTree, k: int, *, options=DeltakitOptions()
             }
         )
     )
-    result.module.verify()
-    return result
+    module.verify()
+    return CircuitProgram(module)
 
 
 def compile_to_deltakit(

@@ -175,3 +175,8 @@ Plotting functions are in this module too.
 References
 -----------
 .. footbibliography::
+
+.. toctree::
+   :hidden:
+
+   backend_deltakit

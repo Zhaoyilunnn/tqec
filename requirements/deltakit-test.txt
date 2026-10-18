@@ -1,0 +1,4 @@
+# Optional native backend; source is pinned because 0.1.0 was not on the tested index.
+deltakit-compile @ git+https://github.com/Deltakit/deltakit-compile.git@e242562f1387b7efdff23d2bc7ea351f8b6edd03
+xdsl==0.68.0
+deltakit-stim==0.2.7

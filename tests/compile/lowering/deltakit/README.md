@@ -11,3 +11,41 @@ The API smoke test builds native circuits, validates measurement SSA and exports
 both physical xDSL IR and Deltakit-Stim. It does not establish full TQEC physical
 or QEC equivalence. The production adapter must never import a Stim circuit as
 its input. Deltakit's own deltakit-stim dependency is a separate dependency.
+
+## Reproduce
+
+```sh
+uv pip install -r requirements/deltakit-test.txt
+.venv/bin/python -m pytest tests/compile/lowering/deltakit -m ''
+.venv/bin/python -m tests.compile.lowering.deltakit.performance
+```
+
+The full suite includes slow native flow checks. Use the environment's Python
+directly after installing optional packages; a subsequent dependency sync can
+remove packages that are not part of the default project environment.
+
+[The support matrix](support_matrix.md) separates explicit QEC from the native
+experimental finder. No original Stim fixture or compile integration test is
+changed. Optional dependency isolation is checked in fresh Python processes.
+The direct producer test blocks original Stim, tqecd, both other backend modules,
+and Bloq while building verified native physical IR.
+
+The profiler reports wall time, peak traced Python allocation and cumulative
+function times. Buckets overlap and must not be added together. Tracing adds
+substantial overhead; these are diagnostic profiles, not throughput benchmarks.
+Native fragment building includes explicit boundary-flow computation. Native
+pass time includes serialization and export; native detector finding is also
+reported separately. Peak Python allocation excludes native-library allocations.
+The first profile includes cold imports; subsequent profiles reuse imports.
+
+## Local profile (Python 3.11.16)
+
+| Case | Wall seconds | Peak traced MiB | Native passes including export | Detector finding |
+|---|---:|---:|---:|---:|
+| Z memory k=1, explicit | 7.31 | 30.90 | 2.43 | 0.006 |
+| Z memory k=2, explicit | 14.91 | 17.99 | 10.27 | 0.045 |
+| Z memory k=1, auto | 6.39 | 4.96 | 5.08 | 0.095 |
+
+These profiles were collected alongside other validation jobs. They establish
+reproducible measurement points, not a maximum supported scale. Run the profiler
+to inspect the separate template, translation, schedule and native IR buckets.
